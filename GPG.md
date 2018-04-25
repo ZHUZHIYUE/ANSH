@@ -1,8 +1,9 @@
-# GPG
-### 创建GPG密钥
-如果您没有现有的GPG密钥，您可以生成一个新的GPG密钥来用于签署提交和标记。
-1. 为您的操作系统下载并安装最新版本的[GIT工具](https://git-scm.com/downloads)。您将需要版本2.16.2或更大的版本来遵循下面的说明。
-2. 打开GIT安装目录下面git-bash.exe。
+### GPG
+#### 什么是GPG
+1991年，程序员Phil Zimmermann为了避开政府的监视，开发了加密软件PGP。因为这个软件非常好用，迅速流传开来成为许多程序员的必备工具。但是，它是商业软不能自由使用。所以，自由软件基金会决定，开发一个PGP的替代品取名为GnuPG，因此GPG就诞生了。GPG是GNU Privacy Guard的缩写，是自由软件基金会的GNU计划的一部分。它是一种基于密钥的加密方式，使用了一对密钥对消息进行加密和解密，来保证消息的安全传输。一开始，用户通过数字证书认证软件生成一对公钥和私钥。任何其他想给该用户发送加密消息的用户，需要先从证书机构的公共目录获取接收者的公钥，然后用公钥加密信息，再发送给接收者。当接收者收到加密消息后，他可以用自己的私钥来解密，而私钥是不应该被其他人拿到的。
+#### 创建GPG密钥
+1. 为您的操作系统下载并安装最新版本[GunPG v2.1+](https://www.gnupg.org/download/index.html)或者[GIT v2.16.2+](https://git-scm.com/downloads)。
+2. GnuPG运行命令，GIT打开安装目录下面git-bash.exe。
 3. 粘贴下面的文本来生成一个GPG密钥。
 ``` 
 $ gpg --gen-key
@@ -75,14 +76,15 @@ ssb   4096R/42B317FD4BA89E7A 2016-03-10
 $ gpg --armor --export 3AA5C34371567BD2
 # Prints the GPG key ID, in ASCII armor format
 ```
-### 设置GPG密钥
+### 发布GPG密钥
 1. 拷贝您的GPG公匙, 从 -----BEGIN PGP PUBLIC KEY BLOCK----- 到 -----END PGP PUBLIC KEY BLOCK----- 结束**公钥加密，私匙解密。实际使用中应将公匙发布给服务器** *（如果您需要发布到GitHub，则将公匙添加到GitHub账户的GPG KEY中。）*  
 2. 在GIT中设置您的GPG钥匙。请粘贴下面的文本，替换为要使用的GPG密钥ID。在此示例中，GPG密钥ID为3AA5C34371567BD2
 ```
 $ git config --global user.signingkey 3AA5C34371567BD2
 ```
-### 使用GPG密钥
-使用GPG对GITCommit进行签名，在本地分支中提交更改时，将- S标志添加到git提交命令
+### 在GIT中配置GPG密钥
+* 使用GPG对GIT提交进行签名
+在本地分支中提交更改时，将- S标志添加到git提交命令
 ```
 $ git commit -S -m your commit message
 # Creates a signed commit
