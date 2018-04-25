@@ -94,7 +94,7 @@ $ git commit -S -m your commit message
 >**要存储GPG密钥密码，使您不必在每次签署提交时输入密码，建议使用以下工具**  
 >
 >>对于Mac用户，GPG套件允许您将GPG密钥密码存储在Mac操作系统钥匙串中。  
->>对于Windows用户，Gpg4win与其他Windows工具集成在一起，并做相应的配置。
+>>对于Windows用户，[Gpg4win](https://www.gnupg.org/download/)与其他Windows工具集成在一起，并做相应的配置。
 >>```
 >>$ git config --global gpg.program "${Gpg4win}/gpg.exe"
 >>```
