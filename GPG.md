@@ -58,27 +58,30 @@ Comment:
 You need a Passphrase to protect your secret key.
 Enter passphrase:
 ``` 
-10. 粘贴下面的文本来列出GPG密钥，您可以同时使用公钥和私钥。签署提交或标记所需的私钥。
+10. 粘贴下面的文本来列出系统中已有的密钥．
 ``` 
-$ gpg --list-secret-keys --keyid-format LONG
+$ gpg --list-keys
 ```
 11. 从GPG密钥列表中，复制您想要使用的GPG密钥ID。在本例中，GPG密钥ID为3AA5C34371567BD2。
 ``` 
-$ gpg --list-secret-keys --keyid-format LONG
-/Users/hubot/.gnupg/secring.gpg
-------------------------------------
-sec   4096R/3AA5C34371567BD2 2016-03-10 [expires: 2017-03-10]
-uid                          Hubot 
-ssb   4096R/42B317FD4BA89E7A 2016-03-10
+$ gpg --list-keys
+/home/ruanyf/.gnupg/pubring.gpg
+　　-------------------------------
+　　pub 4096R/EDDD6D76 2013-07-11
+　　uid zhuxi <xxxx@xxxx.com>
+　　sub 4096R/3FA69BE4 2013-07-11
 ```
-12. 生成公匙，粘贴下面的文本，用您想要使用的GPG密钥ID代替。在本例中，GPG密钥ID为3AA5C34371567BD2。
+第一行显示公钥文件名（pubring.gpg），第二行显示公钥特征（4096位，Hash字符串和生成时间），第三行显示"用户ID"，第四行显示私钥特征。  
+12. 生成公匙，粘贴下面的文本，用您想要使用的GPG公钥ID或用户ID代替。在本例中，GPG公钥ID为EDDD6D76，用户ID为zhuxi。
 ```
-$ gpg --armor --export 3AA5C34371567BD2
+$ gpg --armor --export EDDD6D76
+OR
+$ gpg --armor --export zhuxi
 # Prints the GPG key ID, in ASCII armor format
 ```
 ### 发布GPG密钥
 1. 拷贝您的GPG公匙, 从 -----BEGIN PGP PUBLIC KEY BLOCK----- 到 -----END PGP PUBLIC KEY BLOCK----- 结束**公钥加密，私匙解密。实际使用中应将公匙发布给服务器** *（如果您需要发布到GitHub，则将公匙添加到GitHub账户的GPG KEY中。）*  
-2. 在GIT中设置您的GPG钥匙。请粘贴下面的文本，替换为要使用的GPG密钥ID。在此示例中，GPG密钥ID为3AA5C34371567BD2
+2. 在GIT中设置您的GPG钥匙。请粘贴下面的文本，替换为要使用的GPG密钥ID。在此示例中，GPG密钥ID为EDDD6D76
 ```
 $ git config --global user.signingkey 3AA5C34371567BD2
 ```
