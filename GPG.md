@@ -62,7 +62,7 @@ Enter passphrase:
 ``` 
 $ gpg --list-keys
 ```
-11. 从GPG密钥列表中，复制您想要使用的GPG密钥ID。在本例中，GPG密钥ID为3AA5C34371567BD2。
+11. 从GPG密钥列表中，复制您想要使用的GPG密钥ID。
 ``` 
 $ gpg --list-keys
 /home/ruanyf/.gnupg/pubring.gpg
