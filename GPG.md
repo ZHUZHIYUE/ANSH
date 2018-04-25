@@ -82,9 +82,9 @@ $ gpg --armor --export 3AA5C34371567BD2
 ```
 $ git config --global user.signingkey 3AA5C34371567BD2
 ```
-### 在GIT中配置GPG密钥
-* 使用GPG对GIT提交进行签名
-在本地分支中提交更改时，将- S标志添加到git提交命令
+### 签名和验证签名
+#### 对GIT提交进行签名
+在本地分支中提交更改时，将-S标志添加到git提交命令
 ```
 $ git commit -S -m your commit message
 # Creates a signed commit
@@ -100,4 +100,33 @@ $ git commit -S -m your commit message
 >>```
 >>$ git config --global gpg.program "${Gpg4win}/gpg.exe"
 >>```
-
+#### 对GIT标签进行签名和验证签名
+通过以下命令签名标签
+```
+$ git tag -s mytag
+# Creates a signed tag
+```
+通过以下命令验证标签
+```
+$ git tag -v mytag
+# Verifies the signed tag
+```
+#### 对文件签名和验证签名
+通过以下命令签名文件
+```
+$ gpg --sign demo.txt                  --生成二进制码的签名文件
+```
+```
+$ gpg --clearsign demo.txt             --生成ASCII码的签名文件
+```
+```
+$ gpg --detach-sign demo.txt           --生成单独的二进制签名文件
+```
+```
+$ gpg --armor --detach-sign demo.txt   --生成单独的ASCII码签名文件
+```
+我们收到别人签名后的文件，需要用对方的公钥验证签名是否为真。verify参数用来验证。
+通过以下命令验证签名文件
+```
+$ gpg --verify demo.txt.asc demo.txt
+```
