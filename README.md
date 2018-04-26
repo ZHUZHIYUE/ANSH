@@ -7,7 +7,7 @@
 [![GitHub license](https://img.shields.io/github/license/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/blob/master/LICENSE)
 [![GitHub tag](https://img.shields.io/github/tag/expressjs/express.svg)](https://github.com/ZHUZHIYUE/ANSH)  
 ### 准备工作
-确保您的操作系统中已经安装[NuGet](/docs/NuGet.md)，[GIT（可选）](/docs/GIT.md)，[node.js（可选）](/docs/NodeJS.md)  
+确保您的操作系统中已经安装[NuGet](/docs/NuGet.md)  
 在命令行中，运行以下命令
 ```
 $ cd ${ANSH.sln}
