@@ -13,3 +13,18 @@
 $ cd ${ANSH.sln}
 $ nuget restore
 ```
+### 类库
+#### ANSH.AspNetCore
+AspNetCore操作的类库。
+#### ANSH.Common
+通用类库，不需要第三方package且没有创建单独类库的方法都集成在此类库中。
+#### ANSH.DataBase.Connection
+数据库连接类库，包括对事物的处理。
+#### ANSH.DataBase.EFCore
+基于EFCore使用的基类。
+#### ANSH.DataBase.EFCore.MySQL
+EFCore对MySql进行操作的类库
+#### ANSH.DataBase.EFCore.SQLServer
+EFCore对SqlServer进行操作的类库
+#### ANSH.Json
+Json操作类库
