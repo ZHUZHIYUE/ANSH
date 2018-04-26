@@ -1,5 +1,5 @@
 # Asp.Net Standard Helper (ANSH) 
-基于[NET Standard 2.0](https://docs.microsoft.com/zh-cn/dotnet/standard/net-standard)  
+解决方案基于[NET Standard 2.0](https://docs.microsoft.com/zh-cn/dotnet/standard/net-standard)开发，主要是将一些项目开发中常用的方法进行整合。  
 [![Travis](https://img.shields.io/travis/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH)
 [![GitHub issues](https://img.shields.io/github/issues/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/issues)
 [![GitHub forks](https://img.shields.io/github/forks/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/network)
