@@ -24,7 +24,7 @@ AspNetCore操作的类库
 基于EFCore使用的基类
 * **ANSH.DataBase.EFCore.MySQL**  
 EFCore对MySql进行操作的类库
-* **ANSH.DataBase.EFCore.SQLServer**  
+* **ANSH.DataBase.EFCore.SQLServer**  
 EFCore对SqlServer进行操作的类库
 * **ANSH.Json**  
 Json操作类库
