@@ -1,8 +1,7 @@
-### GPG
-#### 什么是GPG
+# GPG
 1991年，程序员Phil Zimmermann为了避开政府的监视，开发了加密软件PGP。因为这个软件非常好用，迅速流传开来成为许多程序员的必备工具。但是，它是商业软不能自由使用。所以，自由软件基金会决定，开发一个PGP的替代品取名为GnuPG，因此GPG就诞生了。GPG是GNU Privacy Guard的缩写，是自由软件基金会的GNU计划的一部分。它是一种基于密钥的加密方式，使用了一对密钥对消息进行加密和解密，来保证消息的安全传输。一开始，用户通过数字证书认证软件生成一对公钥和私钥。任何其他想给该用户发送加密消息的用户，需要先从证书机构的公共目录获取接收者的公钥，然后用公钥加密信息，再发送给接收者。当接收者收到加密消息后，他可以用自己的私钥来解密，而私钥是不应该被其他人拿到的。
-#### 私匙解密，公匙加密。私匙签名，公匙验证。私匙保留，公匙共享。
-#### 创建GPG密钥
+## 私匙解密，公匙加密。私匙签名，公匙验证。私匙保留，公匙共享。
+## 创建GPG密钥
 1. 为您的操作系统下载并安装最新版本[GunPG v2.1+](https://www.gnupg.org/download/index.html)或者[GIT v2.16.2+](https://git-scm.com/downloads)。
 2. GnuPG运行命令，GIT打开安装目录下面git-bash.exe。
 3. 粘贴下面的文本来生成一个GPG密钥。
@@ -60,8 +59,8 @@ You need a Passphrase to protect your secret key.
 Enter passphrase:
 ``` 
 系统提示密钥已经生成了。
-#### 管理密匙
-##### 列出密钥
+## 管理密匙
+### 列出密钥
 粘贴下面的文本来列出系统中已有的密钥．
 ``` 
 $ gpg --list-keys
@@ -76,7 +75,7 @@ uid zhuxi <xxxx@xxxx.com>
 sub 4096R/3FA69BE4 2013-07-11
 ```
 第一行显示\[公钥文件名\]（pubring.gpg），第二行显示\[公钥特征\]（4096位，Hash字符串和生成时间），第三行显示\[用户ID\]，第四行显示\[私钥特征\]（4096位，Hash字符串和生成时间），**EDDD6D76为密匙ID**。  
-##### 删除密匙
+### 删除密匙
 **删除密匙时候应保证步骤（作废服务端公匙-删除本地私匙-删除本地公匙）**
 1. 申请公匙吊销证书 **（若未将公匙发布至服务器，请忽略这一步。）**
 ``` 
@@ -94,8 +93,8 @@ $ gpg --delete-secret-keys [密匙ID]
 ``` 
 $ gpg --delete-keys [密匙ID]
 ```
-##### 输出密钥
-###### 公匙
+### 输出密钥
+#### 公匙
 公钥文件（.gnupg/pubring.gpg）以二进制形式储存，armor参数可以将其转换为ASCII码显示。
 ```
 $ gpg --armor --export [密匙ID]
@@ -105,11 +104,11 @@ $ gpg --armor --export [密匙ID]
 ```
 $ gpg --armor --output public-key.txt --export [密匙ID]
 ```
-###### 私匙
+#### 私匙
 类似地，将公匙中参数--export替换为--export-secret-keys参数可以转换私钥。
-##### 上传公钥
+### 上传公钥
 **实际使用中应将公匙上传服务器，私匙保留**
-###### 公钥服务器
+#### 公钥服务器
 公钥服务器是网络上专门储存用户公钥的服务器。send-keys参数可以将公钥上传到服务器。
 ```
 $ gpg --send-keys [密匙ID] --keyserver hkp://subkeys.pgp.net
@@ -119,15 +118,15 @@ $ gpg --send-keys [密匙ID] --keyserver hkp://subkeys.pgp.net
 ```
 $ gpg --fingerprint [密匙ID]
 ```
-###### GitHub
+#### GitHub
 1. 拷贝您的GPG公匙, 从 -----BEGIN PGP PUBLIC KEY BLOCK----- 到 -----END PGP PUBLIC KEY BLOCK----- 结束
 2. 将公匙添加到GitHub账户的GPG KEY中。
 3. 在GIT中设置您的GPG钥匙。请粘贴下面的文本，替换为要使用的用户ID。
 ```
 $ git config --global user.signingkey [密匙ID]
 ```
-#### 签名和验证签名
-##### 对GIT提交进行签名
+## 签名和验证签名
+### 对GIT提交进行签名
 在本地分支中提交更改时，将-S标志添加到git提交命令
 ```
 $ git commit -S -m your commit message
@@ -144,7 +143,7 @@ $ git commit -S -m your commit message
 >>```
 >>$ git config --global gpg.program "${Gpg4win}/gpg.exe"
 >>```
-##### 对GIT标签进行签名和验证签名
+### 对GIT标签进行签名和验证签名
 通过以下命令签名标签
 ```
 $ git tag -s mytag
@@ -155,7 +154,7 @@ $ git tag -s mytag
 $ git tag -v mytag
 # Verifies the signed tag
 ```
-##### 对文件签名和验证签名
+### 对文件签名和验证签名
 通过以下命令签名文件
 ```
 $ gpg --sign demo.txt                  --生成二进制码的签名文件
@@ -174,13 +173,13 @@ $ gpg --armor --detach-sign demo.txt   --生成单独的ASCII码签名文件
 ```
 $ gpg --verify demo.txt.asc demo.txt
 ```
-#### 加密和解密
-##### 加密
+## 加密和解密
+### 加密
 ```
 $ gpg --recipient [密匙ID] --output demo.en.txt --encrypt demo.txt
 ```
 recipient参数指定公钥所对应的密匙ID，output参数指定加密后的文件名，encrypt参数指定源文件。运行上面的命令后，demo.en.txt就是已加密的文件。
-##### 解密
+### 解密
 收到加密文件以后，就用自己的私钥解密。
 ```
 $ gpg --recipient [密匙ID] --output demo.txt --decrypt demo.en.txt
@@ -191,7 +190,7 @@ GPG允许省略decrypt参数。
 $ gpg demo.en.txt
 ```
 运行上面的命令以后，解密后的文件内容直接显示在标准输出。
-#### 签名+加密
+## 签名+加密
 如果想同时签名和加密，可以使用下面的命令。
 ```
 $ gpg --local-user [发信者ID] --recipient [接收者ID] --armor --sign --encrypt demo.txt
