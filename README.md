@@ -4,7 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/issues)
 [![GitHub forks](https://img.shields.io/github/forks/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/network)
 [![GitHub stars](https://img.shields.io/github/stars/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/stargazers)
-[![GitHub license](https://img.shields.io/github/license/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/blob/master/LICENSE)  
 解决方案基于[NET Standard 2.0](https://docs.microsoft.com/zh-cn/dotnet/standard/net-standard)开发，主要是将一些项目开发中常用的方法进行整合。  
 ## 准备工作
 **确保您的操作系统中已经安装[NuGet](/docs/NuGet.md)**  
