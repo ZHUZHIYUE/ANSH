@@ -14,6 +14,12 @@ $ cd ${ANSH.sln}
 $ nuget restore
 ```
 ## 类库
+* **ANSH.ALL**  
+ANSH所有类库引用
+* **ANSH.API**  
+WebApi SDK操作类库，请求-响应  
+* **ANSH.OAuth**  
+OAuth2授权操作类库
 * **ANSH.AspNetCore**  
 AspNetCore操作的类库
 * **ANSH.Common**  
