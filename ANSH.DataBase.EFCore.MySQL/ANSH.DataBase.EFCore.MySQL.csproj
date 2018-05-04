@@ -1,21 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.11" />
-  </ItemGroup>
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>zhuxi</Authors>
-    <Company>zhuxi</Company>
-    <Product>zhuxi</Product>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
-    <PackageId>ANSH.DataBase.EFCore.MySQL</PackageId>
-    <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.DataBase.EFCore.MySQL.xml</DocumentationFile>
-  </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.11" />
+    </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Authors>zhuxi</Authors>
+        <Company>zhuxi</Company>
+        <Product>zhuxi</Product>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <Version>1.1.0</Version>
+        <PackageId>ANSH.DataBase.EFCore.MySQL</PackageId>
+        <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.0\ANSH.DataBase.EFCore.MySQL.xml</DocumentationFile>
+    </PropertyGroup>
 </Project>
