@@ -25,7 +25,7 @@ public static class ANSHCommonExtensions
 
         if (!is_parse && default_value == null)
         {
-            throw new ArgumentNullException("转换类型失败");
+            throw new FormatException("转换类型失败");
         }
 
         return is_parse ? result.Value : default_value.Value;
@@ -58,7 +58,7 @@ public static class ANSHCommonExtensions
 
         if (!is_parse && default_value == null)
         {
-            throw new ArgumentNullException("转换类型失败");
+            throw new FormatException("转换类型失败");
         }
 
         return is_parse ? result.Value : default_value.Value;
@@ -102,7 +102,7 @@ public static class ANSHCommonExtensions
 
         if (!is_parse && default_value == null)
         {
-            throw new ArgumentNullException("转换类型失败");
+            throw new FormatException("转换类型失败");
         }
 
         return is_parse ? result.Value : default_value.Value;
@@ -137,7 +137,7 @@ public static class ANSHCommonExtensions
 
         if (!is_parse && default_value == null)
         {
-            throw new ArgumentNullException("转换类型失败");
+            throw new FormatException("转换类型失败");
         }
 
         return is_parse ? result.Value : default_value.Value;
@@ -172,7 +172,7 @@ public static class ANSHCommonExtensions
 
         if (!is_parse && default_value == null)
         {
-            throw new ArgumentNullException("转换类型失败");
+            throw new FormatException("转换类型失败");
         }
         return is_parse ? result.Value : default_value.Value;
     }
