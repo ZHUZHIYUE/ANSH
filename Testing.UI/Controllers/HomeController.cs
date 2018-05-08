@@ -10,5 +10,9 @@ namespace Testing.UI.Controllers {
     public class HomeController : Controller {
         [HttpGet]
         public IActionResult Middleware_UseStatusCode (int StatusCode) => new StatusCodeResult (StatusCode);
+
+        [HttpGet]
+        public IActionResult Middleware_Exception (int StatusCode) =>
+            throw new Exception (string.Empty);
     }
 }
