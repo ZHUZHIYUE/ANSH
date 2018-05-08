@@ -7,12 +7,16 @@
     <Product>zhuxi</Product>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Version>1.1.0</Version>
-    <PackageId>ANSH.Common</PackageId>
+    <PackageId>ANSH.API</PackageId>
     <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.Common.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.API.xml</DocumentationFile>
   </PropertyGroup>
 
+ <ItemGroup>
+   <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
+   <ProjectReference Include="..\ANSH.Json\ANSH.Json.csproj" />
+ </ItemGroup>
 </Project>

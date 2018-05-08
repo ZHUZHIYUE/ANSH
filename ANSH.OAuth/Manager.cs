@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ANSH.Common.OAuth
+namespace ANSH.OAuth
 {
     /// <summary>
     /// 授权服务

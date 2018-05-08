@@ -32,6 +32,9 @@ namespace ANSH.DataBase.EFCore {
             set;
         } = null;
 
+        /// <summary>
+        /// 创建DbContext集合
+        /// </summary>
         List<DBContext> _dbContext {
             get;
             set;
@@ -44,9 +47,8 @@ namespace ANSH.DataBase.EFCore {
         /// <returns>返回对应的BLL层对象</returns>
         public virtual TResult Set<TResult> ()
         where TResult : DBContext, new () {
-            Open ();
-            var result = new TResult () { DB_Connection = _db_connection, AddDbContext = AddDbContext };
-            result.UserTransaction ();
+            var result = new TResult ();
+            result.UseConnection (_db_connection);
             AddDbContext (result);
             return result;
         }
@@ -63,10 +65,8 @@ namespace ANSH.DataBase.EFCore {
         /// 释放资源
         /// </summary>
         public void Dispose () {
-            if (_db_connection != null) {
-                _db_connection.Dispose ();
-            }
-            (_dbContext ?? new List<DBContext> ()).ForEach (m => m.Dispose ());
+            _db_connection?.Dispose ();
+            _dbContext?.ForEach (m => m.Dispose ());
         }
 
         /// <summary>
@@ -75,22 +75,12 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="Method">事物保护的方法</param>
         public void ExecuteTransaction (Action Method) {
             try {
-                Open ();
                 _db_connection.BeginTransaction ();
                 Method ();
                 _db_connection.Commit ();
             } catch (Exception ex) {
                 _db_connection.Rollback ();
                 throw ex;
-            }
-        }
-
-        /// <summary>
-        /// 打开链接
-        /// </summary>
-        void Open () {
-            if (_db_connection.Connection.State != ConnectionState.Open) {
-                _db_connection.Open ();
             }
         }
     }

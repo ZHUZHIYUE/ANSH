@@ -52,6 +52,9 @@ namespace ANSH.DataBase.Connection {
         /// <param name="isolationLevel">隔离级别</param>
         public void BeginTransaction (IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) {
             if (TranCount == 0) {
+                if (_Connection?.State != ConnectionState.Open) {
+                    Open ();
+                }
                 _Transaction = _Connection.BeginTransaction (isolationLevel);
             }
             TranCount++;
@@ -64,8 +67,8 @@ namespace ANSH.DataBase.Connection {
             TranCount--;
 
             if (TranCount == 0) {
-                _Transaction.Commit ();
-                _Transaction.Dispose ();
+                _Transaction?.Commit ();
+                _Transaction?.Dispose ();
                 _Transaction = null;
             }
         }
@@ -75,8 +78,8 @@ namespace ANSH.DataBase.Connection {
         /// </summary>
         public void Rollback () {
             if (TranCount > 0) {
-                _Transaction.Rollback ();
-                _Transaction.Dispose ();
+                _Transaction?.Rollback ();
+                _Transaction?.Dispose ();
                 _Transaction = null;
             }
             TranCount = 0;
@@ -86,6 +89,8 @@ namespace ANSH.DataBase.Connection {
         /// 释放数据库连接资源
         /// </summary>
         public void Dispose () {
+            _Transaction?.Dispose ();
+            _Transaction = null;
             _Connection.Dispose ();
         }
 

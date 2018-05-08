@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ANSH.Common.OAuth
+namespace ANSH.OAuth
 {
 
     /// <summary>

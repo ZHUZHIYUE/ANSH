@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>zhuxi</Authors>
+    <Company>zhuxi</Company>
+    <Product>zhuxi</Product>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <PackageId>ANSH.ALL</PackageId>
+    <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.ALL.xml</DocumentationFile>
+  </PropertyGroup>
+
+   <ItemGroup>
+   <ProjectReference Include="..\ANSH.API\ANSH.API.csproj" />
+   <ProjectReference Include="..\ANSH.AspNetCore\ANSH.AspNetCore.csproj" />
+   <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
+   <ProjectReference Include="..\ANSH.DataBase.EFCore.SQLServer\ANSH.DataBase.EFCore.SQLServer.csproj" />
+   <ProjectReference Include="..\ANSH.Json\ANSH.Json.csproj" />
+   <ProjectReference Include="..\ANSH.OAuth\ANSH.OAuth.csproj" />
+   <ProjectReference Include="..\ANSH.Json\ANSH.Json.csproj" />
+ </ItemGroup>
+</Project>

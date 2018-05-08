@@ -6,7 +6,7 @@
     <Company>zhuxi</Company>
     <Product>zhuxi</Product>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <PackageId>ANSH.DataBase.EFCore.SQLServer</PackageId>
     <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
   </PropertyGroup>
