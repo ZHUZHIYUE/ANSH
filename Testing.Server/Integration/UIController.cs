@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.TestHost;
 using Xunit;
 namespace Testing.Server.Unit.ANSH.Common {
     public class UIController {
-        private readonly TestServer _server;
-        private readonly HttpClient _client;
+        private TestServer _server { get; }
+        private HttpClient _client { get; }
         public UIController () {
             _server = new TestServer (new WebHostBuilder ()
                 .UseStartup<UI.Startup> ());
@@ -30,6 +30,15 @@ namespace Testing.Server.Unit.ANSH.Common {
             } else {
                 Assert.Empty (body);
             }
+        }
+
+        [Fact]
+        public async Task Test_Middleware_Exception () {
+            var response = await _client.GetAsync ($"/Middleware_Exception/");
+            var body = await response.Content.ReadAsStringAsync ();
+            Assert.Equal (500, (int) response.StatusCode);
+            Assert.Equal ($"StatusCode：500", body);
+
         }
     }
 }
