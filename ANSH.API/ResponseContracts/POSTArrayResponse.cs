@@ -8,35 +8,14 @@ namespace ANSH.API.ResponseContracts {
     /// <para>数组POST</para>
     /// </summary>
     /// <typeparam name="TModelResponse">响应模型</typeparam>
-    public abstract class POSTArrayResponse<TModelResponse> : BaseResponse where TModelResponse : POSTArrayResponse<TModelResponse>.POSTArrayModelResponse {
+    public abstract class POSTArrayResponse<TModelResponse> : BaseResponse where TModelResponse : Model.POSTArrayResponseModel {
 
         /// <summary>
-        /// 返回值信息
+        /// 返回信息
         /// </summary>
-        public List<TModelResponse> array_list {
+        public List<TModelResponse> result_list {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 数组对象
-        /// </summary>
-        public class POSTArrayModelResponse {
-            /// <summary>
-            /// 返回码
-            /// </summary>
-            public int Item_MsgCode {
-                get;
-                set;
-            } = 0;
-
-            /// <summary>
-            /// 错误消息
-            /// </summary>
-            public string Item_Msg {
-                get;
-                set;
-            } = "SUCCESS";
         }
     }
 }

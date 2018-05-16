@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ANSH.API.RequestContracts.Model;
 using ANSH.API.ResponseContracts;
+using ANSH.API.ResponseContracts.Model;
 using Newtonsoft.Json;
 namespace ANSH.API.RequestContracts {
     /// <summary>
@@ -12,15 +14,15 @@ namespace ANSH.API.RequestContracts {
     /// <typeparam name="TResponse">响应</typeparam>
     /// <typeparam name="TMODELRequest">请求模型</typeparam>
     /// <typeparam name="TModelResponse">响应模型</typeparam>
-    public abstract class POSTRequest<TResponse, TMODELRequest, TModelResponse> : BaseRequest
-    where TResponse : POSTArrayResponse<TModelResponse>
-        where TMODELRequest : POSTRequest<TResponse, TMODELRequest, TModelResponse>.POSTArrayModelRequest
-    where TModelResponse : POSTArrayResponse<TModelResponse>.POSTArrayModelResponse {
+    public abstract class POSTArrayRequest<TResponse, TMODELRequest, TModelResponse> : POSTRequest<TResponse>
+        where TResponse : POSTArrayResponse<TModelResponse>
+        where TMODELRequest : POSTArrayRequestModel
+    where TModelResponse : POSTArrayResponseModel {
 
         /// <summary>
         /// 数组
         /// </summary>
-        protected List<TMODELRequest> array_list {
+        protected List<TMODELRequest> post_list {
             get;
             set;
         }
@@ -28,15 +30,9 @@ namespace ANSH.API.RequestContracts {
         /// <summary>
         /// 批量处理数组最大条数
         /// </summary>
-        protected virtual int _array_numb {
+        [JsonProperty]
+        protected abstract int post_list_numb {
             get;
-        } = 100;
-
-        /// <summary>
-        /// 数组对象
-        /// </summary>
-        public class POSTArrayModelRequest {
-
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ANSH.API.ResponseContracts;
+using ANSH.API.ResponseContracts.Model;
 
 namespace ANSH.API.RequestContracts {
     /// <summary>
@@ -10,12 +11,14 @@ namespace ANSH.API.RequestContracts {
     /// <para>分页</para>
     /// </summary>
     /// <typeparam name="TResponse">响应</typeparam>
-    public abstract class GETByPageRequest<TResponse> : GETRequest<TResponse>
-        where TResponse : GETByPageResponse {
+    /// <typeparam name="TModelResponse">响应模型</typeparam>
+    public abstract class GETByPageRequest<TResponse, TModelResponse> : GETRequest<TResponse>
+        where TResponse : GETByPageResponse<TModelResponse>
+        where TModelResponse : GETArrayResponseModel {
             /// <summary>
             /// 列表分页当前页
             /// </summary>
-            public virtual int page {
+            public virtual int page_cur {
                 get;
                 set;
             } = 1;
@@ -44,7 +47,7 @@ namespace ANSH.API.RequestContracts {
             /// 准备URL参数
             /// </summary>
             Dictionary<string, string> SetByPageParameters () => new Dictionary<string, string> {
-                ["page"] = page.ToString (),
+                ["page_cur"] = page_cur.ToString (),
                 ["page_size"] = page_size.ToString ()
             };
         }

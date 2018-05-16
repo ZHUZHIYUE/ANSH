@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ANSH.API.RequestContracts.Model;
 using ANSH.API.ResponseContracts;
+using ANSH.API.ResponseContracts.Model;
 using Newtonsoft.Json;
 namespace ANSH.API.RequestContracts {
     /// <summary>
@@ -10,7 +12,5 @@ namespace ANSH.API.RequestContracts {
     /// <para>POST</para>
     /// </summary>
     /// <typeparam name="TResponse">响应</typeparam>
-    public abstract class POSTRequest<TResponse> : BaseRequest where TResponse : BaseResponse {
-
-    }
+    public abstract class POSTRequest<TResponse> : BaseRequest where TResponse : BaseResponse { }
 }
