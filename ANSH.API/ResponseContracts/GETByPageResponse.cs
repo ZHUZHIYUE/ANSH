@@ -10,48 +10,24 @@ namespace ANSH.API.ResponseContracts {
     /// 响应
     /// <para>分页</para>
     /// </summary>
-    public abstract class GETByPageResponse : BaseResponse {
+    /// <typeparam name="TModelResponse">响应模型</typeparam>
+    public abstract class GETByPageResponse<TModelResponse> : BaseResponse where TModelResponse : Model.GETArrayResponseModel {
 
         /// <summary>
-        /// 总页数
+        /// 返回信息
         /// </summary>
-        /// <returns></returns>
-        public PageModel Page {
+        public List<TModelResponse> result_list {
             get;
             set;
         }
 
         /// <summary>
-        /// 分页信息
+        /// 总页数
         /// </summary>
-        public abstract class PageModel {
-
-            /// <summary>
-            /// 总页数
-            /// </summary>
-            /// <returns></returns>
-            public int? page_count {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// 当前页
-            /// </summary>
-            /// <returns></returns>
-            public int? page {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// 是否还有下一页
-            /// </summary>
-            /// <returns></returns>
-            public bool? has_next {
-                get;
-                set;
-            }
+        /// <returns></returns>
+        public Model.PageResponesModel page_info {
+            get;
+            set;
         }
     }
 }
