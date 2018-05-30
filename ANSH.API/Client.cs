@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using ANSH.API.RequestContracts;
 using ANSH.API.RequestContracts.Model;
 using ANSH.API.ResponseContracts;
@@ -110,12 +111,14 @@ namespace ANSH.API {
         /// <param name="request">请求参数</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>响应参数</returns>
-        public TResponse Execute<TResponse> (POSTRequest<TResponse> request, string accessToken = null)
+        public async Task<TResponse> Execute<TResponse> (POSTRequest<TResponse> request, string accessToken = null)
         where TResponse : BaseResponse {
             var _accessToken = accessToken??AccessToken;
             Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
             var request_json = CreatePOSTParameter (request, APIDoman, _accessToken);
-            string response = HTTPClient.PostString (url, request_json);
+            var httpmsg_response = await HTTPClient.PostAsync (url, request_json, "application/json;charset=utf-8", Encoding.UTF8);
+            string response = await httpmsg_response.Content.ReadAsStringAsync ();
+            
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {
@@ -130,7 +133,7 @@ namespace ANSH.API {
         /// <param name="request">请求参数</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>响应参数</returns>
-        public TResponse Execute<TResponse> (GETRequest<TResponse> request, string accessToken = null)
+        public async Task<TResponse> Execute<TResponse> (GETRequest<TResponse> request, string accessToken = null)
         where TResponse : BaseResponse {
             var _accessToken = accessToken??AccessToken;
             Uri uri = CreateGETUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
@@ -139,7 +142,9 @@ namespace ANSH.API {
                 throw new Exception ($"GET请求地址应保证不带任何参数，错误地址：{uri.AbsolutePath}");
             }
 
-            string response = HTTPClient.GetString (new Uri ($"{uri.AbsoluteUri}?{ CreateGETParameter (request, APIDoman, _accessToken)}"));
+            var httpmsg_response = await HTTPClient.GetAsync (new Uri ($"{uri.AbsoluteUri}?{ CreateGETParameter (request, APIDoman, _accessToken)}"));
+            string response = await httpmsg_response.Content.ReadAsStringAsync ();
+
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {

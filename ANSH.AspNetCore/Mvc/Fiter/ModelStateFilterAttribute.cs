@@ -19,14 +19,6 @@ namespace ANSH.AspNetCore.Mvc.Filter {
         public virtual int Order => 1;
 
         /// <summary>
-        /// Action执行后
-        /// </summary>
-        /// <param name="context">当前请求上下文</param>
-        public void OnActionExecuted (ActionExecutedContext context) {
-
-        }
-
-        /// <summary>
         /// Action执行前
         /// </summary>
         /// <param name="context">当前请求上下文</param>
@@ -36,6 +28,14 @@ namespace ANSH.AspNetCore.Mvc.Filter {
             } else {
                 ModelStateFail (context);
             }
+        }
+
+        /// <summary>
+        /// Action执行后
+        /// </summary>
+        /// <param name="context">当前请求上下文</param>
+        public void OnActionExecuted (ActionExecutedContext context) {
+
         }
 
         /// <summary>
