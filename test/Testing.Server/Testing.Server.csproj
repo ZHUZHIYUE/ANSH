@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
+    <ProjectReference Include="..\..\src\ANSH.Common\ANSH.Common.csproj" />
     <ProjectReference Include="..\Testing.UI\Testing.UI.csproj" />
   </ItemGroup>
 </Project>

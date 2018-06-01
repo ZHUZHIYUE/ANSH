@@ -1,0 +1,9 @@
+.vs/
+.vscode/
+node_modules/
+*bin/
+*obj/
+.dockerignore
+docker-compose.yml
+Dockerfile
+*.pdb
