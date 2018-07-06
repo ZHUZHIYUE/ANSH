@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ANSH.AspNetCore.Middleware
+namespace ANSH.AspNetCore.Middlewares
 {
     /// <summary>
     /// 处理Response.StatusCode在400-599之间的中间件

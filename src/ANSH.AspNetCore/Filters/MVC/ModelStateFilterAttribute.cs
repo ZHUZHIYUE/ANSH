@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace ANSH.AspNetCore.Mvc.Filter {
+namespace ANSH.AspNetCore.Filters.MVC {
 
     /// <summary>
     /// 操作筛选器
@@ -22,11 +22,14 @@ namespace ANSH.AspNetCore.Mvc.Filter {
         /// Action执行前
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public void OnActionExecuting (ActionExecutingContext context) {
-            if (context.ModelState.IsValid) {
-                ModelStatePass (context);
-            } else {
-                ModelStateFail (context);
+        public virtual void OnActionExecuting (ActionExecutingContext context) {
+
+            if (context.HttpContext.Request.Method.ToLower () == "POST".ToLower ()) {
+                if (context.ModelState.IsValid) {
+                    ModelStatePass (context);
+                } else {
+                    ModelStateFail (context);
+                }
             }
         }
 
@@ -34,7 +37,7 @@ namespace ANSH.AspNetCore.Mvc.Filter {
         /// Action执行后
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public void OnActionExecuted (ActionExecutedContext context) {
+        public virtual void OnActionExecuted (ActionExecutedContext context) {
 
         }
 

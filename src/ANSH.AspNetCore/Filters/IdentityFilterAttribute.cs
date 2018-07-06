@@ -8,31 +8,31 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json.Linq;
 
-namespace ANSH.AspNetCore.Mvc.Filter {
+namespace ANSH.AspNetCore.Filters {
     /// <summary>
-    /// 验证权限授权筛选器
+    /// 身份筛选器
     /// </summary>
     [AttributeUsage (AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public abstract class AuthPermissionFilterAttribute : Attribute, IAuthorizationFilter, IOrderedFilter {
+    public abstract class IdentityFilterAttribute : Attribute, IAuthorizationFilter, IOrderedFilter {
         /// <summary>
         /// 执行顺序
         /// </summary>
-        public virtual int Order => 2;
+        public virtual int Order => 1;
 
         /// <summary>
         /// 筛选器管道内最先执行的筛选器
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public void OnAuthorization (AuthorizationFilterContext context) {
+        public virtual void OnAuthorization (AuthorizationFilterContext context) {
             if (!(context?.Filters?.Any (m => (m is AllowAnonymousFilter)) ?? false)) {
-                CheckPermission (context);
+                VerifyIdentity (context);
             }
         }
 
         /// <summary>
-        /// 验证权限
+        /// 验证身份
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public abstract void CheckPermission (AuthorizationFilterContext context);
+        public abstract void VerifyIdentity (AuthorizationFilterContext context);
     }
 }

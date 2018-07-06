@@ -16,6 +16,7 @@ namespace ANSH.API.RequestContracts {
         /// <summary>
         /// 获取URL参数
         /// </summary>
+        /// <returns>url参数集合</returns>
         public virtual Dictionary<string, string> GetParameters () {
             return SetParameters();
         }
@@ -23,7 +24,7 @@ namespace ANSH.API.RequestContracts {
         /// <summary>
         /// 设置URL参数
         /// </summary>
-        /// <returns></returns>
+        /// <returns>url参数集合</returns>
         public abstract Dictionary<string, string> SetParameters ();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using ANSH.AspNetCore.Middleware;
+using ANSH.AspNetCore.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 

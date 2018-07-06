@@ -16,6 +16,7 @@ namespace Testing.Server.Unit.ANSH.Common {
             TestValue5 = 0x010
         }
 
+        #region Test_ToInt
         public static IEnumerable<object[]> Test_ToInt_param () {
             yield return new object[] { "-1" };
             yield return new object[] { "-1", 1 };
@@ -47,7 +48,9 @@ namespace Testing.Server.Unit.ANSH.Common {
 
             await Task.CompletedTask;
         }
+        #endregion
 
+        #region Test_IsInt
         public static IEnumerable<object[]> Test_IsInt_param () {
             yield return new object[] { "-1" };
             yield return new object[] { "0" };
@@ -70,8 +73,10 @@ namespace Testing.Server.Unit.ANSH.Common {
             }
             await Task.CompletedTask;
         }
+        #endregion
 
-        public static IEnumerable<object[]> Test_ToEnum_param () {
+        #region Test_ToEnum_Value
+        public static IEnumerable<object[]> Test_ToEnum_param_value () {
             yield return new object[] { 1 };
             yield return new object[] { 1, TestEnum.TestValue1 };
             yield return new object[] { 0x002 };
@@ -79,8 +84,8 @@ namespace Testing.Server.Unit.ANSH.Common {
         }
 
         [Theory]
-        [MemberData (nameof (Test_ToEnum_param))]
-        public async Task Test_ToEnum (int value, TestEnum? default_value = null) {
+        [MemberData (nameof (Test_ToEnum_param_value))]
+        public async Task Test_ToEnum_Value (int value, TestEnum? default_value = null) {
             var parse_success = Enum.TryParse (value.ToString (), out TestEnum parse_result) && Enum.IsDefined (typeof (TestEnum), parse_result);
             if (parse_success) {
                 Assert.Equal (parse_result, value.ToEnum (default_value));
@@ -93,15 +98,42 @@ namespace Testing.Server.Unit.ANSH.Common {
             }
             await Task.CompletedTask;
         }
+        #endregion
 
-        public static IEnumerable<object[]> Test_IsEnum_param () {
+        #region Test_ToEnum_Names
+        public static IEnumerable<object[]> Test_ToEnum_param_names () {
+            yield return new object[] { "TestValue1" };
+            yield return new object[] { "TestValue1", TestEnum.TestValue2 };
+            yield return new object[] { "TestValue2" };
+            yield return new object[] { "TestValue2", TestEnum.TestValue1 };
+        }
+
+        [Theory]
+        [MemberData (nameof (Test_ToEnum_param_names))]
+        public async Task Test_ToEnum_Names (string value, TestEnum? default_value = null) {
+            var parse_success = Enum.TryParse (value.ToString (), out TestEnum parse_result) && Enum.IsDefined (typeof (TestEnum), parse_result);
+            if (parse_success) {
+                Assert.Equal (parse_result, value.ToEnum (default_value));
+            } else {
+                if (default_value != null) {
+                    Assert.Equal (default_value, value.ToEnum (default_value));
+                } else {
+                    Assert.Throws<FormatException> (() => value.ToEnum (default_value));
+                }
+            }
+            await Task.CompletedTask;
+        }
+        #endregion
+
+        #region Test_IsEnum_Value
+        public static IEnumerable<object[]> Test_IsEnum_param_value () {
             yield return new object[] { 1 };
             yield return new object[] { 0x002 };
         }
 
         [Theory]
-        [MemberData (nameof (Test_IsEnum_param))]
-        public async Task Test_IsEnum (int value) {
+        [MemberData (nameof (Test_IsEnum_param_value))]
+        public async Task Test_IsEnum_Value (int value) {
             var parse_success = Enum.TryParse (value.ToString (), out TestEnum parse_result) && Enum.IsDefined (typeof (TestEnum), parse_result);
 
             if (parse_success) {
@@ -113,6 +145,29 @@ namespace Testing.Server.Unit.ANSH.Common {
             }
             await Task.CompletedTask;
         }
+        #endregion
+
+        #region Test_IsEnum_Names
+        public static IEnumerable<object[]> Test_IsEnum_param_names () {
+            yield return new object[] { "TestValue1" };
+            yield return new object[] { "TestValue2" };
+        }
+
+        [Theory]
+        [MemberData (nameof (Test_IsEnum_param_names))]
+        public async Task Test_IsEnum_Names (string value) {
+            var parse_success = Enum.TryParse (value, out TestEnum parse_result) && Enum.IsDefined (typeof (TestEnum), parse_result);
+
+            if (parse_success) {
+                Assert.True (value.IsEnum (out TestEnum? result));
+                Assert.Equal (parse_result, result);
+            } else {
+                Assert.False (value.IsEnum (out TestEnum? result));
+                Assert.Null (result);
+            }
+            await Task.CompletedTask;
+        }
+        #endregion
 
         public static IEnumerable<object[]> Test_ToLong_param () {
             yield return new object[] { "-1" };

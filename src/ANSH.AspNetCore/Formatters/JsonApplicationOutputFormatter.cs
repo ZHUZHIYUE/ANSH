@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
-namespace ANSH.AspNetCore.Formatter {
+namespace ANSH.AspNetCore.Formatters {
     /// <summary>
     /// WebApi格式化响应数据，用给定的文本格式将一个物体写到输出流中
     /// </summary>

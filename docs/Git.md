@@ -15,6 +15,19 @@ $ git reset --soft <版本号>
 使用 --hard 参数会抛弃当前工作区的修改
 使用 --soft 参数的话会回退到之前的版本，但是保留当前工作区的修改，可以重新提交。
 ```
+### Git Branch
+#### 查看分支
+```
+$ git branch -a
+```
+#### 删除本地分支
+```
+$ git branch -d ${BranchName}
+```
+#### 删除远程分支
+```
+$ git push origin --delete ${BranchName}
+```
 ## Git-SSH 配置和使用
 ### 设置Git的username和email
 ```

@@ -49,7 +49,7 @@ public static class ANSHCommonExtensions {
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
     /// <returns>与当前实例值对应的 System.Enum</returns>
     public static T ToEnum<T> (this int value, T? default_value = null) where T : struct {
-        bool is_parse = value.IsEnum (out T? result);
+        bool is_parse = value.ToString ().IsEnum (out T? result);
 
         if (!is_parse && default_value == null) {
             throw new FormatException ("转换类型失败");
@@ -59,13 +59,37 @@ public static class ANSHCommonExtensions {
     }
 
     /// <summary>
+    /// 将此实例的值转换为指定的 System.Enum
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <returns>与当前实例值对应的 System.Enum</returns>
+    public static T ToEnum<T> (this string value, T? default_value = null) where T : struct {
+        bool is_parse = value.IsEnum (out T? result);
+
+        if (!is_parse && default_value == null) {
+            throw new FormatException ("转换类型失败");
+        }
+
+        return is_parse ? result.Value : default_value.Value;
+    }
+    /// <summary>
     /// 判断此实例的值是否可转换为指定的 System.Enum
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="result">转换成功返回对应值，失败返回null</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
     public static bool IsEnum<T> (this int value, out T? result) where T : struct {
-        bool is_parse = Enum.TryParse (value.ToString (), out T parse_result) && Enum.IsDefined (typeof (T), parse_result);
+        return value.ToString ().IsEnum (out result);
+    }
+    /// <summary>
+    /// 判断此实例的值是否可转换为指定的 System.Enum
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回null</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsEnum<T> (this string value, out T? result) where T : struct {
+        bool is_parse = Enum.TryParse (value, out T parse_result) && Enum.IsDefined (typeof (T), parse_result);
         result = is_parse ? (T?) parse_result : null;
         return is_parse;
     }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
-namespace ANSH.AspNetCore.Formatter {
+namespace ANSH.AspNetCore.Formatters {
     /// <summary>
     /// WebApi自定义格式化程序，从请求体中读取一个带有JSON文本格式的物体。
     /// </summary>

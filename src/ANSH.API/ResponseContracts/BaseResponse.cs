@@ -32,17 +32,5 @@ namespace ANSH.API.ResponseContracts
             get { return _msg; }
             set { _msg = value; }
         }
-
-
-        string _result = "SUCCESS";
-        /// <summary>
-        /// 返回信息
-        /// </summary>
-        /// <returns></returns>
-        public string result
-        {
-            get { return _result; }
-            set { _result = value; }
-        }
     }
 }
