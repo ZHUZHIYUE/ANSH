@@ -11,7 +11,7 @@ namespace ANSH.API.ResponseContracts {
     /// <para>分页</para>
     /// </summary>
     /// <typeparam name="TModelResponse">响应模型</typeparam>
-    public abstract class GETByPageResponse<TModelResponse> : BaseResponse where TModelResponse : Model.GETArrayResponseModel {
+    public abstract class GETByPageResponse<TModelResponse> : BaseResponse where TModelResponse : Models.GETArrayResponseModel {
 
         /// <summary>
         /// 返回信息
@@ -19,15 +19,15 @@ namespace ANSH.API.ResponseContracts {
         public List<TModelResponse> result_list {
             get;
             set;
-        }
+        } = new List<TModelResponse> ();
 
         /// <summary>
         /// 总页数
         /// </summary>
         /// <returns></returns>
-        public Model.PageResponesModel page_info {
+        public Models.PageResponesModel page_info {
             get;
             set;
-        }
+        } = new Models.PageResponesModel ();
     }
 }

@@ -11,6 +11,7 @@ namespace ANSH.DataBase.EFCore.MySQL {
         /// </summary>
         protected override void OnConfiguringsOptions (DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder
+                .UseLoggerFactory (Loggers)
                 .UseMySQL (DB_Connection.Connection)
                 .ConfigureWarnings (warnings => warnings.Throw (RelationalEventId.QueryClientEvaluationWarning));
         }

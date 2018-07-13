@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using ANSH.DataBase.Connection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace ANSH.DataBase.EFCore {
     /// <summary>
@@ -19,7 +21,6 @@ namespace ANSH.DataBase.EFCore {
         /// </summary>
         /// <param name="dbconnection">数据库连接对象</param>
         public DBContext (DBConnection dbconnection) {
-
             UseConnection (dbconnection);
         }
 
@@ -119,5 +120,11 @@ namespace ANSH.DataBase.EFCore {
             base.Dispose ();
             _dbContext?.ForEach (m => m.Dispose ());
         }
+
+        /// <summary>
+        /// 日志记录
+        /// </summary>
+        protected static readonly LoggerFactory Loggers
+            = new LoggerFactory (new [] { new ConsoleLoggerProvider ((_, __) => true, true) });
     }
 }

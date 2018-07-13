@@ -11,6 +11,7 @@ namespace ANSH.DataBase.EFCore.SQLServer {
         /// </summary>
         protected override void OnConfiguringsOptions (DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder
+                .UseLoggerFactory (Loggers)
                 .UseSqlServer (DB_Connection.Connection, m => m.UseRowNumberForPaging ())
                 .ConfigureWarnings (warnings => warnings.Throw (RelationalEventId.QueryClientEvaluationWarning));
         }

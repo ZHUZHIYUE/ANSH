@@ -13,14 +13,14 @@ namespace ANSH.AspNetCore.Formatters {
     /// </summary>
     public class JsonApplicationInputFormatter : TextInputFormatter {
 
-        Action<IServiceProvider, string, Type> _action;
+        Func<IServiceProvider, string, Type, Task<InputFormatterResult>> _func;
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="action">对读取的JSON文本格式进行操作</param>
+        /// <param name="func">对读取的JSON文本格式进行操作</param>
         /// <returns></returns>
-        public JsonApplicationInputFormatter (Action<IServiceProvider, string, Type> action = null) : base () {
-            _action = action;
+        public JsonApplicationInputFormatter (Func<IServiceProvider, string, Type, Task<InputFormatterResult>> func) : base () {
+            _func = func;
             SupportedMediaTypes.Clear ();
             SupportedMediaTypes.Add (new MediaTypeHeaderValue ("application/json"));
             SupportedEncodings.Clear ();
@@ -34,24 +34,14 @@ namespace ANSH.AspNetCore.Formatters {
         /// <param name="encoding">编码格式</param>
         /// <returns>完成对请求体进行反序列化的任务</returns>
         public override Task<InputFormatterResult> ReadRequestBodyAsync (InputFormatterContext context, Encoding encoding) {
-            try {
-                if (context == null) {
-                    throw new ArgumentNullException (nameof (context));
-                }
 
-                var request = context.HttpContext.Request;
-
-                using (var reader = new StreamReader (request.Body, encoding)) {
-                    string body_str = reader.ReadToEnd ();
-
-                    _action (context.HttpContext.RequestServices, body_str, context.ModelType);
-
-                    var request_body = body_str.ToJsonObj (context.ModelType);
-
-                    return InputFormatterResult.SuccessAsync (request_body);
-                }
-            } catch {
-                return InputFormatterResult.FailureAsync ();
+            if (context == null) {
+                throw new ArgumentNullException (nameof (context));
+            }
+            var request = context.HttpContext.Request;
+            using (var reader = new StreamReader (request.Body, encoding)) {
+                string body_str = reader.ReadToEnd ();
+                return _func (context.HttpContext.RequestServices, body_str, context.ModelType);
             }
         }
     }

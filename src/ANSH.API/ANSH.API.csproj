@@ -16,7 +16,7 @@
   </PropertyGroup>
 
  <ItemGroup>
-   <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
    <ProjectReference Include="..\ANSH.Json\ANSH.Json.csproj" />
+   <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
  </ItemGroup>
 </Project>

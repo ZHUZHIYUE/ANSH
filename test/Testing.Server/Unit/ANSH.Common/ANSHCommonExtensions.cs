@@ -51,25 +51,33 @@ namespace Testing.Server.Unit.ANSH.Common {
         #endregion
 
         #region Test_IsInt
-        public static IEnumerable<object[]> Test_IsInt_param () {
-            yield return new object[] { "-1" };
-            yield return new object[] { "0" };
-            yield return new object[] { "1" };
-            yield return new object[] { "error_parameter" };
-            yield return new object[] { "" };
-            yield return new object[] { null };
-        }
-
         [Theory]
-        [MemberData (nameof (Test_IsInt_param))]
-        public async Task Test_IsInt (string value) {
-            var parse_success = int.TryParse (value, out int parse_result);
-            if (parse_success) {
-                Assert.True (value.IsInt (out int? result));
-                Assert.Equal (parse_result, result);
-            } else {
-                Assert.False (value.IsInt (out int? result));
-                Assert.Null (result);
+        [InlineData]
+        public async Task Test_IsInt () {
+            {
+                string value = "-1";
+                Assert.True (value.IsInt (out int? _out));
+                Assert.Equal (_out, -1);
+            } {
+                string value = "0";
+                Assert.True (value.IsInt (out int? _out));
+                Assert.Equal (_out, 0);
+            } {
+                string value = "1";
+                Assert.True (value.IsInt (out int? _out));
+                Assert.Equal (_out, 1);
+            } {
+                string value = "error_parameter";
+                Assert.False (value.IsInt (out int? _out));
+                Assert.Null (_out);
+            } {
+                string value = "";
+                Assert.False (value.IsInt (out int? _out));
+                Assert.Null (_out);
+            } {
+                string value = null;
+                Assert.False (value.IsInt (out int? _out));
+                Assert.Null (_out);
             }
             await Task.CompletedTask;
         }
@@ -165,6 +173,34 @@ namespace Testing.Server.Unit.ANSH.Common {
                 Assert.False (value.IsEnum (out TestEnum? result));
                 Assert.Null (result);
             }
+            await Task.CompletedTask;
+        }
+        #endregion
+
+        #region Test_ToJsonObj
+        class JsonClass {
+            public string key1 { get; set; }
+            public string key2 { get; set; }
+            public string key3 { get; set; }
+            public string key4 { get; set; }
+            public string key5 { get; set; }
+            public int? key6 { get; set; }
+            public int? key7 { get; set; }
+            public int? key8 { get; set; }
+        }
+
+        [Theory]
+        [InlineData ("{\"key1\" : \"\", \"key2\" : null, \"key3\" : \"SUCCESS\",\"key4\" : \"null\", \"key6\" : \"2\", \"key7\" : 3}")]
+        public async Task Test_ToJsonObj (string value) {
+            var jsonclass = value.ToJsonObj<JsonClass> ();
+            Assert.Empty (jsonclass.key1);
+            Assert.Null (jsonclass.key2);
+            Assert.Equal (jsonclass.key3, "SUCCESS");
+            Assert.Equal (jsonclass.key4, "null");
+            Assert.Null (jsonclass.key5);
+            Assert.Equal (jsonclass.key6, 2);
+            Assert.Equal (jsonclass.key7, 3);
+            Assert.Throws<Newtonsoft.Json.JsonReaderException> (() => { "{\"key8\" : \"SUCCESS\"}".ToJsonObj<JsonClass> (); });
             await Task.CompletedTask;
         }
         #endregion

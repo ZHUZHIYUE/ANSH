@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ANSH.OAuth
-{
+namespace ANSH.OAuth {
     /// <summary>
     /// 授权方式
     /// </summary>
-    public enum GrantTypes
-    {
+    public enum GrantTypes {
         /// <summary>
-        /// 通过授权码创建令牌
+        /// 授权码模式创建令牌
         /// </summary>
         authorization_code,
 
         /// <summary>
-        /// 通过刷新凭证创建令牌
+        /// 刷新凭证创建令牌
         /// </summary>
-        refresh_token
+        refresh_token,
+
+        /// <summary>
+        /// 客户端模式创建令牌
+        /// </summary>
+        client_credentials
     }
 }

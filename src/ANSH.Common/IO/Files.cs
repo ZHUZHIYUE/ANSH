@@ -22,7 +22,7 @@ namespace ANSH.Common.IO
         {
             path = path.Trim('/', '\\');
             if (!System.IO.Directory.Exists(path)) System.IO.Directory.CreateDirectory(path);
-            using (StreamWriter writer = System.IO.File.AppendText($"{path}\\{file}"))
+            using (StreamWriter writer = System.IO.File.AppendText($"{path}/{file}"))
             {
                 writer.Write(value);
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ANSH.API.ResponseContracts;
-using ANSH.API.ResponseContracts.Model;
+using ANSH.API.ResponseContracts.Models;
 
 namespace ANSH.API.RequestContracts {
     /// <summary>
@@ -18,18 +18,18 @@ namespace ANSH.API.RequestContracts {
             /// <summary>
             /// 列表分页当前页
             /// </summary>
-            public virtual int page_cur {
+            public virtual string page_cur {
                 get;
                 set;
-            } = 1;
+            } = "1";
 
             /// <summary>
             /// 列表分页每页显示条数
             /// </summary>
-            public virtual int page_size {
+            public virtual string page_size {
                 get;
                 set;
-            } = 15;
+            } = "15";
 
             /// <summary>
             /// 获取URL参数
@@ -47,8 +47,28 @@ namespace ANSH.API.RequestContracts {
             /// 准备URL参数
             /// </summary>
             Dictionary<string, string> SetByPageParameters () => new Dictionary<string, string> {
-                ["page_cur"] = page_cur.ToString (),
-                ["page_size"] = page_size.ToString ()
+                ["page_cur"] = page_cur,
+                ["page_size"] = page_size
             };
+
+            /// <summary>
+            /// 验证参数合法性
+            /// </summary>
+            /// <param name="msg">提示信息</param>
+            /// <returns>验证通过返回True，验证失败返回False</returns>
+            public override bool Validate (out string msg) {
+                if (!base.Validate (out msg)) { return false; }
+
+                if (!page_cur.IsInt (out int? _page_cur) || _page_cur < 1) {
+                    msg = $"参数page_cur格式错误，应为大于等于1的整数";
+                    return false;
+                }
+
+                if (!page_size.IsInt (out int? _page_size) || _page_size < 1) {
+                    msg = $"参数page_size格式错误，应为大于等于1的整数";
+                    return false;
+                }
+                return true;
+            }
         }
 }

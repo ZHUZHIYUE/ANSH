@@ -8,7 +8,7 @@ namespace ANSH.API.ResponseContracts {
     /// <para>数组POST</para>
     /// </summary>
     /// <typeparam name="TModelResponse">响应模型</typeparam>
-    public abstract class POSTArrayResponse<TModelResponse> : BaseResponse where TModelResponse : Model.POSTArrayResponseModel {
+    public abstract class POSTArrayResponse<TModelResponse> : BaseResponse where TModelResponse : Models.POSTArrayResponseModel {
 
         /// <summary>
         /// 返回信息
@@ -16,6 +16,6 @@ namespace ANSH.API.ResponseContracts {
         public List<TModelResponse> result_list {
             get;
             set;
-        }
+        } = new List<TModelResponse> ();
     }
 }

@@ -12,7 +12,7 @@ namespace ANSH.Common.IO {
         /// <summary>
         /// 物理路径
         /// </summary>
-        static string Path => $"{Directory.GetCurrentDirectory()}\\logs";
+        static string Path => $"{Directory.GetCurrentDirectory()}/logs";
 
         /// <summary>
         /// 日志名称
@@ -24,7 +24,7 @@ namespace ANSH.Common.IO {
         /// </summary>
         /// <param name="ex">异常描述</param>
         /// <param name="file">文件名默认{DateTime.Now.ToString("yyyy-MM-dd")}.txt</param>{
-        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}\\logs\\</param>
+        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}/logs/</param>
         public static void Write (Exception ex, string path = null, string file = null) {
             try {
                 path = path ?? Path;
@@ -53,7 +53,7 @@ namespace ANSH.Common.IO {
         /// </summary>
         /// <param name="msg">异常描述</param>
         /// <param name="file">文件名默认{DateTime.Now.ToString("yyyy-MM-dd")}.txt</param>
-        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}\\logs\\</param>
+        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}/logs/</param>
         public static void Write (string msg, string path = null, string file = null) {
             try {
                 path = path ?? Path;
@@ -74,7 +74,7 @@ namespace ANSH.Common.IO {
         /// </summary>
         /// <param name="log_msg">错误信息</param>
         /// <param name="file">文件名默认{DateTime.Now.ToString("yyyy-MM-dd")}.txt</param>
-        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}\\logs\\</param>
+        /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}/logs/</param>
         static void Save (List<string> log_msg, string file, string path) {
             Files.Save (path, file, string.Join ("\r\n", log_msg));
         }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ANSH.API.RequestContracts.Model;
+using ANSH.API.RequestContracts.Models;
 using ANSH.API.ResponseContracts;
-using ANSH.API.ResponseContracts.Model;
+using ANSH.API.ResponseContracts.Models;
 using Newtonsoft.Json;
 namespace ANSH.API.RequestContracts {
     /// <summary>

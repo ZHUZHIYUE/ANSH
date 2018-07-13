@@ -1,9 +1,9 @@
 ﻿using System;
-namespace ANSH.API.ResponseContracts.Model {
+namespace ANSH.API.ResponseContracts.Models {
     /// <summary>
     /// 数组对象
     /// </summary>
-    public class POSTArrayResponseModel {
+    public abstract class POSTArrayResponseModel {
         /// <summary>
         /// 返回码
         /// </summary>

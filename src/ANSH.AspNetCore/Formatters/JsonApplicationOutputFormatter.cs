@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace ANSH.AspNetCore.Formatters {
     /// <summary>
@@ -12,14 +13,14 @@ namespace ANSH.AspNetCore.Formatters {
     /// </summary>
     public class JsonApplicationOutputFormatter : TextOutputFormatter {
 
-        Action<IServiceProvider, string, Type> _action;
+        Func<IServiceProvider, object, Type, JObject> _func;
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="action">对响应的JSON文本格式进行操作</param>
+        /// <param name="func">对响应的JSON文本格式进行操作</param>
         /// <returns></returns>
-        public JsonApplicationOutputFormatter (Action<IServiceProvider, string, Type> action = null) : base () {
-            _action = action;
+        public JsonApplicationOutputFormatter (Func<IServiceProvider, object, Type, JObject> func = null) : base () {
+            _func = func;
             SupportedMediaTypes.Clear ();
             SupportedMediaTypes.Add (new MediaTypeHeaderValue ("application/json"));
             SupportedEncodings.Clear ();
@@ -31,11 +32,13 @@ namespace ANSH.AspNetCore.Formatters {
         /// </summary>
         /// <param name="context">响应上下文</param>
         /// <param name="selectedEncoding">应用于响应的编码格式</param>
-        /// <returns></returns>
         public override Task WriteResponseBodyAsync (OutputFormatterWriteContext context, Encoding selectedEncoding) {
-            var response_body = context.Object.ToJson ();
-            _action (context.HttpContext.RequestServices, response_body, context.ObjectType);
-            return context.HttpContext.Response.WriteAsync (response_body);
+
+            var jobject =
+                _func != null ?
+                _func.Invoke (context.HttpContext.RequestServices, context.Object, context.ObjectType) :
+                JObject.FromObject (context.Object);
+            return context.HttpContext.Response.WriteAsync (jobject.ToString (), selectedEncoding);
         }
     }
 }

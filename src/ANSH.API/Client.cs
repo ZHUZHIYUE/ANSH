@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ANSH.API.RequestContracts;
-using ANSH.API.RequestContracts.Model;
+using ANSH.API.RequestContracts.Models;
 using ANSH.API.ResponseContracts;
-using ANSH.API.ResponseContracts.Model;
+using ANSH.API.ResponseContracts.Models;
 using ANSH.Common.HTTP;
 
 namespace ANSH.API {
@@ -118,7 +118,7 @@ namespace ANSH.API {
             var request_json = CreatePOSTParameter (request, APIDoman, _accessToken);
             var httpmsg_response = await HTTPClient.PostAsync (url, request_json, "application/json;charset=utf-8", Encoding.UTF8);
             string response = await httpmsg_response.Content.ReadAsStringAsync ();
-            
+
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {

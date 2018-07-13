@@ -54,6 +54,11 @@ public enum ANSHErrorCodes {
     未能识别的AppID和AppSecret组合 = 10002,
 
     /// <summary>
+    /// 授权GrantTypes异常
+    /// </summary>
+    无效的授权模式 = 10003,
+
+    /// <summary>
     /// 一般指该操作权限不足
     /// </summary>
     权限不足受限 = 20001,

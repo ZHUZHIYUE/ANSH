@@ -60,7 +60,7 @@ namespace ANSH.OAuth
                 Token_Type = StoreToken.TokenTypes.code
             };
 
-            _STORE.OutToken((_STORE.GetToken(stoken.Authorize, stoken.Authorized, stoken.Token_Type) ?? new List<OAuth.StoreToken>()).ToArray());
+            _STORE.OutToken((_STORE.GetToken(stoken.Authorize, stoken.Authorized) ?? new List<OAuth.StoreToken>()).ToArray());
 
             _STORE.SaveToken(stoken);
 

@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace ANSH.AspNetCore.Filters.MVC {
+namespace ANSH.AspNetCore.Filters.API {
 
     /// <summary>
-    /// 验证ModelState
+    /// 验证MediaType
     /// </summary>
     [AttributeUsage (AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public abstract class ModelStateFilterAttribute : Attribute, IActionFilter, IOrderedFilter {
+    public abstract class MediaTypeFilterAttribute : Attribute, IActionFilter, IOrderedFilter {
         /// <summary>
         /// 执行顺序
         /// </summary>
@@ -23,13 +24,12 @@ namespace ANSH.AspNetCore.Filters.MVC {
         /// </summary>
         /// <param name="context">当前请求上下文</param>
         public virtual void OnActionExecuting (ActionExecutingContext context) {
-
-            if (context.HttpContext.Request.Method.ToLower () == "POST".ToLower ()) {
-                if (context.ModelState.IsValid) {
-                    ModelStatePass (context);
-                } else {
-                    ModelStateFail (context);
-                }
+            if (context.HttpContext.Request.Method.ToLower () != "POST".ToLower () || context.HttpContext.Request.Method.ToLower () == "POST".ToLower () &&
+                MediaTypeHeaderValue.TryParse (context.HttpContext.Request.ContentType, out MediaTypeHeaderValue mediatype) &&
+                MediaTypeWhiteList.Exists (m => m.MediaType.ToLower () == mediatype.MediaType.ToLower () && m.CharSet.ToLower () == mediatype.CharSet.ToLower ())) {
+                MediaTypeStatePass (context);
+            } else {
+                MediaTypeStateFail (context);
             }
         }
 
@@ -40,17 +40,23 @@ namespace ANSH.AspNetCore.Filters.MVC {
         public virtual void OnActionExecuted (ActionExecutedContext context) {
 
         }
+        /// <summary>
+        /// 支持的MediaType
+        /// </summary>
+        public abstract List<MediaTypeHeaderValue> MediaTypeWhiteList {
+            get;
+        }
 
         /// <summary>
-        /// ModelState 验证通过
+        /// MediaType 验证通过
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public abstract void ModelStatePass (ActionExecutingContext context);
+        public abstract void MediaTypeStatePass (ActionExecutingContext context);
 
         /// <summary>
-        /// ModelState 验证未通过
+        /// MediaType 验证未通过
         /// </summary>
         /// <param name="context">当前请求上下文</param>
-        public abstract void ModelStateFail (ActionExecutingContext context);
+        public abstract void MediaTypeStateFail (ActionExecutingContext context);
     }
 }

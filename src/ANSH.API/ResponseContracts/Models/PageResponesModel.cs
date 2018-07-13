@@ -1,5 +1,5 @@
 using System;
-namespace ANSH.API.ResponseContracts.Model {
+namespace ANSH.API.ResponseContracts.Models {
     /// <summary>
     /// 分页信息
     /// </summary>
