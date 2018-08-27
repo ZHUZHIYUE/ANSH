@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="..\sources.props"/>
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>zhuxi</Authors>
-    <Company>zhuxi</Company>
-    <Product>zhuxi</Product>
-    <Version>1.1.0</Version>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <Version>$(VersionProjectInFormation)</Version>
     <PackageId>ANSH.DataBase.EFCore</PackageId>
-    <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
+    <Description>$(DescriptionProjectInFormation)</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.DataBase.EFCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.EFCore.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ANSH.DataBase.Connection\ANSH.DataBase.Connection.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCoreRelationalPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsolePackageVersion)" />
   </ItemGroup>
 </Project>

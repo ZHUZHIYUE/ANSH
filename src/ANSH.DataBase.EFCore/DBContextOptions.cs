@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using ANSH.DataBase.Connection;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,7 +55,12 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="wheres">指定条件</param>
         /// <param name="entity">需要修改的项</param>
         public virtual void Update (Action<TEntity> entity, Expression<Func<TEntity, bool>> wheres = null) {
-            Get (wheres).ToList ().ForEach (entity);
+            Get (wheres, tracking : true).ToList ().ForEach ((item) => {
+                entity (item);
+                Ignore (item);
+                DbEntity.Update (item);
+            });
+
             SaveChangesCoverage ();
         }
 
@@ -103,6 +110,25 @@ namespace ANSH.DataBase.EFCore {
                             ex.Entries.Single ().Reload ();
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 忽略null值
+        /// </summary>
+        /// <param name="entity">模型</param>
+        public void Ignore (TEntity entity) {
+            foreach (System.Reflection.PropertyInfo p in entity.GetType ().GetProperties ()) {
+
+                if (p.IsDefined (typeof (NavigationAttribute), true) || p.IsDefined (typeof (KeyAttribute))) {
+                    continue;
+                }
+
+                if (p.GetValue (entity) != null) {
+                    this.Entry<TEntity> (entity).Property (p.Name).IsModified = true;
+                } else {
+                    this.Entry<TEntity> (entity).Property (p.Name).IsModified = false;
                 }
             }
         }

@@ -1,24 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="..\sources.props"/>
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>zhuxi</Authors>
-    <Company>zhuxi</Company>
-    <Product>zhuxi</Product>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
     <PackageId>ANSH.AspNetCore</PackageId>
-    <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
+    <Description>$(DescriptionProjectInFormation)</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.AspNetCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.AspNetCore.xml</DocumentationFile>
   </PropertyGroup>
 
  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="$(MicrosoftAspNetCorePackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="$(MicrosoftAspNetCoreMvcFormattersJsonPackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="$(MicrosoftAspNetCoreMvcViewFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="$(MicrosoftAspNetCoreMvcRazorPagesPackageVersion)" />
   </ItemGroup>
 
  <ItemGroup>

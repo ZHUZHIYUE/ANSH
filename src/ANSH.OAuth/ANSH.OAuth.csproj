@@ -1,16 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>zhuxi</Authors>
-    <Company>zhuxi</Company>
-    <Product>zhuxi</Product>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
+  <Import Project="..\sources.props"/>
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
     <PackageId>ANSH.OAuth</PackageId>
-    <Description>https://github.com/ZHUZHIYUE/ANSH</Description>
+    <Description>$(DescriptionProjectInFormation)</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\ANSH.OAuth.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.OAuth.xml</DocumentationFile>
   </PropertyGroup>
 </Project>

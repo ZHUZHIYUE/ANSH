@@ -11,14 +11,14 @@ namespace ANSH.API.RequestContracts {
     /// <para>GET</para>
     /// </summary>
     /// <typeparam name="TResponse">响应</typeparam>
-    public abstract class GETRequest<TResponse> : BaseRequest where TResponse : BaseResponse {
+    public abstract class GETRequest<TResponse> : BaseRequest<TResponse> where TResponse : BaseResponse {
 
         /// <summary>
         /// 获取URL参数
         /// </summary>
         /// <returns>url参数集合</returns>
         public virtual Dictionary<string, string> GetParameters () {
-            return SetParameters();
+            return SetParameters ();
         }
 
         /// <summary>

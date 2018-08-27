@@ -92,4 +92,9 @@ public enum ANSHErrorCodes {
     /// 所有未定义的错误类型
     /// </summary>
     服务器内部错误 = 50000,
+
+    /// <summary>
+    /// 未登录或登录超时
+    /// </summary>
+    未登录或登录超时 = 60001,
 }

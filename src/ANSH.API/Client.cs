@@ -61,12 +61,16 @@ namespace ANSH.API {
         /// 创建POST请求Body参数
         /// </summary>
         /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
         /// <param name="request">api请求参数</param>
         /// <param name="APIDoman">api域名地址</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>api请求完整地址</returns>
-        protected virtual string CreatePOSTParameter<TResponse> (POSTRequest<TResponse> request, string APIDoman, string accessToken)
-        where TResponse : BaseResponse {
+        protected virtual string CreatePOSTParameter<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string APIDoman, string accessToken)
+        where TResponse : POSTResponse<TModelResponse>
+            where TMODELRequest : POSTRequestModel
+        where TModelResponse : POSTResponseModel {
             return request.ToJson ();
         }
 
@@ -108,11 +112,15 @@ namespace ANSH.API {
         /// 执行POST请求
         /// </summary>
         /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
         /// <param name="request">请求参数</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>响应参数</returns>
-        public async Task<TResponse> Execute<TResponse> (POSTRequest<TResponse> request, string accessToken = null)
-        where TResponse : BaseResponse {
+        public async Task<TResponse> Execute<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
+        where TResponse : POSTResponse<TModelResponse>
+            where TMODELRequest : POSTRequestModel
+        where TModelResponse : POSTResponseModel {
             var _accessToken = accessToken??AccessToken;
             Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
             var request_json = CreatePOSTParameter (request, APIDoman, _accessToken);

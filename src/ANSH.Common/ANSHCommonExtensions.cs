@@ -17,26 +17,46 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Int32</returns>
     public static int ToInt (this string value, int? default_value = null) {
-        bool is_parse = value.IsInt (out int? result);
+        return value.IsInt (out int result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
+    }
 
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
+    /// <summary>
+    /// 将此实例的值转换为 System.Int32。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <returns>与当前实例值对应的 System.Int32</returns>
+    public static int ToInt (this string value, int default_value) {
+        return value.IsInt (out int result) ? result : default_value;
+    }
 
-        return is_parse ? result.Value : default_value.Value;
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.Int32。 
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsInt (this string value) {
+        return value.IsInt (out _);
     }
 
     /// <summary>
     /// 判断此实例的值是否可转换为 System.Int32。
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsInt (this string value, out int? result) {
+    public static bool IsInt (this string value, out int result) {
         bool is_parse = int.TryParse (value, out int parse_result);
-        result = is_parse ? (int?) parse_result : null;
+        result = is_parse ? parse_result : default (int);
         return is_parse;
     }
     #endregion
@@ -47,15 +67,16 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Enum</returns>
-    public static T ToEnum<T> (this int value, T? default_value = null) where T : struct {
-        bool is_parse = value.ToString ().IsEnum (out T? result);
-
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
-
-        return is_parse ? result.Value : default_value.Value;
+    public static T ToEnum<T> (this string value, T? default_value = null) where T : struct {
+        return value.IsEnum (out T result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
     }
 
     /// <summary>
@@ -63,34 +84,53 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Enum</returns>
-    public static T ToEnum<T> (this string value, T? default_value = null) where T : struct {
-        bool is_parse = value.IsEnum (out T? result);
+    public static T ToEnum<T> (this int value, T? default_value = null) where T : struct {
+        return value.IsEnum (out T result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
+    }
 
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
-
-        return is_parse ? result.Value : default_value.Value;
+    /// <summary>
+    /// 判断此实例的值是否可转换为指定的 System.Enum
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsEnum<T> (this int value) where T : struct {
+        return value.IsEnum (out T _);
     }
     /// <summary>
     /// 判断此实例的值是否可转换为指定的 System.Enum
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsEnum<T> (this int value, out T? result) where T : struct {
+    public static bool IsEnum<T> (this string value) where T : struct {
+        return value.IsEnum (out T _);
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为指定的 System.Enum
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsEnum<T> (this int value, out T result) where T : struct {
         return value.ToString ().IsEnum (out result);
     }
     /// <summary>
     /// 判断此实例的值是否可转换为指定的 System.Enum
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsEnum<T> (this string value, out T? result) where T : struct {
+    public static bool IsEnum<T> (this string value, out T result) where T : struct {
         bool is_parse = Enum.TryParse (value, out T parse_result) && Enum.IsDefined (typeof (T), parse_result);
-        result = is_parse ? (T?) parse_result : null;
+        result = is_parse ? parse_result : default (T);
         return is_parse;
     }
     #endregion
@@ -101,9 +141,17 @@ public static class ANSHCommonExtensions {
     /// 将此实例的值转换为 System.Int64。
     /// </summary>
     /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Int64</returns>
-    public static long ToLong (this string value) {
-        return value.ToLong (null);
+    public static long ToLong (this string value, long? default_value = null) {
+        return value.IsLong (out long result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
     }
 
     /// <summary>
@@ -112,28 +160,31 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
     /// <returns>与当前实例值对应的 System.Int64</returns>
-    public static long ToLong (this string value, long? default_value = null) {
-        bool is_parse = value.IsLong (out long? result);
+    public static long ToLong (this string value, long default_value) {
+        return value.IsLong (out long result) ? result : default_value;
+    }
 
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
-
-        return is_parse ? result.Value : default_value.Value;
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.Int64。 
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsLong (this string value) {
+        return value.IsLong (out _);
     }
 
     /// <summary>
     /// 判断此实例的值是否可转换为 System.Int64。
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsLong (this string value, out long? result) {
+    public static bool IsLong (this string value, out long result) {
         bool is_parse = long.TryParse (value, out long parse_result);
-
-        result = is_parse ? (long?) parse_result : null;
+        result = is_parse ? parse_result : default (long);
         return is_parse;
     }
+
     #endregion
 
     #region System.DateTime 
@@ -142,30 +193,89 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
-    /// <param name="format">指定DateTime转换格式。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.DateTime且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.DateTime</returns>
-    public static DateTime ToDateTime (this string value, DateTime? default_value = null, string format = null) {
-        bool is_parse = value.IsDateTime (out DateTime? result, format);
+    public static DateTime ToDateTime (this string value, DateTime? default_value = null) {
+        return value.IsDateTime (out DateTime result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
+    }
 
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
-
-        return is_parse ? result.Value : default_value.Value;
+    /// <summary>
+    /// 将此实例的值转换为 System.DateTime。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <param name="format">指定DateTime转换格式。</param>
+    /// <exception cref="System.FormatException">当此实例不是格式为<paramref name="format"/>的有效System.DateTime且<paramref name="default_value"/>为null时引发异常。</exception>
+    /// <returns>与当前实例值对应的 System.DateTime</returns>
+    public static DateTime ToDateTime (this string value, DateTime? default_value, string format) {
+        return value.IsDateTime (out DateTime result, format) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
     }
 
     /// <summary>
     /// 判断此实例的值是否可转换为 System.DateTime。
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDateTime (this string value) {
+        return value.IsDateTime (out _);
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.DateTime。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDateTime (this string value, out DateTime result) {
+        return DateTime.TryParse (value, out result);
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.DateTime。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
     /// <param name="format">指定DateTime转换格式。</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsDateTime (this string value, out DateTime? result, string format = null) {
-        bool is_parse = format == null ? DateTime.TryParse (value, out DateTime parse_result) : DateTime.TryParseExact (value, format, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parse_result);
+    public static bool IsDateTime (this string value, out DateTime result, string format) {
+        return DateTime.TryParseExact (value, format, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out result);
+    }
 
-        result = is_parse ? (DateTime?) parse_result : null;
-        return is_parse;
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.DateTime。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <param name="upperlimit">实例值所在时间范围上限。</param>
+    /// <param name="lowerlimit">实例值所在时间范围下限。</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDateTime (this string value, out DateTime result, DateTime lowerlimit, DateTime upperlimit) {
+        return value.IsDateTime (out result) && lowerlimit <= result && result <= upperlimit;
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.DateTime。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <param name="format">指定DateTime转换格式。</param>
+    /// <param name="upperlimit">实例值所在时间范围上限。</param>
+    /// <param name="lowerlimit">实例值所在时间范围下限。</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDateTime (this string value, out DateTime result, string format, DateTime lowerlimit, DateTime upperlimit) {
+        return value.IsDateTime (out result, format) && value.IsDateTime (out _, lowerlimit, upperlimit);
     }
     #endregion
 
@@ -175,14 +285,16 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Decimal且<paramref name="default_value"/>为null时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Decimal</returns>
     public static decimal ToDecimal (this string value, decimal? default_value = null) {
-        var is_parse = value.IsDecimal (out decimal? result, null);
-
-        if (!is_parse && default_value == null) {
-            throw new FormatException ("转换类型失败");
-        }
-        return is_parse ? result.Value : default_value.Value;
+        return value.IsDecimal (out decimal result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
     }
 
     /// <summary>
@@ -202,18 +314,28 @@ public static class ANSHCommonExtensions {
     /// <param name="digit">指定Decimal小数位数。</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
     public static bool IsFixed (this decimal value, int digit) {
-        return value.ToString ().IsDecimal (out decimal? result, digit);
+        return value.ToString ().IsDecimal (out decimal result, digit);
     }
 
     /// <summary>
     /// 判断此实例的值是否可转换为 System.Decimal。
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回null</param>
     /// <param name="digit">指定Decimal小数位数。</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsDecimal (this string value, out decimal? result, int? digit = null) {
-        result = null;
+    public static bool IsDecimal (this string value, int? digit = null) {
+        return value.IsDecimal (out _, digit);
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.Decimal。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <param name="digit">指定Decimal小数位数。</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDecimal (this string value, out decimal result, int? digit = null) {
+        result = default (decimal);
         bool is_parse = decimal.TryParse (value, out decimal parse_result);
         string[] split_digit;
         if (!is_parse || (split_digit = value.Split ('.')).Length > 2) {
@@ -229,7 +351,7 @@ public static class ANSHCommonExtensions {
 
         result = parse_result;
         if (digit.HasValue) {
-            result = (decimal?) decimal.Parse (parse_result.ToString (DecimalDigit (digit.Value)));
+            result = decimal.Parse (parse_result.ToString (DecimalDigit (digit.Value)));
         }
         return true;
     }
@@ -405,6 +527,40 @@ public static class ANSHCommonExtensions {
     }
     #endregion
 
+    #region SHA1
+    /// <summary>
+    /// SHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string SHA1Encryp (this string value) {
+        return ASCIIEncoding.UTF8.GetBytes (value).SHA1Encryp ();
+    }
+
+    /// <summary>
+    /// SHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string SHA1Encryp (this byte[] value) {
+        byte[] tmpHash = SHA1.Create ().ComputeHash (value);
+        StringBuilder sha1 = new StringBuilder ();
+        foreach (byte bt in tmpHash) {
+            sha1.Append (bt.ToString ("x2"));
+        }
+        return sha1.ToString ();
+    }
+
+    /// <summary>
+    /// SHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string SHA1Encryp (this Stream value) {
+        return value.ToByte ().SHA1Encryp ();
+    }
+    #endregion
+
     #region DesEncrypt
 
     /// <summary>
@@ -557,7 +713,7 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <returns>返回时间戳值</returns>
     public static long ToTimeStamp (this DateTime value) {
-        return (long) Math.Floor (value.Subtract (TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 8, 0, 0), TimeZoneInfo.Local)).TotalSeconds);
+        return (long) Math.Floor (value.Subtract (TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc), TimeZoneInfo.Local)).TotalSeconds);
     }
 
     /// <summary>
@@ -567,7 +723,7 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <returns>返回时间戳对应DateTime</returns>
     public static DateTime ToTimeStamp (this long value) {
-        return TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 8, 0, 0).AddSeconds (value), TimeZoneInfo.Local);
+        return TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (value), TimeZoneInfo.Local);
     }
 
     #endregion
@@ -631,9 +787,9 @@ public static class ANSHCommonExtensions {
     public static bool ValidateDateTime (string time_start, string time_end, string time_type = "yyyy-MM-dd HH:mm:ss") {
         time_start = time_start ?? string.Empty;
         time_end = time_end ?? string.Empty;
-        if (!time_start.IsDateTime (out DateTime? time_starts, time_type) ||
-            !time_end.IsDateTime (out DateTime? time_ends, time_type) ||
-            DateTime.Compare (time_starts.Value, time_ends.Value) > 0) {
+        if (!time_start.IsDateTime (out DateTime time_starts, time_type) ||
+            !time_end.IsDateTime (out DateTime time_ends, time_type) ||
+            DateTime.Compare (time_starts, time_ends) > 0) {
             return false;
         }
         return true;

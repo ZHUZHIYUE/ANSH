@@ -21,7 +21,7 @@ namespace Testing.Server.Unit.ANSH.Common {
         [InlineData (400)]
         [InlineData (200)]
         public async Task Test_Middleware_UseStatusCode (int StatusCode) {
-            var response = await _client.GetAsync ($"/Middleware_UseStatusCode/?StatusCode={StatusCode}");
+            var response = await _client.GetAsync ($"/Home/Middleware_UseStatusCode?StatusCode={StatusCode}");
             var body = await response.Content.ReadAsStringAsync ();
             Assert.Equal (StatusCode, (int) response.StatusCode);
             if (StatusCode >= 400 && StatusCode <= 599) {
@@ -34,7 +34,7 @@ namespace Testing.Server.Unit.ANSH.Common {
 
         [Fact]
         public async Task Test_Middleware_Exception () {
-            var response = await _client.GetAsync ($"/Middleware_Exception/");
+            var response = await _client.GetAsync ($"/Home/Middleware_Exception");
             var body = await response.Content.ReadAsStringAsync ();
             Assert.Equal (500, (int) response.StatusCode);
             Assert.Equal ($"StatusCode：500", body);

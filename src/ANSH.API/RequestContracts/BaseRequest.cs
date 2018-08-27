@@ -9,7 +9,7 @@ namespace ANSH.API.RequestContracts {
     /// 请求
     /// </summary>
     [JsonObject (MemberSerialization.OptOut)]
-    public abstract class BaseRequest {
+    public abstract class BaseRequest<BaseResponse>{
         /// <summary>
         /// 验证参数合法性
         /// </summary>

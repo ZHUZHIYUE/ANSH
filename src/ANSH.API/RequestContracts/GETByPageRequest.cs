@@ -59,12 +59,12 @@ namespace ANSH.API.RequestContracts {
             public override bool Validate (out string msg) {
                 if (!base.Validate (out msg)) { return false; }
 
-                if (!page_cur.IsInt (out int? _page_cur) || _page_cur < 1) {
+                if (!page_cur.IsInt (out int _page_cur) || _page_cur < 1) {
                     msg = $"参数page_cur格式错误，应为大于等于1的整数";
                     return false;
                 }
 
-                if (!page_size.IsInt (out int? _page_size) || _page_size < 1) {
+                if (!page_size.IsInt (out int _page_size) || _page_size < 1) {
                     msg = $"参数page_size格式错误，应为大于等于1的整数";
                     return false;
                 }

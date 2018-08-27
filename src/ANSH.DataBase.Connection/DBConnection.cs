@@ -159,6 +159,9 @@ namespace ANSH.DataBase.Connection {
         /// <param name="result">参数</param>
         /// <returns>返回SqlCommand</returns>
         DbCommand CreateCmd (string CommandText, List<DBParameters> DBParameters, CommandType cmdType, DbConnection Connection, DbTransaction Transaction, out List<DbParameter> result) {
+            if (Connection?.State != ConnectionState.Open) {
+                Open ();
+            }
             DbCommand cmd = Connection.CreateCommand ();
             cmd.CommandText = CommandText;
             cmd.CommandType = cmdType;

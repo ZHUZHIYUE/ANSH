@@ -1,0 +1,28 @@
+<Project>
+    <PropertyGroup Label="Package Versions">
+        <MicrosoftAspNetCorePackageVersion>2.1.2</MicrosoftAspNetCorePackageVersion>
+        <MicrosoftAspNetCoreMvcFormattersJsonPackageVersion>2.1.1</MicrosoftAspNetCoreMvcFormattersJsonPackageVersion>
+        <MicrosoftAspNetCoreMvcViewFeaturesPackageVersion>2.1.1</MicrosoftAspNetCoreMvcViewFeaturesPackageVersion>
+        <MicrosoftAspNetCoreMvcRazorPagesPackageVersion>2.1.1</MicrosoftAspNetCoreMvcRazorPagesPackageVersion>
+        <MicrosoftExtensionsLoggingAbstractionsPackageVersion>2.1.1</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+        <SystemDataSqlClientPackageVersion>4.5.1</SystemDataSqlClientPackageVersion>
+        <MicrosoftEntityFrameworkCoreRelationalPackageVersion>2.1.1</MicrosoftEntityFrameworkCoreRelationalPackageVersion>
+        <MicrosoftExtensionsLoggingConsolePackageVersion>2.1.1</MicrosoftExtensionsLoggingConsolePackageVersion>
+        <MySqlDataEntityFrameworkCorePackageVersion>8.0.11</MySqlDataEntityFrameworkCorePackageVersion>
+        <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>2.1.1</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
+        <NewtonsoftJsonPackageVersion>11.0.2</NewtonsoftJsonPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Project InFormation">
+        <AuthorsProjectInFormation>zhuxi</AuthorsProjectInFormation>
+        <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
+        <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
+        <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
+        <VersionProjectInFormation>1.1.0</VersionProjectInFormation>
+        <DescriptionProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</DescriptionProjectInFormation>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Base">
+        <NetstandardBase>2.0</NetstandardBase>
+    </PropertyGroup>
+</Project>
