@@ -32,6 +32,14 @@ namespace ANSH.API.RequestContracts {
             } = "15";
 
             /// <summary>
+            /// 每页显示条数上限
+            /// </summary>
+            protected virtual int page_size_limit {
+                get;
+                set;
+            } = 100;
+
+            /// <summary>
             /// 获取URL参数
             /// </summary>
             public override Dictionary<string, string> GetParameters () {
@@ -66,6 +74,11 @@ namespace ANSH.API.RequestContracts {
 
                 if (!page_size.IsInt (out int _page_size) || _page_size < 1) {
                     msg = $"参数page_size格式错误，应为大于等于1的整数";
+                    return false;
+                }
+
+                if (_page_size > page_size_limit) {
+                    msg = $"参数page_size错误，每页显示条数上限为{page_size_limit}";
                     return false;
                 }
                 return true;

@@ -9,21 +9,30 @@ using Newtonsoft.Json;
 namespace ANSH.API.RequestContracts {
     /// <summary>
     /// 请求
+    /// <para>数组POST</para>
     /// </summary>
     /// <typeparam name="TResponse">响应</typeparam>
     /// <typeparam name="TMODELRequest">请求模型</typeparam>
     /// <typeparam name="TModelResponse">响应模型</typeparam>
-    public abstract class POSTRequest<TResponse, TMODELRequest, TModelResponse> : BaseRequest<TResponse>
-        where TResponse : POSTResponse<TModelResponse>
-        where TMODELRequest : class
-    where TModelResponse : class {
+    public abstract class POSTArrayRequest<TResponse, TMODELRequest, TModelResponse> : BaseRequest<TResponse>
+        where TResponse : POSTArrayResponse<TModelResponse>
+        where TMODELRequest : POSTArrayRequestModel
+    where TModelResponse : POSTArrayResponseModel {
 
         /// <summary>
-        /// 提交内容
+        /// 数组
         /// </summary>
-        public TMODELRequest post_item {
+        public List<TMODELRequest> post_list {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 批量处理数组最大条数
+        /// </summary>
+        [JsonIgnore]
+        protected abstract int post_list_numb {
+            get;
         }
 
         /// <summary>
@@ -35,8 +44,12 @@ namespace ANSH.API.RequestContracts {
             if (!base.Validate (out msg)) {
                 return false;
             }
-            if (post_item is null) {
-                msg = $"参数$post_item不能为空。";
+            if (!(post_list?.Count > 0)) {
+                msg = $"参数post_list为空，请确保post_list有传值且满足JSON数据格式。";
+                return false;
+            }
+            if (post_list.Count > post_list_numb) {
+                msg = $"请确保参数post_list最大处理量不得超过{post_list_numb}";
                 return false;
             }
             return true;

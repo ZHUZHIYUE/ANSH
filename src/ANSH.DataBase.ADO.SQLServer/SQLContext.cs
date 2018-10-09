@@ -107,17 +107,25 @@ namespace ANSH.DataBase.ADO.SQLServer {
                 return Tsql.ToString ();
             }
 
-            /// <summary>
-            /// 构建Page语句
-            /// </summary>
-            /// <param name="tbinfo">表信息</param>
-            /// <param name="whereparameters">条件参数</param>
-            /// <param name="orderby">排序</param>
-            /// <param name="output">输出参数</param>
-            /// <param name="pageIndex">第几页</param>
-            /// <param name="pageSize">每页多少条</param>
-            /// <returns>Page语句</returns>
-            public override string CreatePageTSQL (TableInfo tbinfo, Dictionary<string, DBParameters> whereparameters, out Connection.DBParameters output, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
+        /// <summary>
+        /// 构建Select Count 语句
+        /// </summary>
+        /// <param name="tbinfo">表信息</param>
+        /// <param name="whereparameters">条件参数</param>
+        /// <returns>Select Count 语句</returns>
+        public override string CreateSelectCountTSQL(TableInfo tbinfo, Dictionary<string, DBParameters> whereparameters) => $" SELECT COUNT(*) FROM {tbinfo.TableName} {tbinfo.TableASName} {CreateWhere (whereparameters,tbinfo.TableASName)} ";
+
+        /// <summary>
+        /// 构建Page语句
+        /// </summary>
+        /// <param name="tbinfo">表信息</param>
+        /// <param name="whereparameters">条件参数</param>
+        /// <param name="orderby">排序</param>
+        /// <param name="output">输出参数</param>
+        /// <param name="pageIndex">第几页</param>
+        /// <param name="pageSize">每页多少条</param>
+        /// <returns>Page语句</returns>
+        public override string CreatePageTSQL (TableInfo tbinfo, Dictionary<string, DBParameters> whereparameters, out Connection.DBParameters output, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
                 StringBuilder PageSql = new StringBuilder ();
                 StringBuilder Tsql = new StringBuilder ();
                 StringBuilder CountSql = new StringBuilder ();

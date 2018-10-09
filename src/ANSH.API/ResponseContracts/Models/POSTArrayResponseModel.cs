@@ -3,7 +3,7 @@ namespace ANSH.API.ResponseContracts.Models {
     /// <summary>
     /// 数组对象
     /// </summary>
-    public abstract class POSTResponseModel {
+    public abstract class POSTArrayResponseModel {
         /// <summary>
         /// 返回码
         /// </summary>

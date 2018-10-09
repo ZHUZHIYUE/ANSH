@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using ANSH.DataBase.Connection;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ namespace ANSH.DataBase.ADO {
         /// 日志记录
         /// </summary>
         protected ILogger logger
-            => _logger = _logger?? loggerfactory.CreateLogger ($" {this.GetType().Namespace} {this.GetType().Name}");
+            => _logger = _logger?? loggerfactory?.CreateLogger ($" {this.GetType().Namespace} {this.GetType().Name}");
 
         /// <summary>
         /// 创建对应的访问层对象
@@ -43,28 +44,11 @@ namespace ANSH.DataBase.ADO {
         /// <summary>
         /// 事物
         /// </summary>
-        /// <typeparam name="TResult">返回对象类型</typeparam>
-        /// <param name="TResultMethod">带有返回值委托</param>
-        /// <returns>委托返回值</returns>
-        protected TResult ExecuteTransaction<TResult> (Func<TResult> TResultMethod) {
-            TResult result = default (TResult);
-            try {
-                server_connection.BeginTransaction ();
-                result = TResultMethod ();
-                server_connection.Commit ();
-            } catch (Exception ex) {
-                server_connection.Rollback ();
-                throw ex;
-            }
-            return result;
-        }
-        /// <summary>
-        /// 事物
-        /// </summary>
         /// <param name="Method">操作委托</param>
-        protected void ExecuteTransaction (Action Method) {
+        /// <param name="isolationLevel">隔离级别</param>
+        protected void ExecuteTransaction (Action Method, IsolationLevel isolationLevel = IsolationLevel.RepeatableRead) {
             try {
-                server_connection.BeginTransaction ();
+                server_connection.BeginTransaction (isolationLevel);
                 Method ();
                 server_connection.Commit ();
             } catch (Exception ex) {

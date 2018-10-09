@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -16,39 +17,37 @@ namespace Testing.Server.Unit.ANSH.Common {
             TestValue5 = 0x010
         }
 
-        [Theory]
-        [InlineData]
+        [Fact]
         public async Task Test_IsInt () {
             {
                 string value = "-1";
                 Assert.True (value.IsInt (out int _out));
-                Assert.Equal (_out, -1);
+                Assert.Equal (-1, _out);
             } {
                 string value = "0";
                 Assert.True (value.IsInt (out int _out));
-                Assert.Equal (_out, 0);
+                Assert.Equal (0, _out);
             } {
                 string value = "1";
                 Assert.True (value.IsInt (out int _out));
-                Assert.Equal (_out, 1);
+                Assert.Equal (1, _out);
             } {
                 string value = "error_parameter";
                 Assert.False (value.IsInt (out int _out));
-                Assert.Equal (_out, default (int));
+                Assert.Equal (default (int), _out);
             } {
                 string value = "";
                 Assert.False (value.IsInt (out int _out));
-                Assert.Equal (_out, default (int));
+                Assert.Equal (default (int), _out);
             } {
                 string value = null;
                 Assert.False (value.IsInt (out int _out));
-                Assert.Equal (_out, default (int));
+                Assert.Equal (default (int), _out);
             }
             await Task.CompletedTask;
         }
 
-        [Theory]
-        [InlineData]
+        [Fact]
         public async Task Test_IsDateTime () {
             {
                 string value = "1987-11-12";
@@ -98,6 +97,15 @@ namespace Testing.Server.Unit.ANSH.Common {
                 Assert.True (value.IsDateTime (out DateTime result, format, lowerlimit, upperlimit));
                 Assert.Equal (value.ToDateTime (), result);
             }
+            await Task.CompletedTask;
+        }
+
+        [Fact]
+        public async Task Test_ToTimeStamp () {
+            DateTime time = DateTime.Now; {
+                Assert.Equal (time.Subtract (new DateTime (1970, 1, 1, 8, 0, 0)).TotalSeconds, time.ToTimeStamp ());
+            }
+
             await Task.CompletedTask;
         }
     }

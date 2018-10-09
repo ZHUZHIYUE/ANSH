@@ -3,7 +3,7 @@ namespace ANSH.API.RequestContracts.Models {
     /// <summary>
     /// 数组对象
     /// </summary>
-    public abstract class POSTRequestModel {
+    public abstract class POSTArrayRequestModel {
 
         /// <summary>
         /// 验证参数合法性

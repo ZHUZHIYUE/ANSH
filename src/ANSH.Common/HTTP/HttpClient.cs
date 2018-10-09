@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
         public static HttpResponseMessage Get (Uri url, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
@@ -30,7 +31,7 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
         public static async Task<HttpResponseMessage> GetAsync (Uri url, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
@@ -48,6 +49,7 @@ namespace ANSH.Common.HTTP {
         #endregion
 
         #region POST
+
         /// <summary>
         /// POST请求
         /// </summary>
@@ -56,11 +58,11 @@ namespace ANSH.Common.HTTP {
         /// <param name="name">HTTP内容的名称</param>
         /// <param name="filename">HTTP内容文件名</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static HttpResponseMessage PostMultipartFormData (Uri url, byte[] param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
-            return PostMultipartFormDataAsync (url, param, name, filename, headers, autDecom, x509cert).Result;
+        public static HttpResponseMessage PostFile (Uri url, byte[] param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+            return PostFileAsync (url, param, name, filename, headers, autDecom, x509cert).Result;
         }
 
         /// <summary>
@@ -71,12 +73,12 @@ namespace ANSH.Common.HTTP {
         /// <param name="name">HTTP内容的名称</param>
         /// <param name="filename">HTTP内容文件名</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static async Task<HttpResponseMessage> PostMultipartFormDataAsync (Uri url, byte[] param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+        public static async Task<HttpResponseMessage> PostFileAsync (Uri url, byte[] param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
             using (MemoryStream stream = new MemoryStream (param)) {
-                return await PostMultipartFormDataAsync (url, stream, name, filename, headers, autDecom, x509cert);
+                return await PostFileAsync (url, stream, name, filename, headers, autDecom, x509cert);
             }
         }
 
@@ -88,11 +90,11 @@ namespace ANSH.Common.HTTP {
         /// <param name="name">HTTP内容的名称</param>
         /// <param name="filename">HTTP内容文件名</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static HttpResponseMessage PostMultipartFormData (Uri url, Stream param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
-            return PostMultipartFormDataAsync (url, param, name, filename, headers, autDecom, x509cert).Result;
+        public static HttpResponseMessage PostFile (Uri url, Stream param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+            return PostFileAsync (url, param, name, filename, headers, autDecom, x509cert).Result;
         }
 
         /// <summary>
@@ -103,21 +105,36 @@ namespace ANSH.Common.HTTP {
         /// <param name="name">HTTP内容的名称</param>
         /// <param name="filename">HTTP内容文件名</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static async Task<HttpResponseMessage> PostMultipartFormDataAsync (Uri url, Stream param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+        public static async Task<HttpResponseMessage> PostFileAsync (Uri url, Stream param, string name, string filename, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+            using (MultipartFormDataContent content = new MultipartFormDataContent ()) {
+                using (StreamContent file = new StreamContent (param)) {
+                    content.Add (file, name, filename);
+                    return await PostMultipartFormDataAsync (url, content, headers, autDecom, x509cert);
+                }
+            }
+        }
+
+        /// <summary>
+        /// POST请求
+        /// </summary>
+        /// <param name="url">请求地址</param>
+        /// <param name="content">POST内容</param>
+        /// <param name="autDecom">文件压缩解压编码格式</param>
+        /// <param name="headers">默认标头</param>
+        /// <param name="x509cert">安全证书</param>
+        /// <returns>返回请求页面响应内容</returns>
+        public static async Task<HttpResponseMessage> PostMultipartFormDataAsync (Uri url, MultipartFormDataContent content, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+            if (content is null) {
+                throw new ArgumentNullException ("$param值不能为空。");
+            }
             using (HttpClientHandler handler = new HttpClientHandler ()) {
                 CreateHandlerDecompressionMethods (handler, autDecom);
                 CreateHandlerX509 (handler, x509cert);
                 using (HttpClient http = handler == null ? new HttpClient () : new HttpClient (handler)) {
-                    using (MultipartFormDataContent file = new MultipartFormDataContent ()) {
-                        using (StreamContent content = new StreamContent (param)) {
-                            AddHeaders (http, headers);
-                            file.Add (content, name, filename);
-                            return await http.PostAsync (url, file);
-                        }
-                    }
+                    return await http.PostAsync (url, content);
                 }
             }
         }
@@ -127,7 +144,7 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="param">POST内容</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
@@ -140,7 +157,7 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="param">POST内容</param>
-        /// <param name="headers">标头</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
@@ -160,14 +177,13 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="param">POST内容</param>
-        /// <param name="encoding">用于内容的编码（默认：utf-8）</param>
-        /// <param name="mediaType">要用于该内容的媒体（默认：application/json）</param>
-        /// <param name="headers">标头</param>
+        /// <param name="mediaType">要用于该内容的媒体（默认：application/json;charset=utf-8）</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static HttpResponseMessage Post (Uri url, string param, string mediaType, Encoding encoding, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
-            return PostAsync (url, param, mediaType, encoding, headers, autDecom, x509cert).Result;
+        public static HttpResponseMessage Post (Uri url, string param, MediaTypeHeaderValue mediaType, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+            return PostAsync (url, param, mediaType, headers, autDecom, x509cert).Result;
         }
 
         /// <summary>
@@ -175,19 +191,18 @@ namespace ANSH.Common.HTTP {
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="param">POST内容</param>
-        /// <param name="encoding">用于内容的编码（默认：utf-8）</param>
-        /// <param name="mediaType">要用于该内容的媒体（默认：application/json）</param>
-        /// <param name="headers">标头</param>
+        /// <param name="mediaType">要用于该内容的媒体（默认：application/json;charset=utf-8）</param>
+        /// <param name="headers">默认标头</param>
         /// <param name="autDecom">文件压缩解压编码格式</param>
         /// <param name="x509cert">安全证书</param>
         /// <returns>返回请求页面响应内容</returns>
-        public static async Task<HttpResponseMessage> PostAsync (Uri url, string param, string mediaType, Encoding encoding, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
+        public static async Task<HttpResponseMessage> PostAsync (Uri url, string param, MediaTypeHeaderValue mediaType, Dictionary<string, string> headers = null, System.Net.DecompressionMethods autDecom = System.Net.DecompressionMethods.None, params X509Certificate[] x509cert) {
             using (HttpClientHandler handler = new HttpClientHandler ()) {
                 CreateHandlerDecompressionMethods (handler, autDecom);
                 CreateHandlerX509 (handler, x509cert);
                 using (HttpClient http = handler == null ? new HttpClient () : new HttpClient (handler)) {
                     AddHeaders (http, headers);
-                    return await http.PostAsync (url, new StringContent (param, encoding, mediaType));
+                    return await http.PostAsync (url, new StringContent (param, Encoding.GetEncoding (mediaType.CharSet), mediaType.MediaType));
                 }
             }
         }

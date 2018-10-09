@@ -76,7 +76,7 @@ namespace ANSH.Common.IO {
         /// <param name="file">文件名默认{DateTime.Now.ToString("yyyy-MM-dd")}.txt</param>
         /// <param name="path">保存地址默认{Directory.GetCurrentDirectory()}/logs/</param>
         static void Save (List<string> log_msg, string file, string path) {
-            Files.Save (path, file, string.Join ("\r\n", log_msg));
+            Files.AppendText (path, file, string.Join ("\r\n", log_msg));
         }
 
     }

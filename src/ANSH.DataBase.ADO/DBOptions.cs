@@ -64,9 +64,10 @@ namespace ANSH.DataBase.ADO {
         /// 事物保护
         /// </summary>
         /// <param name="Method">事物保护的方法</param>
-        public void ExecuteTransaction (Action Method) {
+        /// <param name="isolationLevel">隔离级别</param>
+        public void ExecuteTransaction (Action Method, IsolationLevel isolationLevel = IsolationLevel.RepeatableRead) {
             try {
-                _db_connection.BeginTransaction ();
+                _db_connection.BeginTransaction (isolationLevel);
                 Method ();
                 _db_connection.Commit ();
             } catch (Exception ex) {

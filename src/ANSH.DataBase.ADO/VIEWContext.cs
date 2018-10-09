@@ -15,14 +15,27 @@ namespace ANSH.DataBase.ADO {
     /// <typeparam name="TMODEL">表字段模型</typeparam>
     public abstract class VIEWContext<TMODEL> : ADODBContext
     where TMODEL : class, new () {
+        /// <summary>
+        /// 获取满足条件的数量
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <returns>返回满足条件的数量</returns>
+        public virtual int GetCount (Action<TMODEL> where) {
+            var Twheres = new TMODEL ();
+            where?.Invoke (Twheres);
+            var db_where = ConvertWHERE (Twheres, out TableInfo tbinfo);
+            string Tsql = CreateSelectCountTSQL (tbinfo, db_where);
+            logger?.LogDebug (Tsql);
+            return (int) base.server_connection.ExecuteSQLScalar (Tsql.ToString (), db_where.Values.ToList ());
+        }
 
         /// <summary>
         /// 获取满足条件的第一个模型
         /// </summary>
-        /// <param name="action">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <returns>返回满足条件的第一个模型</returns>
-        public virtual TMODEL GetModel (Action<TMODEL> action) {
-            var result = GetList (action);
+        public virtual TMODEL GetModel (Action<TMODEL> where) {
+            var result = GetList (where);
             if (result?.Count > 0) {
                 return result[0];
             }
@@ -32,10 +45,10 @@ namespace ANSH.DataBase.ADO {
         /// <summary>
         /// 获取满足条件的第一个模型
         /// </summary>
-        /// <param name="wheres">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <returns>返回满足条件的第一个模型</returns>
-        public virtual TMODEL GetModel (TMODEL wheres) {
-            var result = GetList (wheres);
+        public virtual TMODEL GetModel (TMODEL where) {
+            var result = GetList (where);
             if (result?.Count > 0) {
                 return result[0];
             }
@@ -45,23 +58,23 @@ namespace ANSH.DataBase.ADO {
         /// <summary>
         /// 获取满足条件的所有模型
         /// </summary>
-        /// <param name="action">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <param name="orderby">排序</param>
         /// <returns>返回满足条件的所有模型</returns>
-        public virtual List<TMODEL> GetList (Action<TMODEL> action, params string[] orderby) {
-            var wheres = new TMODEL ();
-            action?.Invoke (wheres);
-            return GetList (wheres, orderby);
+        public virtual List<TMODEL> GetList (Action<TMODEL> where, params string[] orderby) {
+            var Twheres = new TMODEL ();
+            where?.Invoke (Twheres);
+            return GetList (Twheres, orderby);
         }
 
         /// <summary>
         /// 获取满足条件的所有模型
         /// </summary>
-        /// <param name="wheres">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <param name="orderby">排序</param>
         /// <returns>返回满足条件的所有模型</returns>
-        public virtual List<TMODEL> GetList (TMODEL wheres, params string[] orderby) {
-            var db_where = ConvertWHERE (wheres, out TableInfo tbinfo);
+        public virtual List<TMODEL> GetList (TMODEL where, params string[] orderby) {
+            var db_where = ConvertWHERE (where, out TableInfo tbinfo);
             string Tsql = CreateSelectTSQL (tbinfo, db_where, orderby);
             logger?.LogDebug (Tsql);
             return DataTableToList (base.server_connection.ExecuteSQLQuery (Tsql.ToString (), db_where.Values.ToList ()));
@@ -71,7 +84,7 @@ namespace ANSH.DataBase.ADO {
         /// 获取满足条件的模型
         /// <para>分页</para>
         /// </summary>
-        /// <param name="action">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <param name="pageIndex">当前页数</param>
         /// <param name="pageSize">每页显示条数</param>
         /// <param name="datacount">满足指定条件数据总条数</param>
@@ -79,17 +92,17 @@ namespace ANSH.DataBase.ADO {
         /// <param name="hasnext">是否含有下一页</param>
         /// <param name="orderby">排序</param>
         /// <returns>返回满足条件的模型</returns>
-        public virtual List<TMODEL> GetList (out int datacount, out int pagecount, out bool hasnext, Action<TMODEL> action, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
-            var wheres = new TMODEL ();
-            action?.Invoke (wheres);
-            return GetList (out datacount, out pagecount, out hasnext, wheres, pageIndex, pageSize, orderby);
+        public virtual List<TMODEL> GetList (out int datacount, out int pagecount, out bool hasnext, Action<TMODEL> where, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
+            var Twheres = new TMODEL ();
+            where?.Invoke (Twheres);
+            return GetList (out datacount, out pagecount, out hasnext, Twheres, pageIndex, pageSize, orderby);
         }
 
         /// <summary>
         /// 获取满足条件的模型
         /// <para>分页</para>
         /// </summary>
-        /// <param name="wheres">查询条件</param>
+        /// <param name="where">查询条件</param>
         /// <param name="pageIndex">当前页数</param>
         /// <param name="pageSize">每页显示条数</param>
         /// <param name="datacount">满足指定条件数据总条数</param>
@@ -97,8 +110,8 @@ namespace ANSH.DataBase.ADO {
         /// <param name="hasnext">是否含有下一页</param>
         /// <param name="orderby">排序</param>
         /// <returns>返回满足条件的模型</returns>
-        public virtual List<TMODEL> GetList (out int datacount, out int pagecount, out bool hasnext, TMODEL wheres, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
-            var db_where = ConvertWHERE (wheres, out TableInfo tbinfo);
+        public virtual List<TMODEL> GetList (out int datacount, out int pagecount, out bool hasnext, TMODEL where, int pageIndex = 1, int pageSize = 20, params string[] orderby) {
+            var db_where = ConvertWHERE (where, out TableInfo tbinfo);
             string Tsql = CreatePageTSQL (tbinfo, db_where, out DBParameters output, pageIndex, pageSize, orderby);
             logger?.LogDebug (Tsql);
             List<DBParameters> dbparamses = new List<DBParameters> ();
@@ -303,6 +316,14 @@ namespace ANSH.DataBase.ADO {
         /// <param name="orderby">排序</param>
         /// <returns>Select语句</returns>
         public abstract string CreateSelectTSQL (TableInfo tbinfo, Dictionary<string, DBParameters> whereparameters, params string[] orderby);
+
+        /// <summary>
+        /// 构建Select Count 语句
+        /// </summary>
+        /// <param name="tbinfo">表信息</param>
+        /// <param name="whereparameters">条件参数</param>
+        /// <returns>Select Count 语句</returns>
+        public abstract string CreateSelectCountTSQL (TableInfo tbinfo, Dictionary<string, DBParameters> whereparameters);
 
         /// <summary>
         /// 构建Page语句

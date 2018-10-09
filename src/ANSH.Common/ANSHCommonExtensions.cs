@@ -61,6 +61,56 @@ public static class ANSHCommonExtensions {
     }
     #endregion
 
+    #region System.Double
+    /// <summary>
+    /// 将此实例的值转换为 System.Double。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
+    /// <returns>与当前实例值对应的 System.Double</returns>
+    public static double ToDouble (this string value, double? default_value = null) {
+        return value.IsDouble (out double result) ?
+            result :
+            (
+                default_value.HasValue ?
+                default_value.Value :
+                throw new FormatException ("转换类型失败")
+            );
+    }
+
+    /// <summary>
+    /// 将此实例的值转换为 System.Double。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
+    /// <returns>与当前实例值对应的 System.Double</returns>
+    public static double ToDouble (this string value, double default_value) {
+        return value.IsDouble (out double result) ? result : default_value;
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.Double。 
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDouble (this string value) {
+        return value.IsDouble (out _);
+    }
+
+    /// <summary>
+    /// 判断此实例的值是否可转换为 System.Double。
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
+    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
+    public static bool IsDouble (this string value, out double result) {
+        bool is_parse = double.TryParse (value, out double parse_result);
+        result = is_parse ? parse_result : default (double);
+        return is_parse;
+    }
+    #endregion
+
     #region System.Enum
     /// <summary>
     /// 将此实例的值转换为指定的 System.Enum
@@ -258,8 +308,8 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <param name="result">转换成功返回对应值，失败返回默认值</param>
-    /// <param name="upperlimit">实例值所在时间范围上限。</param>
     /// <param name="lowerlimit">实例值所在时间范围下限。</param>
+    /// <param name="upperlimit">实例值所在时间范围上限。</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
     public static bool IsDateTime (this string value, out DateTime result, DateTime lowerlimit, DateTime upperlimit) {
         return value.IsDateTime (out result) && lowerlimit <= result && result <= upperlimit;
@@ -271,8 +321,8 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <param name="result">转换成功返回对应值，失败返回默认值</param>
     /// <param name="format">指定DateTime转换格式。</param>
-    /// <param name="upperlimit">实例值所在时间范围上限。</param>
     /// <param name="lowerlimit">实例值所在时间范围下限。</param>
+    /// <param name="upperlimit">实例值所在时间范围上限。</param>
     /// <returns>可转换，则为 true；不可转换则为 false。</returns>
     public static bool IsDateTime (this string value, out DateTime result, string format, DateTime lowerlimit, DateTime upperlimit) {
         return value.IsDateTime (out result, format) && value.IsDateTime (out _, lowerlimit, upperlimit);
@@ -561,6 +611,43 @@ public static class ANSHCommonExtensions {
     }
     #endregion
 
+    #region HMACSHA1加密
+    /// <summary>
+    /// HMACSHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="key">密钥参数</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string HMACSHA1Encryp (this string value, string key) {
+        return ASCIIEncoding.UTF8.GetBytes (value).HMACSHA1Encryp (key);
+    }
+
+    /// <summary>
+    /// HMACSHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="key">密钥参数</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string HMACSHA1Encryp (this byte[] value, string key) {
+        byte[] tmpHash = new HMACSHA1 (ASCIIEncoding.UTF8.GetBytes (key)).ComputeHash (value);
+        StringBuilder hmacsha1 = new StringBuilder ();
+        foreach (byte bt in tmpHash) {
+            hmacsha1.Append (bt.ToString ("x2"));
+        }
+        return hmacsha1.ToString ();
+    }
+
+    /// <summary>
+    /// SHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="key">密钥参数</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static string HMACSHA1Encryp (this Stream value, string key) {
+        return value.ToByte ().HMACSHA1Encryp (key);
+    }
+    #endregion
+
     #region DesEncrypt
 
     /// <summary>
@@ -705,15 +792,43 @@ public static class ANSHCommonExtensions {
     }
     #endregion
 
+    /// <summary>
+    /// 将此实例的值格式化为Number（逗号分隔）
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <exception cref="System.FormatException">当此实例不是有效的Sytem.Int32时引发异常。</exception>
+    /// <returns>与当前实例值对应的Number</returns>
+    public static string FormatNumber (this string value) {
+        return value.ToInt ().FormatNumber ();
+    }
+    /// <summary>
+    /// 将此实例的值格式化为Number（逗号分隔）
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>与当前实例值对应的Number</returns>
+    public static string FormatNumber (this int value) {
+        return value >= 1000 ? string.Format ("{0:0,0}", value) : value.ToString ();
+    }
+
     #region 时间戳
     /// <summary>
     /// 将此实例值转换成时间戳
-    /// <para>时间戳:格林威治时间从1970年01月01日08时00分00秒起至现在的总秒数</para>
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns>返回时间戳值</returns>
-    public static long ToTimeStamp (this DateTime value) {
-        return (long) Math.Floor (value.Subtract (TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc), TimeZoneInfo.Local)).TotalSeconds);
+    public static double ToTimeStamp (this DateTime value) {
+        return value.Subtract (TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc), TimeZoneInfo.Local)).TotalSeconds;
+    }
+
+    /// <summary>
+    /// 将此时间戳实例值转换成时间
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>返回时间戳对应DateTime</returns>
+    public static DateTime ToTimeStamp (this double value) {
+        return TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (value), TimeZoneInfo.Local);
     }
 
     /// <summary>
@@ -723,9 +838,161 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <returns>返回时间戳对应DateTime</returns>
     public static DateTime ToTimeStamp (this long value) {
-        return TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (value), TimeZoneInfo.Local);
+        return ((double) value).ToTimeStamp ();
     }
 
+    /// <summary>
+    /// 将此时间戳实例值转换成时间
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>返回时间戳对应DateTime</returns>
+    public static DateTime ToTimeStamp (this string value) {
+        return value.ToDouble ().ToTimeStamp ();
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this double value) {
+        return value.IsTimeStamp (new DateTime (1753, 1, 1, 0, 0, 0), new DateTime (9999, 12, 31, 11, 59, 59));
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this double value, out DateTime timestamp) {
+        return value.IsTimeStamp (new DateTime (1753, 1, 1, 0, 0, 0), new DateTime (9999, 12, 31, 11, 59, 59), out timestamp);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this double value, DateTime start, DateTime end) {
+        double lowerlimit = start.ToTimeStamp (), upperlimit = end.ToTimeStamp ();
+        return lowerlimit <= value && value <= upperlimit;
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this double value, DateTime start, DateTime end, out DateTime timestamp) {
+        bool result = value.IsTimeStamp (start, end);
+        timestamp = result?value.ToTimeStamp () : default (DateTime);
+        return result;
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this long value) {
+        return value.IsTimeStamp (out _);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this long value, out DateTime timestamp) {
+        return ((double) value).IsTimeStamp (out timestamp);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this long value, DateTime start, DateTime end) {
+        return value.IsTimeStamp (start, end, out _);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this long value, DateTime start, DateTime end, out DateTime timestamp) {
+        return ((double) value).IsTimeStamp (start, end, out timestamp);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this string value) {
+        return value.IsTimeStamp (out _);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this string value, out DateTime timestamp) {
+        timestamp = default (DateTime);
+        return value.IsDouble (out double _double) && _double.IsTimeStamp (out timestamp);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this string value, DateTime start, DateTime end) {
+        return value.IsTimeStamp (start, end, out _);
+    }
+
+    /// <summary>
+    /// 判断此实例是否可以转成成时间戳
+    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="start">时间范围起始</param>
+    /// <param name="end">时间范围结束</param>
+    /// <param name="timestamp">成功：转换成对应的时间，失败为默认时间</param>
+    /// <returns>是否可以转换成时间戳（时间范围1753-1-1 0:0:0至9999-12-31 11:59:59）</returns>
+    public static bool IsTimeStamp (this string value, DateTime start, DateTime end, out DateTime timestamp) {
+        timestamp = default (DateTime);
+        return value.IsDouble (out double _double) && _double.IsTimeStamp (start, end, out timestamp);
+    }
     #endregion
 
     #region List<T>
@@ -794,4 +1061,11 @@ public static class ANSHCommonExtensions {
         }
         return true;
     }
+
+    /// <summary>
+    /// 根据虚拟路径获取物理路径
+    /// </summary>
+    /// <param name="value">虚拟路径</param>
+    /// <returns>物理路径</returns>
+    public static string ToPhysicalPathBeginRoot (this string value) => $"{Directory.GetCurrentDirectory().TrimEnd('/', '\\')}{value?.TrimStart('/', '\\') ?? string.Empty}";
 }

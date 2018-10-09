@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +27,7 @@ namespace ANSH.API {
         /// <param name="APIVersion">api版本号</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>api请求完整地址</returns>
-        protected virtual Uri CreateGETUrl (string APIDoman, string APIName, string APIVersion, string accessToken) {
-            return CreatePOSTUrl (APIDoman, APIName, APIVersion, accessToken);
-        }
+        protected virtual Uri CreateGETUrl (string APIDoman, string APIName, string APIVersion, string accessToken) => CreatePOSTUrl (APIDoman, APIName, APIVersion, accessToken);
 
         /// <summary>
         /// 获取POST请求地址
@@ -38,9 +37,7 @@ namespace ANSH.API {
         /// <param name="APIVersion">api版本号</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>api请求完整地址</returns>
-        protected virtual Uri CreatePOSTUrl (string APIDoman, string APIName, string APIVersion, string accessToken) {
-            return new Uri ($"{APIDoman?.TrimEnd('/')}/{APIName?.TrimEnd('/')}/?APIVersion={APIVersion}&access_token={accessToken}");
-        }
+        protected virtual Uri CreatePOSTUrl (string APIDoman, string APIName, string APIVersion, string accessToken) => new Uri ($"{APIDoman?.TrimEnd('/')}/{APIName?.TrimEnd('/')}/?APIVersion={APIVersion}&access_token={accessToken}");
 
         /// <summary>
         /// 创建GET请求URL参数
@@ -67,10 +64,27 @@ namespace ANSH.API {
         /// <param name="APIDoman">api域名地址</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>api请求完整地址</returns>
+        protected virtual string CreatePOSTArrayParameter<TResponse, TMODELRequest, TModelResponse> (POSTArrayRequest<TResponse, TMODELRequest, TModelResponse> request, string APIDoman, string accessToken)
+        where TResponse : POSTArrayResponse<TModelResponse>
+            where TMODELRequest : POSTArrayRequestModel
+        where TModelResponse : POSTArrayResponseModel {
+            return request.ToJson ();
+        }
+
+        /// <summary>
+        /// 创建POST请求Body参数
+        /// </summary>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <param name="request">api请求参数</param>
+        /// <param name="APIDoman">api域名地址</param>
+        /// <param name="accessToken">令牌值</param>
+        /// <returns>api请求完整地址</returns>
         protected virtual string CreatePOSTParameter<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string APIDoman, string accessToken)
         where TResponse : POSTResponse<TModelResponse>
-            where TMODELRequest : POSTRequestModel
-        where TModelResponse : POSTResponseModel {
+            where TMODELRequest : class
+        where TModelResponse : class {
             return request.ToJson ();
         }
 
@@ -117,16 +131,48 @@ namespace ANSH.API {
         /// <param name="request">请求参数</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>响应参数</returns>
-        public async Task<TResponse> Execute<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
+        public async Task<TResponse> ExecuteAsync<TResponse, TMODELRequest, TModelResponse> (POSTArrayRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
+        where TResponse : POSTArrayResponse<TModelResponse>
+            where TMODELRequest : POSTArrayRequestModel
+        where TModelResponse : POSTArrayResponseModel {
+            var _accessToken = accessToken??AccessToken;
+            Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
+            var request_json = CreatePOSTArrayParameter (request, APIDoman, _accessToken);
+            var httpmsg_response = await HTTPClient.PostAsync (url, request_json, MediaTypeHeaderValue.Parse ("application/json;charset=utf-8"));
+            string response = await httpmsg_response.Content.ReadAsStringAsync ();
+
+            try {
+                return response.ToJsonObj<TResponse> ();
+            } catch (Newtonsoft.Json.JsonReaderException) {
+                throw new Newtonsoft.Json.JsonReaderException ($"未识别的JSON字符串：{response}");
+            }
+        }
+
+        /// <summary>
+        /// 执行POST请求
+        /// </summary>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <param name="request">请求参数</param>
+        /// <param name="accessToken">令牌值</param>
+        /// <returns>响应参数</returns>
+        public async Task<TResponse> ExecuteAsync<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
         where TResponse : POSTResponse<TModelResponse>
-            where TMODELRequest : POSTRequestModel
-        where TModelResponse : POSTResponseModel {
+            where TMODELRequest : class
+        where TModelResponse : class {
             var _accessToken = accessToken??AccessToken;
             Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
             var request_json = CreatePOSTParameter (request, APIDoman, _accessToken);
-            var httpmsg_response = await HTTPClient.PostAsync (url, request_json, "application/json;charset=utf-8", Encoding.UTF8);
+#if DEBUG
+            Console.WriteLine ($"HTTPPOST：{url.AbsoluteUri}");
+            Console.WriteLine ($"Body：{request_json}");
+#endif
+            var httpmsg_response = await HTTPClient.PostAsync (url, request_json, MediaTypeHeaderValue.Parse ("application/json;charset=utf-8"));
             string response = await httpmsg_response.Content.ReadAsStringAsync ();
-
+#if DEBUG
+            Console.WriteLine ($"ResultBody：{response}");
+#endif
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {
@@ -141,23 +187,69 @@ namespace ANSH.API {
         /// <param name="request">请求参数</param>
         /// <param name="accessToken">令牌值</param>
         /// <returns>响应参数</returns>
-        public async Task<TResponse> Execute<TResponse> (GETRequest<TResponse> request, string accessToken = null)
+        public async Task<TResponse> ExecuteAsync<TResponse> (GETRequest<TResponse> request, string accessToken = null)
         where TResponse : BaseResponse {
             var _accessToken = accessToken??AccessToken;
-            Uri uri = CreateGETUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
+            Uri base_uri = CreateGETUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
 
-            if (!string.IsNullOrWhiteSpace (uri?.Query)) {
-                throw new Exception ($"GET请求地址应保证不带任何参数，错误地址：{uri.AbsolutePath}");
-            }
-
-            var httpmsg_response = await HTTPClient.GetAsync (new Uri ($"{uri.AbsoluteUri}?{ CreateGETParameter (request, APIDoman, _accessToken)}"));
+            var get_url = new Uri ($"{base_uri.AbsoluteUri.TrimEnd('/','\\')}{(string.IsNullOrWhiteSpace (base_uri?.Query) ? "?" : "&")}{ CreateGETParameter (request, APIDoman, _accessToken)}");
+#if DEBUG
+            Console.WriteLine ($"HTTPGET：{get_url.AbsoluteUri}");
+#endif
+            var httpmsg_response = await HTTPClient.GetAsync (get_url);
             string response = await httpmsg_response.Content.ReadAsStringAsync ();
-
+#if DEBUG
+            Console.WriteLine ($"ResultBody：{response}");
+#endif
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {
                 throw new Newtonsoft.Json.JsonReaderException ($"未识别的JSON字符串：{response}");
             }
+        }
+
+        /// <summary>
+        /// 执行POST请求
+        /// </summary>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <param name="request">请求参数</param>
+        /// <param name="accessToken">令牌值</param>
+        /// <returns>响应参数</returns>
+        public TResponse Execute<TResponse, TMODELRequest, TModelResponse> (POSTArrayRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
+        where TResponse : POSTArrayResponse<TModelResponse>
+            where TMODELRequest : POSTArrayRequestModel
+        where TModelResponse : POSTArrayResponseModel {
+            return ExecuteAsync (request, accessToken).Result;
+        }
+
+        /// <summary>
+        /// 执行POST请求
+        /// </summary>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <param name="request">请求参数</param>
+        /// <param name="accessToken">令牌值</param>
+        /// <returns>响应参数</returns>
+        public TResponse Execute<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
+        where TResponse : POSTResponse<TModelResponse>
+            where TMODELRequest : class
+        where TModelResponse : class {
+            return ExecuteAsync (request, accessToken).Result;
+        }
+
+        /// <summary>
+        /// 执行GET请求
+        /// </summary>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <param name="request">请求参数</param>
+        /// <param name="accessToken">令牌值</param>
+        /// <returns>响应参数</returns>
+        public TResponse Execute<TResponse> (GETRequest<TResponse> request, string accessToken = null)
+        where TResponse : BaseResponse {
+            return ExecuteAsync (request, accessToken).Result;
         }
     }
 }
