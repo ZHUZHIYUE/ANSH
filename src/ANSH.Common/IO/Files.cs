@@ -58,6 +58,7 @@ namespace ANSH.Common.IO {
         /// <param name="filemodel">文件模式</param>
         public static async Task SaveAsync (string path, string filename, Stream file, FileMode filemodel = FileMode.Create) {
             CreateDirectory (path);
+            if (file.CanSeek) { file.Seek (0, SeekOrigin.Begin); }
             using (var fileStream = new FileStream ($"{path}/{filename}", filemodel)) {
                 await file.CopyToAsync (fileStream);
             }

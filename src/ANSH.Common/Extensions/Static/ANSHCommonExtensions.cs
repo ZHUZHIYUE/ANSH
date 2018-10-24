@@ -10,57 +10,6 @@ using System.Text;
 /// 拓展类方法
 /// </summary>
 public static class ANSHCommonExtensions {
-
-    #region System.Int32
-    /// <summary>
-    /// 将此实例的值转换为 System.Int32。
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
-    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
-    /// <returns>与当前实例值对应的 System.Int32</returns>
-    public static int ToInt (this string value, int? default_value = null) {
-        return value.IsInt (out int result) ?
-            result :
-            (
-                default_value.HasValue ?
-                default_value.Value :
-                throw new FormatException ("转换类型失败")
-            );
-    }
-
-    /// <summary>
-    /// 将此实例的值转换为 System.Int32。
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
-    /// <returns>与当前实例值对应的 System.Int32</returns>
-    public static int ToInt (this string value, int default_value) {
-        return value.IsInt (out int result) ? result : default_value;
-    }
-
-    /// <summary>
-    /// 判断此实例的值是否可转换为 System.Int32。 
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsInt (this string value) {
-        return value.IsInt (out _);
-    }
-
-    /// <summary>
-    /// 判断此实例的值是否可转换为 System.Int32。
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="result">转换成功返回对应值，失败返回默认值</param>
-    /// <returns>可转换，则为 true；不可转换则为 false。</returns>
-    public static bool IsInt (this string value, out int result) {
-        bool is_parse = int.TryParse (value, out int parse_result);
-        result = is_parse ? parse_result : default (int);
-        return is_parse;
-    }
-    #endregion
-
     #region System.Double
     /// <summary>
     /// 将此实例的值转换为 System.Double。
@@ -459,6 +408,29 @@ public static class ANSHCommonExtensions {
 
     #endregion
 
+    #region ToX2
+    /// <summary>
+    /// 将此实例值转换为16进制字符串
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns> 与此实例值字符串表示形式，以16进制字符串表示</returns>
+    public static string ToX2String (this byte[] value) {
+        StringBuilder x2 = new StringBuilder ();
+        foreach (byte bt in value) {
+            x2.Append (bt.ToX2String ());
+        }
+        return x2.ToString ();
+    }
+
+    /// <summary>
+    /// 将此实例值转换为16进制字符串
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns> 与此实例值字符串表示形式，以16进制字符串表示</returns>
+    public static string ToX2String (this byte value) => value.ToString ("x2");
+
+    #endregion
+
     #region System.Byte[]
     /// <summary>
     /// 将此实例的值转换为 System.Byte[]。
@@ -549,32 +521,20 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns>MD5加密数据值</returns>
-    public static string MD5Encryp (this string value) {
-        return ASCIIEncoding.UTF8.GetBytes (value).MD5Encryp ();
-    }
+    public static byte[] MD5Encryp (this string value) => ASCIIEncoding.UTF8.GetBytes (value).MD5Encryp ();
 
     /// <summary>
     /// MD5加密
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns>MD5加密数据值</returns>
-    public static string MD5Encryp (this byte[] value) {
-        byte[] tmpHash = MD5.Create ().ComputeHash (value);
-        StringBuilder md5 = new StringBuilder ();
-        foreach (byte bt in tmpHash) {
-            md5.Append (bt.ToString ("x2"));
-        }
-        return md5.ToString ();
-    }
-
+    public static byte[] MD5Encryp (this byte[] value) => MD5.Create ().ComputeHash (value);
     /// <summary>
     /// MD5加密
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns>MD5加密数据值</returns>
-    public static string MD5Encryp (this Stream value) {
-        return value.ToByte ().MD5Encryp ();
-    }
+    public static byte[] MD5Encryp (this Stream value) => value.ToByte ().MD5Encryp ();
     #endregion
 
     #region SHA1
@@ -608,43 +568,6 @@ public static class ANSHCommonExtensions {
     /// <returns>SHA1加密数据值</returns>
     public static string SHA1Encryp (this Stream value) {
         return value.ToByte ().SHA1Encryp ();
-    }
-    #endregion
-
-    #region HMACSHA1加密
-    /// <summary>
-    /// HMACSHA1加密
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="key">密钥参数</param>
-    /// <returns>SHA1加密数据值</returns>
-    public static string HMACSHA1Encryp (this string value, string key) {
-        return ASCIIEncoding.UTF8.GetBytes (value).HMACSHA1Encryp (key);
-    }
-
-    /// <summary>
-    /// HMACSHA1加密
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="key">密钥参数</param>
-    /// <returns>SHA1加密数据值</returns>
-    public static string HMACSHA1Encryp (this byte[] value, string key) {
-        byte[] tmpHash = new HMACSHA1 (ASCIIEncoding.UTF8.GetBytes (key)).ComputeHash (value);
-        StringBuilder hmacsha1 = new StringBuilder ();
-        foreach (byte bt in tmpHash) {
-            hmacsha1.Append (bt.ToString ("x2"));
-        }
-        return hmacsha1.ToString ();
-    }
-
-    /// <summary>
-    /// SHA1加密
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <param name="key">密钥参数</param>
-    /// <returns>SHA1加密数据值</returns>
-    public static string HMACSHA1Encryp (this Stream value, string key) {
-        return value.ToByte ().HMACSHA1Encryp (key);
     }
     #endregion
 
