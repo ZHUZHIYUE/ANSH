@@ -164,15 +164,8 @@ namespace ANSH.API {
             var _accessToken = accessToken??AccessToken;
             Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
             var request_json = CreatePOSTParameter (request, APIDoman, _accessToken);
-#if DEBUG
-            Console.WriteLine ($"HTTPPOST：{url.AbsoluteUri}");
-            Console.WriteLine ($"Body：{request_json}");
-#endif
             var httpmsg_response = await HTTPClient.PostAsync (url, request_json, MediaTypeHeaderValue.Parse ("application/json;charset=utf-8"));
             string response = await httpmsg_response.Content.ReadAsStringAsync ();
-#if DEBUG
-            Console.WriteLine ($"ResultBody：{response}");
-#endif
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {
@@ -193,14 +186,8 @@ namespace ANSH.API {
             Uri base_uri = CreateGETUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
 
             var get_url = new Uri ($"{base_uri.AbsoluteUri.TrimEnd('/','\\')}{(string.IsNullOrWhiteSpace (base_uri?.Query) ? "?" : "&")}{ CreateGETParameter (request, APIDoman, _accessToken)}");
-#if DEBUG
-            Console.WriteLine ($"HTTPGET：{get_url.AbsoluteUri}");
-#endif
             var httpmsg_response = await HTTPClient.GetAsync (get_url);
             string response = await httpmsg_response.Content.ReadAsStringAsync ();
-#if DEBUG
-            Console.WriteLine ($"ResultBody：{response}");
-#endif
             try {
                 return response.ToJsonObj<TResponse> ();
             } catch (Newtonsoft.Json.JsonReaderException) {

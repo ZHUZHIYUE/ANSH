@@ -40,11 +40,9 @@ namespace ANSH.DataBase.ADO {
             /// <summary>
             /// 修改指定数据
             /// </summary>
-            /// <param name="update">新的数据</param>
+            /// <param name="model">新的数据</param>
             /// <param name="action">查询条件</param>
-            public virtual void Update (Action<TMODEL> update, Action<TMODEL> action) {
-                var model = new TMODEL ();
-                update?.Invoke (model);
+            public virtual void Update (TMODEL model, Action<TMODEL> action) {
                 var wheres = new TMODEL ();
                 action?.Invoke (wheres);
                 var db_update = ConvertMODEL (model, out TableInfo tbinfo);
@@ -59,6 +57,17 @@ namespace ANSH.DataBase.ADO {
                 dbparamses.AddRange (db_where.Values.ToList ());
                 dbparamses.Remove (null);
                 base.server_connection.ExecuteSQLNonQuery (sql_update, dbparamses);
+            }
+
+            /// <summary>
+            /// 修改指定数据
+            /// </summary>
+            /// <param name="update">新的数据</param>
+            /// <param name="action">查询条件</param>
+            public virtual void Update (Action<TMODEL> update, Action<TMODEL> action) {
+                var model = new TMODEL ();
+                update?.Invoke (model);
+                Update (model, action);
             }
 
             /// <summary>

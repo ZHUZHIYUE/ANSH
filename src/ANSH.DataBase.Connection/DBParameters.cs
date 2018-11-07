@@ -34,12 +34,20 @@ namespace ANSH.DataBase.Connection {
         }
 
         /// <summary>
-        /// 参数类型
+        /// 参数属性
         /// </summary>
         /// <returns></returns>
         public ParameterDirection Direction {
             get;
             set;
         } = ParameterDirection.Input;
+
+        /// <summary>
+        /// 参数类型
+        /// </summary>
+        public DbType? DbType {
+            get;
+            set;
+        }
     }
 }

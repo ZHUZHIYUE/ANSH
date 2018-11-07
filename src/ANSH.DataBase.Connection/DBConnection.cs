@@ -174,6 +174,9 @@ namespace ANSH.DataBase.Connection {
                 dbparameter.Value = in_DBOutParameters.Value;
                 dbparameter.Size = in_DBOutParameters.Size ?? 0;
                 dbparameter.Direction = in_DBOutParameters.Direction;
+                if (in_DBOutParameters.DbType.HasValue) {
+                    dbparameter.DbType = in_DBOutParameters.DbType.Value;
+                }
                 cmd.Parameters.Add (dbparameter);
                 result.Add (dbparameter);
             }
