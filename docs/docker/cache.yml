@@ -1,0 +1,91 @@
+version: '3.6'
+
+services:
+  redis-master:
+    image: redis:5
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    networks:
+      swarms:
+        aliases:
+          - redis-master
+    volumes:
+      - redis.master.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+ 
+  redis-slave:
+    # /usr/local/etc/redis/redis.conf
+    # slaveof redis-master 6379
+    image: redis:5
+    command: /bin/sh -c './wait-for-it.sh redis-master:6379 && redis-server /usr/local/etc/redis/redis.conf'
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis-slave
+    volumes:
+      - redis.slave.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    configs:
+      - source: redis.slave.conf
+        target: /usr/local/etc/redis/redis.conf
+      - source: wait-for-it.sh
+        target: /data/wait-for-it.sh
+        mode: 0500
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == worker
+
+networks:
+  swarms:
+    external: true 
+
+
+volumes:
+  redis.master.data:
+    external: true
+  redis.slave.data:
+    external: true
+    
+configs:
+  wait-for-it.sh:
+    external: true
+  redis.slave.conf:
+    external: true
+

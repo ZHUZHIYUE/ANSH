@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
@@ -52,12 +54,12 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 修改指定实体
         /// </summary>
-        /// <param name="wheres">指定条件</param>
         /// <param name="entity">需要修改的项</param>
+        /// <param name="wheres">指定条件</param>
         public virtual void Update (Action<TEntity> entity, Expression<Func<TEntity, bool>> wheres = null) {
             Get (wheres, tracking : true).ToList ().ForEach ((item) => {
                 entity (item);
-                Ignore (item);
+                //Ignore (item);
                 DbEntity.Update (item);
             });
 
@@ -70,7 +72,7 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="wheres">指定条件</param>
         /// <param name="cascade">联级删除</param>
         public virtual void Delete (Expression<Func<TEntity, bool>> wheres = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> cascade = null) {
-            var iqueryable = Get (wheres);
+            var iqueryable = Get (wheres, tracking : true);
             if (cascade != null) iqueryable = cascade (iqueryable);
             DbEntity.RemoveRange (iqueryable);
             SaveChangesCoverage ();
@@ -81,15 +83,23 @@ namespace ANSH.DataBase.EFCore {
         /// <para>解决乐观并发冲突，用提交数据覆盖数据库数据</para>
         /// </summary>
         void SaveChangesCoverage () {
+            int repeat = 0;
             while (true) {
                 try {
                     base.SaveChanges ();
                     break;
                 } catch (DbUpdateConcurrencyException ex) {
                     foreach (var entry in ex.Entries) {
-                        if (entry is TEntity) {
+                        if (entry.Entity is TEntity) {
                             entry.OriginalValues.SetValues (entry.GetDatabaseValues ());
+                        } else {
+                            throw new NotSupportedException (
+                                "Don't know how to handle concurrency conflicts for " +
+                                entry.Metadata.Name);
                         }
+                    }
+                    if (repeat++ >= 10) {
+                        throw new ApplicationException ("尝试处理并发冲突次数超过10次。");
                     }
                 }
             }
@@ -100,15 +110,23 @@ namespace ANSH.DataBase.EFCore {
         /// <para>解决乐观并发冲突，重新加载数据库中的数据覆盖提交数据</para>
         /// </summary>
         void SaveChangesReload () {
+            int repeat = 0;
             while (true) {
                 try {
                     base.SaveChanges ();
                     break;
                 } catch (DbUpdateConcurrencyException ex) {
                     foreach (var entry in ex.Entries) {
-                        if (entry is TEntity) {
+                        if (entry.Entity is TEntity) {
                             ex.Entries.Single ().Reload ();
+                        } else {
+                            throw new NotSupportedException (
+                                "Don't know how to handle concurrency conflicts for " +
+                                entry.Metadata.Name);
                         }
+                    }
+                    if (repeat++ >= 10) {
+                        throw new ApplicationException ("尝试处理并发冲突次数超过10次。");
                     }
                 }
             }
@@ -118,10 +136,14 @@ namespace ANSH.DataBase.EFCore {
         /// 忽略null值
         /// </summary>
         /// <param name="entity">模型</param>
+        [Obsolete ("取消该方法", true)]
         public void Ignore (TEntity entity) {
             foreach (System.Reflection.PropertyInfo p in entity.GetType ().GetProperties ()) {
 
-                if (p.IsDefined (typeof (NavigationAttribute), true) || p.IsDefined (typeof (KeyAttribute))) {
+                if (p.IsDefined (typeof (RelationshipAttribute), true)) {
+                    continue;
+                }
+                if (p.IsDefined (typeof (KeyAttribute), true)) {
                     continue;
                 }
 
@@ -153,8 +175,8 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="t_sql">sql查询语句</param>
         /// <param name="DBParameters">sql查询参数</param>
         /// <returns>返回查询结果，该结果必须是当前实体对象</returns>
-        public virtual IQueryable<TEntity> SQLQuery (string t_sql, Dictionary<string, object> DBParameters = null) {
-            return DbEntity.FromSql (t_sql, DBParameters).AsNoTracking ();
+        public virtual IQueryable<TEntity> SQLQuery (string t_sql, List<Connection.DBParameters> DBParameters = null) {
+            return DbEntity.FromSql (t_sql, DBParameters?.Count == 0 ? null : DBParameters).AsNoTracking ();
         }
 
         /// <summary>
@@ -177,6 +199,31 @@ namespace ANSH.DataBase.EFCore {
         /// <returns>返回第一行的第一列</returns>
         public virtual object SQLScalar (string t_sql, List<Connection.DBParameters> DBParameters = null) {
             return DB_Connection.ExecuteSQLScalar (t_sql, DBParameters);
+        }
+
+        /// <summary>
+        /// 构建Page语句
+        /// </summary>
+        /// <param name="Tsql">查询表SQL</param>
+        /// <param name="orderby">排序</param>
+        /// <param name="output">输出参数</param>
+        /// <param name="pageIndex">第几页</param>
+        /// <param name="pageSize">每页多少条</param>
+        /// <returns>Page语句</returns>
+        public string CreatePageTSQL (string Tsql, string orderby, out DBParameters output, int pageIndex = 1, int pageSize = 20) {
+            string CountSql = $" SELECT @ROWSCOUNT=Count(*) FROM ({Tsql}) countpage";
+            string PageSql = $@"
+SELECT tbpage.* FROM ({Tsql}) tbpage
+ORDER BY {orderby}
+OFFSET {(pageIndex-1)*pageSize} ROWS
+FETCH NEXT {pageSize} ROWS ONLY ; {CountSql}";
+            output = new DBParameters () {
+                ParameterName = "ROWSCOUNT",
+                Size = 32,
+                Direction = System.Data.ParameterDirection.Output,
+                DbType = DbType.Int32
+            };
+            return PageSql.ToString ();
         }
     }
 }

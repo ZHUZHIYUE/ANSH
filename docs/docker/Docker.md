@@ -2,7 +2,7 @@
 Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化，容器是完全使用沙箱机制，相互之间不会有任何接口。
 ## 准备
 1. 为您的操作系统下载并安装[docker](https://docs.docker.com/)
-2. [设置镜像加速地址](#设置镜像加速地址)
+2. [设置镜像加速地址](#Docker-Daemon)
 ## 常用命令
 ### 查看镜像
 ```
@@ -107,11 +107,15 @@ $ docker exec -it gitlab gitlab-rake gitlab:backup:create
 ```
 $ docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=${文件名称}
 ```
-## 设置镜像加速地址
+## Docker-Daemon
 ```
-$ cd /etc/docker/daemon.json
-设置成
+$ vi /etc/docker/daemon.json
 {
-    "registry-mirrors": ["https://lbpwb5di.mirror.aliyuncs.com"]
+"insecure-registries":["192.168.1.89:5000"],
+"graph":"/opt/docker",
+"userland-proxy": false,
+"registry-mirrors": [
+    "https://lbpwb5di.mirror.aliyuncs.com"
+  ]
 }
 ```

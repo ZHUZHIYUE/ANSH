@@ -2,9 +2,9 @@ using System;
 namespace ANSH.DataBase.EFCore {
 
     /// <summary>
-    /// 导航
+    /// 关系
     /// </summary>
-    public class NavigationAttribute : Attribute {
+    public class RelationshipAttribute : Attribute {
 
     }
 }

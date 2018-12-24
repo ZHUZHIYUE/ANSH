@@ -1,0 +1,120 @@
+version: '3.6'
+
+services:
+  
+  rabbitmq-master:
+    image: docker.io/rabbitmq:3.7.8-management
+    hostname: rabbitmq-master
+    ports:
+      - target: 5672
+        published: 5672
+        protocol: tcp
+        mode: host
+      - target: 15672
+        published: 15672
+        protocol: tcp
+        mode: host
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=Bio*novo!
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=512MiB
+      - RABBITMQ_ERLANG_COOKIE=ESHTJIRLMPQTMHSHFLDH
+      - RABBITMQ_NODENAME=apicenter
+    networks: 
+      swarms:
+        aliases:
+          - rabbitmq-master
+    volumes:
+      - rabbitmq.master:/var/lib/rabbitmq
+      - rabbitmq.master.config:/etc/rabbitmq
+      - rabbitmq.master.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+          
+          
+  
+  rabbitmq-slave:
+    # 首次加入集群需要进入容器操作
+    # rabbitmqctl stop_app  \
+    # rabbitmqctl reset  \
+    # rabbitmqctl join_cluster apicenter@rabbitmq-master  \
+    # rabbitmqctl start_app  \
+    image: docker.io/rabbitmq:3.7.8-management
+    hostname: rabbitmq-slave
+    ports:
+      - target: 5672
+        published: 5672
+        protocol: tcp
+        mode: host
+      - target: 15672
+        published: 15672
+        protocol: tcp
+        mode: host
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=Bio*novo!
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=512MiB
+      - RABBITMQ_ERLANG_COOKIE=ESHTJIRLMPQTMHSHFLDH
+      - RABBITMQ_NODENAME=apicenter
+    networks: 
+      swarms:
+        aliases:
+          - rabbitmq-slave
+    volumes:
+      - rabbitmq.slave:/var/lib/rabbitmq
+      - rabbitmq.slave.config:/etc/rabbitmq
+      - rabbitmq.slave.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      endpoint_mode: dnsrr
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == worker
+          
+          
+
+
+networks:
+  swarms:
+    external: true 
+
+
+volumes:
+  rabbitmq.master:
+    external: true 
+  rabbitmq.master.data:
+    external: true 
+  rabbitmq.master.config:
+    external: true 
+  rabbitmq.slave:
+    external: true 
+  rabbitmq.slave.data:
+    external: true 
+  rabbitmq.slave.config:
+    external: true 

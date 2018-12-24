@@ -9,11 +9,14 @@ namespace ANSH.DataBase.EFCore.MySQL {
         /// <summary>
         /// 数据库链接
         /// </summary>
-        protected override void OnConfiguringsOptions (DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder
-                .UseLoggerFactory (Loggers)
+        protected override void OnConfiguringsOptions (DbContextOptionsBuilder OptionsBuilder) {
+            OptionsBuilder
                 .UseMySQL (DB_Connection.Connection)
                 .ConfigureWarnings (warnings => warnings.Throw (RelationalEventId.QueryClientEvaluationWarning));
+
+            if (Loggers != null) {
+                OptionsBuilder.UseLoggerFactory (Loggers);
+            }
         }
     }
 }

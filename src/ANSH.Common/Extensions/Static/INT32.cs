@@ -14,17 +14,11 @@ public static class ANSHCommonExtensionsINT32 {
     /// 将此实例的值转换为 System.Int32。
     /// </summary>
     /// <param name="value">当前实例值</param>
-    /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
-    /// <exception cref="System.FormatException">当此实例不是有效的System.Enum且<paramref name="default_value"/>为null时引发异常。</exception>
+    /// <exception cref="System.FormatException">当此实例不是有效的System.Int32时引发异常。</exception>
     /// <returns>与当前实例值对应的 System.Int32</returns>
-    public static int ToInt (this string value, int? default_value = null) {
+    public static int ToInt (this string value) {
         return value.IsInt (out int result) ?
-            result :
-            (
-                default_value.HasValue ?
-                default_value.Value :
-                throw new FormatException ("转换类型失败")
-            );
+            result : throw new FormatException ("转换类型失败");
     }
 
     /// <summary>

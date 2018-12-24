@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using ANSH.DataBase.Connection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace ANSH.DataBase.EFCore {
     /// <summary>
@@ -34,25 +34,44 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 数据库连接
         /// </summary>
-        public DBConnection DB_Connection {
-            get => _DB_Connection;
+        public DBConnection DB_Connection => _DB_Connection;
+
+        /// <summary>
+        /// 日志记录
+        /// </summary>
+        ILoggerFactory _Loggers {
+            get;
+            set;
         }
+        /// <summary>
+        /// 日志记录
+        /// </summary>
+        public ILoggerFactory Loggers => _Loggers;
 
         /// <summary>
         /// 使用数据库连接
         /// </summary>
         /// <param name="dbconnection">数据库连接对象</param>
-        public void UseConnection (DBConnection dbconnection) {
+        /// <param name="loggers">日志记录</param>
+        public void UseConnection (DBConnection dbconnection, ILoggerFactory loggers = null) {
             _DB_Connection = dbconnection;
+            _Loggers = loggers;
             UserTransaction ();
         }
 
         /// <summary>
         /// 共享事物保护
         /// </summary>
-        void UserTransaction () {
-            if (_DB_Connection.Transaction != null && base.Database.CurrentTransaction == null) {
-                base.Database.UseTransaction (_DB_Connection.Transaction);
+        public void UserTransaction () {
+            UserTransaction (DB_Connection.Transaction);
+        }
+
+        /// <summary>
+        /// 共享事物保护
+        /// </summary>
+        public void UserTransaction (DbTransaction transaction) {
+            if (transaction != null && base.Database.CurrentTransaction == null) {
+                base.Database.UseTransaction (transaction);
             }
         }
 
@@ -78,12 +97,12 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="Method">事物保护的方法</param>
         protected void ExecuteTransaction (Action Method) {
             try {
-                _DB_Connection.BeginTransaction ();
+                DB_Connection.BeginTransaction ();
                 UserTransaction ();
                 Method ();
-                _DB_Connection.Commit ();
+                DB_Connection.Commit ();
             } catch (Exception ex) {
-                _DB_Connection.Rollback ();
+                DB_Connection.Rollback ();
                 throw ex;
             }
         }
@@ -120,11 +139,5 @@ namespace ANSH.DataBase.EFCore {
             base.Dispose ();
             _dbContext?.ForEach (m => m.Dispose ());
         }
-
-        /// <summary>
-        /// 日志记录
-        /// </summary>
-        protected static readonly LoggerFactory Loggers
-            = new LoggerFactory (new [] { new ConsoleLoggerProvider ((_, __) => true, true) });
     }
 }

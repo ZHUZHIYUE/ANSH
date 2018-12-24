@@ -50,7 +50,7 @@ namespace ANSH.DataBase.Connection {
         /// 开启数据库事务
         /// </summary>
         /// <param name="isolationLevel">隔离级别</param>
-        public void BeginTransaction (IsolationLevel isolationLevel = IsolationLevel.RepeatableRead) {
+        public void BeginTransaction (IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) {
             if (TranCount == 0) {
                 if (_Connection?.State != ConnectionState.Open) {
                     Open ();

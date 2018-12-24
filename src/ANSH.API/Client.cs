@@ -83,7 +83,7 @@ namespace ANSH.API {
         /// <returns>api请求完整地址</returns>
         protected virtual string CreatePOSTParameter<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string APIDoman, string accessToken)
         where TResponse : POSTResponse<TModelResponse>
-            where TMODELRequest : class
+            where TMODELRequest : POSTRequestModel
         where TModelResponse : class {
             return request.ToJson ();
         }
@@ -159,7 +159,7 @@ namespace ANSH.API {
         /// <returns>响应参数</returns>
         public async Task<TResponse> ExecuteAsync<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
         where TResponse : POSTResponse<TModelResponse>
-            where TMODELRequest : class
+            where TMODELRequest : POSTRequestModel
         where TModelResponse : class {
             var _accessToken = accessToken??AccessToken;
             Uri url = CreatePOSTUrl (APIDoman, request.APIName, request.APIVersion, _accessToken);
@@ -222,7 +222,7 @@ namespace ANSH.API {
         /// <returns>响应参数</returns>
         public TResponse Execute<TResponse, TMODELRequest, TModelResponse> (POSTRequest<TResponse, TMODELRequest, TModelResponse> request, string accessToken = null)
         where TResponse : POSTResponse<TModelResponse>
-            where TMODELRequest : class
+            where TMODELRequest : POSTRequestModel
         where TModelResponse : class {
             return ExecuteAsync (request, accessToken).Result;
         }

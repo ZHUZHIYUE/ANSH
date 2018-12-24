@@ -39,13 +39,14 @@ namespace ANSH.Common.Threading {
         /// <param name="repeat_exe">当上一次未执行完成时，是否开始一次新的执行。</param>
         /// <param name="cancellationToken">Task取消</param>
         public static void ExecuteInterval (Action action, long interval, bool repeat_exe = false, CancellationToken cancellationToken = default (CancellationToken)) {
+            var ItemCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
             Task.Factory.StartNew (() => {
                 using (new Timer (param => {
                     Execute ((TimerParam) param, action);
                 }, new TimerParam () { Item_Guid = Guid.NewGuid (), Repeat_EXE = repeat_exe }, 0, interval)) {
-                    cancellationToken.WaitHandle.WaitOne ();
+                    ItemCancellationTokenSource.Token.WaitHandle.WaitOne ();
                 }
-            }, cancellationToken);
+            }, ItemCancellationTokenSource.Token);
         }
 
         /// <summary>

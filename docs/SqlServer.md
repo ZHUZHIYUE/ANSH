@@ -3,70 +3,72 @@
 ### 索引使用情况  
 ```
 USE [DataBase]
-SELECT
-	objects.name						AS 表名,
-	databases.name						AS 数据库名,
-	indexes.name						AS 索引名,
-	(
-		CASE indexes.type
-			WHEN 0 THEN N'堆'
-			WHEN 1 THEN N'聚集'
-			WHEN 2 THEN N'非聚集'
-			WHEN 3 THEN N'XML'
-			WHEN 4 THEN N'空间'
-			WHEN 5 THEN N'聚集列存储索引。 适用范围： SQL Server 2014 (12.x) 到 SQL Server 2017。'
-			WHEN 6 THEN N'非聚集列存储索引。 适用范围： SQL Server 2012 (11.x) 到 SQL Server 2017。'
-			WHEN 7 THEN N'非聚集哈希索引。 适用范围： SQL Server 2014 (12.x) 到 SQL Server 2017。'
-		END
-	)									AS 索引的类型,
-	partition_stats.row_count			AS 表行数,
-	stats.user_seeks					AS 用户索引查找次数,
-	stats.user_scans					AS 用户索引扫描次数,
-	stats.user_updates					AS 用户索引更新次数,
-	(
-		CASE indexes.is_unique
-			WHEN 1 THEN N'是'
-			WHEN 0 THEN N'否'
-		END
-	)									AS 索引是否唯一,
-	(
-		CASE indexes.is_unique_constraint
-			WHEN 1 THEN N'是'
-			WHEN 0 THEN N'否'
-		END
-	)									AS [索引是否为主键约束的一部分],
-	(
-		CASE indexes.is_unique_constraint
-			WHEN 1 THEN N'是'
-			WHEN 0 THEN N'否'
-		END
-	)									AS [索引是否为唯一约束的一部分],
-	(
-		CASE indexes.is_disabled
-			WHEN 1 THEN N'是'
-			WHEN 0 THEN N'否'
-		END
-	)									AS [是否禁用索引],
-	(
-		CASE indexes.auto_created
-			WHEN 1 THEN N'索引已通过自动优化'
-			WHEN 0 THEN N'索引由用户创建'
-		END
-	)									AS [索引创建]
-FROM
-	sys.dm_db_index_usage_stats stats
-	LEFT JOIN sys.objects objects ON stats.object_id = objects.object_id
-	LEFT JOIN sys.databases databases ON databases.database_id = stats.database_id
-	LEFT JOIN sys.indexes indexes ON indexes.index_id = stats.index_id 
-	AND stats.object_id = indexes.object_id
-	LEFT JOIN sys.dm_db_partition_stats partition_stats ON stats.object_id = partition_stats.object_id 
-	AND indexes.index_id = partition_stats.index_id 
+SELECT * FROM 
+(
+	SELECT
+		objects.name						AS 表名,
+		databases.name						AS 数据库名,
+		indexes.name						AS 索引名,
+		(
+			CASE indexes.type
+				WHEN 0 THEN N'堆'
+				WHEN 1 THEN N'聚集'
+				WHEN 2 THEN N'非聚集'
+				WHEN 3 THEN N'XML'
+				WHEN 4 THEN N'空间'
+				WHEN 5 THEN N'聚集列存储索引。 适用范围： SQL Server 2014 (12.x) 到 SQL Server 2017。'
+				WHEN 6 THEN N'非聚集列存储索引。 适用范围： SQL Server 2012 (11.x) 到 SQL Server 2017。'
+				WHEN 7 THEN N'非聚集哈希索引。 适用范围： SQL Server 2014 (12.x) 到 SQL Server 2017。'
+			END
+		)									AS 索引的类型,
+		partition_stats.row_count			AS 表行数,
+		stats.user_seeks					AS 用户索引查找次数,
+		stats.user_scans					AS 用户索引扫描次数,
+		stats.user_updates					AS 用户索引更新次数,
+		stats.user_seeks + stats.user_scans + stats.user_updates  AS 索引使用总数,
+		(
+			CASE indexes.is_unique
+				WHEN 1 THEN N'是'
+				WHEN 0 THEN N'否'
+			END
+		)									AS 索引是否唯一,
+		(
+			CASE indexes.is_unique_constraint
+				WHEN 1 THEN N'是'
+				WHEN 0 THEN N'否'
+			END
+		)									AS [索引是否为主键约束的一部分],
+		(
+			CASE indexes.is_unique_constraint
+				WHEN 1 THEN N'是'
+				WHEN 0 THEN N'否'
+			END
+		)									AS [索引是否为唯一约束的一部分],
+		(
+			CASE indexes.is_disabled
+				WHEN 1 THEN N'是'
+				WHEN 0 THEN N'否'
+			END
+		)									AS [是否禁用索引],
+		(
+			CASE indexes.auto_created
+				WHEN 1 THEN N'索引已通过自动优化'
+				WHEN 0 THEN N'索引由用户创建'
+			END
+		)									AS [索引创建]
+	FROM
+		sys.dm_db_index_usage_stats stats
+		LEFT JOIN sys.objects objects ON stats.object_id = objects.object_id
+		LEFT JOIN sys.databases databases ON databases.database_id = stats.database_id
+		LEFT JOIN sys.indexes indexes ON indexes.index_id = stats.index_id 
+		AND stats.object_id = indexes.object_id
+		LEFT JOIN sys.dm_db_partition_stats partition_stats ON stats.object_id = partition_stats.object_id 
+		AND indexes.index_id = partition_stats.index_id 
+)tb 
 WHERE
-	objects.name IS NOT NULL 
-	AND indexes.name IS NOT NULL 
-ORDER BY
-	stats.object_id,
-	indexes.index_id
+	tb.表名 IS NOT NULL 
+	AND tb.索引名 IS NOT NULL 
+ORDER BY tb.索引使用总数 DESC
 ```  
 ### 缺失索引  
 ```

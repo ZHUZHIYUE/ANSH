@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using ANSH.DataBase.Connection;
 using ANSH.DataBase.EFCore;
+using Microsoft.Extensions.Logging;
 
 namespace ANSH.DataBase.EFCore.SQLServer {
     /// <summary>
@@ -13,7 +14,8 @@ namespace ANSH.DataBase.EFCore.SQLServer {
         /// 创建数据库连接
         /// </summary>
         /// <param name="connection">数据库连接</param>
-        public SQLOptions (string connection) : base (new DBConnection (new SqlConnection (connection))) {
+        /// <param name="loggerfactory">日志记录</param>
+        public SQLOptions (string connection, ILoggerFactory loggerfactory = null) : base (new DBConnection (new SqlConnection (connection)), loggerfactory) {
 
         }
     }

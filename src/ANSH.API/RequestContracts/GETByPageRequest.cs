@@ -29,7 +29,7 @@ namespace ANSH.API.RequestContracts {
             public virtual string page_size {
                 get;
                 set;
-            } = "15";
+            } = "50";
 
             /// <summary>
             /// 每页显示条数上限
@@ -37,7 +37,7 @@ namespace ANSH.API.RequestContracts {
             protected virtual int page_size_limit {
                 get;
                 set;
-            } = 100;
+            } = 200;
 
             /// <summary>
             /// 获取URL参数

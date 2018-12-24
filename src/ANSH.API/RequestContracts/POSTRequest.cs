@@ -15,7 +15,7 @@ namespace ANSH.API.RequestContracts {
     /// <typeparam name="TModelResponse">响应模型</typeparam>
     public abstract class POSTRequest<TResponse, TMODELRequest, TModelResponse> : BaseRequest<TResponse>
         where TResponse : POSTResponse<TModelResponse>
-        where TMODELRequest : class
+        where TMODELRequest : POSTRequestModel
     where TModelResponse : class {
 
         /// <summary>

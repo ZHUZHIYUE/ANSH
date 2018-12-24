@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,42 +14,42 @@ namespace ANSH.MQ.RabbitMQ {
     /// </summary>
     public class BaseMQFactory : IDisposable {
 
+        ConnectionFactory _Factory;
         /// <summary>
         /// 工厂类
         /// </summary>
-        ConnectionFactory Factory {
-            get;
-            set;
-        }
-
+        ConnectionFactory Factory => _Factory = _Factory?? new ConnectionFactory ();
         IConnection _IConnection;
         /// <summary>
         /// 连接类
         /// </summary>
         /// <returns>连接</returns>
-        IConnection IConnection {
-            get {
-                lock (this) {
-                    return _IConnection = _IConnection??Factory.CreateConnection (ClientProvidedName);
-                }
-            }
-        }
+        IConnection IConnection => _IConnection = _IConnection??(HostName?.Count > 0 ? Factory.CreateConnection (HostName) : throw new ArgumentNullException ("没有设置终节点。"));
 
         /// <summary>
-        /// 连接名称
+        /// 终节点
         /// </summary>
-        string ClientProvidedName {
+        List<string> HostName {
             get;
-        }
+        } = new List<string> ();
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="factory">配置参数</param>
-        /// <param name="clientProvidedName">连接名称</param>
-        public BaseMQFactory (ConnectionFactory factory, string clientProvidedName) {
-            Factory = factory;
-            ClientProvidedName = clientProvidedName;
+        /// <param name="username">帐号</param>
+        /// <param name="password">密码</param>
+        /// <param name="port">端口号</param>
+        /// <param name="virtualhost">虚拟地址</param>
+        /// <param name="hostname">主机名称</param>
+        public BaseMQFactory (string username, string password, int port, string virtualhost, string hostname) {
+            var hostName = hostname.Split (new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            if (hostName?.Length > 0) {
+                hostName.ToList ().ForEach (m => HostName.Add (m));
+                Factory.UserName = username;
+                Factory.Password = password;
+                Factory.VirtualHost = virtualhost;
+                Factory.Port = port;
+            }
         }
 
         /// <summary>
@@ -147,6 +148,23 @@ namespace ANSH.MQ.RabbitMQ {
         }
 
         /// <summary>
+        /// 事务操作
+        /// </summary>
+        /// <param name="action">执行内容</param>
+        public void Transaction (Action<IModel> action) {
+            using (var model = IConnection.CreateModel ()) {
+                try {
+                    model.TxSelect ();
+                    action (model);
+                    model.TxCommit ();
+                } catch (Exception ex) {
+                    model.TxRollback ();
+                    throw ex;
+                }
+            }
+        }
+
+        /// <summary>
         /// 生产者
         /// </summary>
         /// <param name="exchange">交换机名称</param>
@@ -156,22 +174,99 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public bool PublishMsg<TMessage> (string exchange, string routkey, TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (string exchange, string routkey, TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : BaseMessage {
-            using (var channel = IConnection.CreateModel ()) {
-                channel.ConfirmSelect ();
-                var props = channel.CreateBasicProperties ();
-                props.Expiration = (expiration).ToString ();
-                props.DeliveryMode = (byte) (delivery ? 2 : 1);
-                props.ContentType = "application/json";
-                props.ContentEncoding = "utf-8";
-                channel.BasicPublish (string.IsNullOrWhiteSpace (exchange) ? "amq.direct" : exchange,
-                    routkey,
-                    props,
-                    ASCIIEncoding.UTF8.GetBytes (message.ToJson ()));
+            PublishMsg (exchange, routkey, new TMessage[] { message }, delivery, expiration);
+        }
 
-                return channel.WaitForConfirms ();
+        /// <summary>
+        /// 生产者
+        /// </summary>
+        /// <param name="exchange">交换机名称</param>
+        /// <param name="routkey">routkey</param>
+        /// <param name="message">消息内容</param>
+        /// <param name="delivery">消息是否持久</param>
+        /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <typeparam name="TMessage">消息模型</typeparam>
+        /// <returns>是否发送成功</returns>
+        public virtual void PublishMsg<TMessage> (string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        where TMessage : BaseMessage {
+            using (var model = IConnection.CreateModel ()) {
+                PublishMsg (model, exchange, routkey, message, delivery, expiration);
             }
+        }
+
+        /// <summary>
+        /// 生产者
+        /// </summary>
+        /// <param name="model">AMQP操作模型</param>
+        /// <param name="exchange">交换机名称</param>
+        /// <param name="routkey">routkey</param>
+        /// <param name="message">消息内容</param>
+        /// <param name="delivery">消息是否持久</param>
+        /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <typeparam name="TMessage">消息模型</typeparam>
+        /// <returns>是否发送成功</returns>
+        public virtual void PublishMsg<TMessage> (IModel model, string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        where TMessage : BaseMessage {
+            var props = model.CreateBasicProperties ();
+            props.Expiration = (expiration).ToString ();
+            props.DeliveryMode = (byte) (delivery ? 2 : 1);
+            props.ContentType = "application/json";
+            props.ContentEncoding = "utf-8";
+            if (message?.Length > 0) {
+                foreach (var message_item in message) {
+                    model.BasicPublish (string.IsNullOrWhiteSpace (exchange) ? "amq.direct" : exchange,
+                        routkey,
+                        props,
+                        ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 生产者（确认模式）
+        /// </summary>
+        /// <param name="exchange">交换机名称</param>
+        /// <param name="routkey">routkey</param>
+        /// <param name="message">消息内容</param>
+        /// <param name="delivery">消息是否持久</param>
+        /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <typeparam name="TMessage">消息模型</typeparam>
+        /// <returns>是否发送成功</returns>
+        public virtual bool PublishMsgConfirm<TMessage> (string exchange, string routkey, TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        where TMessage : BaseMessage {
+            return PublishMsgConfirm (exchange, routkey, new TMessage[] { message }, delivery, expiration);
+        }
+
+        /// <summary>
+        /// 生产者（确认模式）
+        /// </summary>
+        /// <param name="exchange">交换机名称</param>
+        /// <param name="routkey">routkey</param>
+        /// <param name="message">消息内容</param>
+        /// <param name="delivery">消息是否持久</param>
+        /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <typeparam name="TMessage">消息模型</typeparam>
+        /// <returns>是否发送成功</returns>
+        public virtual bool PublishMsgConfirm<TMessage> (string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        where TMessage : BaseMessage {
+            using (var model = IConnection.CreateModel ()) {
+                model.ConfirmSelect ();
+                PublishMsg (model, exchange, routkey, message, delivery, expiration);
+                if (message?.Length > 0) {
+                    if (message.Length == 1) {
+                        return model.WaitForConfirms ();
+                    } else {
+                        try {
+                            model.WaitForConfirmsOrDie ();
+                        } catch {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -182,11 +277,11 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="requeue">消费失败时是否重新进入队列</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
-        public void RetrievingMessages (string queue, Func<string, bool> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) {
+        public virtual void RetrievingMessages (string queue, Func<string, bool> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) {
             var ItemCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
             Task.Run (() => {
                 using (var channel = IConnection.CreateModel ()) {
-                    RetrievingMessagesTask (channel, queue, received, prefetchCount, requeue);
+                    RetrievingMessagesTask (channel, queue, received, requeue, prefetchCount);
                     ItemCancellationTokenSource.Token.WaitHandle.WaitOne ();
                 }
             }, ItemCancellationTokenSource.Token);
@@ -196,26 +291,53 @@ namespace ANSH.MQ.RabbitMQ {
         /// 消费者
         /// </summary>
         /// <param name="queue">消费队列</param>
-        /// <param name="channel">模型</param>
+        /// <param name="model">AMQP操作模型</param>
         /// <param name="received">消费处理</param>
+        /// <param name="requeue">消费失败时是否重新进入队列</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
-        /// <param name="requeue">消费失败时是否重新进入队列</param>prefetchCount
-        void RetrievingMessagesTask (IModel channel, string queue, Func<string, bool> received, ushort prefetchCount, bool requeue) {
-            channel.BasicQos (0, prefetchCount, false);
-            var consumer = new EventingBasicConsumer (channel);
+        void RetrievingMessagesTask (IModel model, string queue, Func<string, bool> received, bool requeue, ushort prefetchCount) => RetrievingMessagesTask (model, queue, (msg) => (received (msg), requeue), prefetchCount);
+
+        /// <summary>
+        /// 消费者
+        /// </summary>
+        /// <param name="queue">消费队列</param>
+        /// <param name="received">消费处理，Item1：操作是否成功，Item2：操作失败是否重新进入队列。</param>
+        /// <param name="prefetchCount">同时处理几条消息</param>
+        /// <param name="cancellationToken">Task取消</param>
+        public virtual void RetrievingMessages (string queue, Func < string, (bool, bool) > received, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) {
+            var ItemCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
+            Task.Run (() => {
+                using (var model = IConnection.CreateModel ()) {
+                    RetrievingMessagesTask (model, queue, received, prefetchCount);
+                    ItemCancellationTokenSource.Token.WaitHandle.WaitOne ();
+                }
+            }, ItemCancellationTokenSource.Token);
+        }
+
+        /// <summary>
+        /// 消费者
+        /// </summary>
+        /// <param name="queue">消费队列</param>
+        /// <param name="model">AMQP操作模型</param>
+        /// <param name="received">消费处理，Item1：操作是否成功，Item2：操作失败是否重新进入队列。</param>
+        /// <param name="prefetchCount">同时处理几条消息</param>
+        void RetrievingMessagesTask (IModel model, string queue, Func < string, (bool, bool) > received, ushort prefetchCount) {
+            model.BasicQos (0, prefetchCount, false);
+            var consumer = new EventingBasicConsumer (model);
             consumer.Received += (obj, eArgs) => {
                 try {
-                    if (received (ASCIIEncoding.UTF8.GetString (eArgs.Body))) {
-                        channel.BasicAck (eArgs.DeliveryTag, false);
+                    var (success, requeue) = received (ASCIIEncoding.UTF8.GetString (eArgs.Body));
+                    if (success) {
+                        model.BasicAck (eArgs.DeliveryTag, false);
                     } else {
-                        channel.BasicNack (eArgs.DeliveryTag, false, requeue);
+                        model.BasicNack (eArgs.DeliveryTag, false, requeue);
                     }
                 } catch (Exception ex) {
-                    channel.BasicNack (eArgs.DeliveryTag, false, requeue);
+                    model.BasicNack (eArgs.DeliveryTag, false, true);
                     throw ex;
                 }
             };
-            channel.BasicConsume (queue, false, consumer);
+            model.BasicConsume (queue, false, consumer);
         }
     }
 }
