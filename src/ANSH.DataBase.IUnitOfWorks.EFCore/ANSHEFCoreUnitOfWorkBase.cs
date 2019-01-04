@@ -12,13 +12,13 @@ namespace ANSH.DataBase.IUnitOfWorks.EFCore {
     /// <summary>
     /// EFCore仓储操作工作基类
     /// </summary>
-    public class ANSHBaseEFCoreUnitOfWork : ANSHBaseUnitOfWork, IANSHEFCoreUnitOfWork {
+    public class ANSHEFCoreUnitOfWorkBase : ANSHUnitOfWorkBase, IANSHEFCoreUnitOfWork {
         /// <summary>
         /// 创建数据库连接
         /// </summary>
         /// <param name="db_connection">数据库连接</param>
         /// <param name="loggerfactory">日志记录</param>
-        public ANSHBaseEFCoreUnitOfWork (DBConnection db_connection, ILoggerFactory loggerfactory = null) : base (db_connection, loggerfactory) { }
+        public ANSHEFCoreUnitOfWorkBase (DBConnection db_connection, ILoggerFactory loggerfactory = null) : base (db_connection, loggerfactory) { }
 
       
         /// <summary>

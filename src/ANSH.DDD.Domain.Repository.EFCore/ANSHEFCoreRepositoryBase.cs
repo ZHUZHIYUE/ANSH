@@ -22,7 +22,7 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
     /// <typeparam name="TAggregateRoot">聚合根</typeparam>
     /// <typeparam name="TRepositoryUnitOfWork">EFCore仓储操作工作基类接口</typeparam>
     /// <typeparam name="TAggregateRootContxt">EFCore实现</typeparam>
-    public abstract class ANSHEFCoreBaseRepository<TAggregateRoot, TRepositoryUnitOfWork, TAggregateRootContxt> : IANSHRepository<TAggregateRoot>
+    public abstract class ANSHEFCoreRepositoryBase<TAggregateRoot, TRepositoryUnitOfWork, TAggregateRootContxt> : IANSHEFCoreRepository<TAggregateRoot, TRepositoryUnitOfWork>
         where TAggregateRoot : class, IDBEntity, IANSHAggregateRoot, new ()
     where TRepositoryUnitOfWork : IANSHEFCoreUnitOfWork, IANSHRepositoryUnitOfWork
     where TAggregateRootContxt : DBContextOptions<TAggregateRoot>, new () {
@@ -30,7 +30,7 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
         /// <summary>
         /// EFCore仓储操作工作类
         /// </summary>
-        protected TRepositoryUnitOfWork Work {
+        public TRepositoryUnitOfWork Work {
             get;
         }
 
@@ -38,7 +38,7 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
         /// 构造函数
         /// </summary>
         /// <param name="work">EFCore仓储操作工作类</param>
-        public ANSHEFCoreBaseRepository (TRepositoryUnitOfWork work) {
+        public ANSHEFCoreRepositoryBase (TRepositoryUnitOfWork work) {
             Work = work;
         }
 

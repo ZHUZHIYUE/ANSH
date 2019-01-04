@@ -6,7 +6,7 @@ namespace ANSH.DDD.Domain.Specifications {
     /// 规约实现基类
     /// </summary>
     /// <typeparam name="TEntity">规约模型</typeparam>
-    public class ANSHBaseSpecificationCommit<TEntity> : ANSHBaseSpecification<TEntity>, IANSHSpecificationCommit<TEntity> where TEntity : class {
+    public class ANSHSpecificationCommitBase<TEntity> : ANSHSpecificationBase<TEntity>, IANSHSpecificationCommit<TEntity> where TEntity : class {
 
         /// <summary>
         /// 提交保存方式

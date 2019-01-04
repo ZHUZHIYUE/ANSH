@@ -7,7 +7,7 @@ namespace ANSH.DDD.Domain.Specifications {
     /// </summary>
     /// <typeparam name="TEntity">规约模型</typeparam>
 
-    public class ANSHBaseSpecification<TEntity> : IANSHSpecification<TEntity> where TEntity : class {
+    public class ANSHSpecificationBase<TEntity> : IANSHSpecification<TEntity> where TEntity : class {
 
         /// <summary>
         /// 条件筛选

@@ -17,4 +17,9 @@
     <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DDD.Domain.Aggregate.xml</DocumentationFile>
   </PropertyGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\ANSH.DDD.Domain.Interface\ANSH.DDD.Domain.Interface.csproj" />
+    <ProjectReference Include="..\ANSH.DataBase.IUnitOfWorks\ANSH.DataBase.IUnitOfWorks.csproj" />
+  </ItemGroup>
+
 </Project>

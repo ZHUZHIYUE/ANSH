@@ -7,7 +7,7 @@ using ANSH.DDD.Domain.Specifications;
 
 namespace ANSH.DDD.Domain.Interface.IRepositories {
     /// <summary>
-    /// 仓储接口，定义公共的泛型GRUD
+    /// 仓储接口
     /// </summary>
     /// <typeparam name="TAggregateRoot">泛型聚合根，因为在DDD里面仓储只能对聚合根做操作</typeparam>
     public interface IANSHRepository<TAggregateRoot> where TAggregateRoot : class, IEntities.IANSHAggregateRoot {

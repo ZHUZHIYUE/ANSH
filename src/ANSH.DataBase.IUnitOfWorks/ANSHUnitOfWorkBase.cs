@@ -7,14 +7,14 @@ namespace ANSH.DataBase.IUnitOfWorks {
     /// <summary>
     /// 工作单元基类实现
     /// </summary>
-    public class ANSHBaseUnitOfWork : IANSHUnitOfWork {
+    public class ANSHUnitOfWorkBase : IANSHUnitOfWork {
 
         /// <summary>
         /// 创建数据库连接
         /// </summary>
         /// <param name="db_connection">数据库连接</param>
         /// <param name="loggerfactory">日志记录</param>
-        public ANSHBaseUnitOfWork (DBConnection db_connection, ILoggerFactory loggerfactory = null) {
+        public ANSHUnitOfWorkBase (DBConnection db_connection, ILoggerFactory loggerfactory = null) {
             DBconnection = db_connection;
             Loggerfactory = loggerfactory;
         }
