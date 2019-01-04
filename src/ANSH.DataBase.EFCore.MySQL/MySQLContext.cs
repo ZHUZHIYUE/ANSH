@@ -9,7 +9,7 @@ namespace ANSH.DataBase.EFCore.MySQL {
         /// <summary>
         /// 数据库链接
         /// </summary>
-        protected override void OnConfiguringsOptions (DbContextOptionsBuilder OptionsBuilder) {
+        protected override void OnConfiguring (DbContextOptionsBuilder OptionsBuilder) {
             OptionsBuilder
                 .UseMySQL (DB_Connection.Connection)
                 .ConfigureWarnings (warnings => warnings.Throw (RelationalEventId.QueryClientEvaluationWarning));
@@ -18,5 +18,11 @@ namespace ANSH.DataBase.EFCore.MySQL {
                 OptionsBuilder.UseLoggerFactory (Loggers);
             }
         }
+
+        /// <summary>
+        /// 模型绑定
+        /// </summary>
+        /// <param name="modelBuilder">模型绑定</param>
+        new protected abstract void OnModelCreating (ModelBuilder modelBuilder);
     }
 }

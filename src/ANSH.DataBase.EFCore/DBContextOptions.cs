@@ -8,14 +8,29 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ANSH.DataBase.Connection;
+using ANSH.DDD.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ANSH.DataBase.EFCore {
     /// <summary>
     /// 操作实体基类
     /// </summary>
     /// <typeparam name="TEntity">实体模型</typeparam>
-    public abstract class DBContextOptions<TEntity> : DBContext where TEntity : DBEntity, new () {
+    public abstract class DBContextOptions<TEntity> : DBContext where TEntity : class, IDBEntity, new () {
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public DBContextOptions () : base () { }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="dbconnection">数据库连接对象</param>
+        /// <param name="loggers">日志记录</param>
+        public DBContextOptions (DBConnection dbconnection, ILoggerFactory loggers) : base (dbconnection, loggers) { }
+
         /// <summary>
         /// 实体对象
         /// </summary>
@@ -57,13 +72,32 @@ namespace ANSH.DataBase.EFCore {
         /// <param name="entity">需要修改的项</param>
         /// <param name="wheres">指定条件</param>
         public virtual void Update (Action<TEntity> entity, Expression<Func<TEntity, bool>> wheres = null) {
-            Get (wheres, tracking : true).ToList ().ForEach ((item) => {
+            Get (wheres, tracking : true).ToList ()?.ForEach ((item) => {
                 entity (item);
                 //Ignore (item);
                 DbEntity.Update (item);
             });
 
             SaveChangesCoverage ();
+        }
+
+        /// <summary>
+        /// 修改指定实体
+        /// </summary>
+        /// <param name="entity">需要修改的项</param>
+        /// <param name="specification">规约</param>
+        public virtual void Update (Action<TEntity> entity, IANSHSpecificationCommit<TEntity> specification) {
+            Get (specification, tracking : true).ToList ().ForEach ((item) => {
+                entity (item);
+                //Ignore (item);
+                DbEntity.Update (item);
+            });
+
+            if (specification?.CommitSaveChanges == CommitSaveChangesTypes.Reload) {
+                SaveChangesReload ();
+            } else {
+                SaveChangesCoverage ();
+            }
         }
 
         /// <summary>
@@ -76,6 +110,23 @@ namespace ANSH.DataBase.EFCore {
             if (cascade != null) iqueryable = cascade (iqueryable);
             DbEntity.RemoveRange (iqueryable);
             SaveChangesCoverage ();
+        }
+
+        /// <summary>
+        /// 删除指定实体
+        /// </summary>
+        /// <param name="specification">规约</param>
+        /// <param name="cascade">联级删除</param>
+        public virtual void Delete (IANSHSpecificationCommit<TEntity> specification = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> cascade = null) {
+            var iqueryable = Get (specification, tracking : true);
+            if (cascade != null) iqueryable = cascade (iqueryable);
+            DbEntity.RemoveRange (iqueryable);
+
+            if (specification?.CommitSaveChanges == CommitSaveChangesTypes.Reload) {
+                SaveChangesReload ();
+            } else {
+                SaveChangesCoverage ();
+            }
         }
 
         /// <summary>
@@ -165,6 +216,19 @@ namespace ANSH.DataBase.EFCore {
         public virtual IQueryable<TEntity> Get (Expression<Func<TEntity, bool>> wheres = null, bool tracking = false) {
             IQueryable<TEntity> iqueryable = tracking ? DbEntity.AsTracking () : DbEntity.AsNoTracking ();
             iqueryable = wheres == null ? iqueryable : iqueryable.Where (wheres);
+            return iqueryable;
+        }
+
+        /// <summary>
+        /// 获取指定实体
+        /// <para>注意：当需要对查询结果进行排序时，应先排序再进行分页</para>
+        /// </summary>
+        /// <param name="specification">规约</param>
+        /// <param name="tracking">是否追踪，追踪数据可进行修改、删除，不追踪提升查询性能</param>
+        /// <returns>返回满足条件的实体</returns>
+        public virtual IQueryable<TEntity> Get (IANSHSpecification<TEntity> specification, bool tracking = false) {
+            IQueryable<TEntity> iqueryable = tracking ? DbEntity.AsTracking () : DbEntity.AsNoTracking ();
+            iqueryable = iqueryable.SetSpecification (specification);
             return iqueryable;
         }
 

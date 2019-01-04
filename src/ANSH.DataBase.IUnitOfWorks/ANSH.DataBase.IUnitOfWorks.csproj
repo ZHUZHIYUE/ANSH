@@ -1,24 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <Import Project="..\sources.props"/>
+
   <PropertyGroup>
     <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
     <Authors>$(AuthorsProjectInFormation)</Authors>
     <Company>$(CompanyProjectInFormation)</Company>
     <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
     <Version>$(VersionProjectInFormation)</Version>
-    <PackageId>ANSH.DataBase.EFCore</PackageId>
+    <PackageId>ANSH.DataBase.IUnitOfWorks</PackageId>
     <Description>$(DescriptionProjectInFormation)</Description>
   </PropertyGroup>
-
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.EFCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.IUnitOfWorks.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\ANSH.DataBase.Connection\ANSH.DataBase.Connection.csproj" />
-    <ProjectReference Include="..\ANSH.DDD.Domain.Specifications\ANSH.DDD.Domain.Specifications.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCoreRelationalPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsLoggingAbstractionsPackageVersion)" />
   </ItemGroup>
+
 </Project>

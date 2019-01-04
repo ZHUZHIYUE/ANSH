@@ -9,20 +9,21 @@
     <Product>$(ProductProjectInFormation)</Product>
     <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
     <Version>$(VersionProjectInFormation)</Version>
-    <PackageId>ANSH.DataBase.EFCore.SQLServer</PackageId>
+    <PackageId>ANSH.DataBase.IUnitOfWorks.EFCore</PackageId>
     <Description>$(DescriptionProjectInFormation)</Description>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.EFCore.SQLServer.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.IUnitOfWorks.EFCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCoreRelationalPackageVersion)" />
   </ItemGroup>
 
-   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(MicrosoftEntityFrameworkCoreSqlServerPackageVersion)" />
+  <ItemGroup>
+    <ProjectReference Include="..\ANSH.DataBase.IUnitOfWorks\ANSH.DataBase.IUnitOfWorks.csproj" />
+    <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

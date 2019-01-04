@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using ANSH.DataBase.EFCore;
+using ANSH.DDD.Domain.Specifications;
+using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 /// 提供DBContext操作扩展方法
@@ -11,6 +13,7 @@ public static class DBContextOptionsExtensions {
     /// 将指定的查询结果进行分页处理
     /// <para>注意：当需要对查询结果进行排序时，应先排序再进行分页</para>
     /// </summary>
+    /// <typeparam name="TEntity">实体模型</typeparam>
     /// <param name="iqueryable">将指定的查询结果</param>
     /// <param name="datacount">满足指定条件数据总条数</param>
     /// <param name="pagecount">满足指定条件数据可分页总数</param>
@@ -18,7 +21,7 @@ public static class DBContextOptionsExtensions {
     /// <param name="page">页数</param>
     /// <param name="pagesize">每页数据条数</param>
     /// <returns>返回分页处理后的查询结果</returns>
-    public static IQueryable<TEntity> ToPage<TEntity> (this IQueryable<TEntity> iqueryable, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TEntity : DBEntity {
+    public static IQueryable<TEntity> ToPage<TEntity> (this IQueryable<TEntity> iqueryable, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TEntity : IDBEntity {
         datacount = iqueryable.Count ();
         pagecount = (int) Math.Ceiling (datacount / (double) pagesize);
         hasnext = page < pagecount;
@@ -60,5 +63,30 @@ public static class DBContextOptionsExtensions {
         var expr = Expression.OrElse (Expression.Invoke (left, param), Expression.Invoke (right, param));
 
         return Expression.Lambda<Func<T, bool>> (expr, param);
+    }
+
+    /// <summary>
+    /// 设置规约
+    /// </summary>
+    /// <typeparam name="TEntity">实体模型</typeparam>
+    /// <param name="source">来源</param>
+    /// <param name="specification">规约</param>
+    public static IQueryable<TEntity> SetSpecification<TEntity> (this IQueryable<TEntity> source, IANSHSpecification<TEntity> specification) where TEntity : class, IDBEntity {
+        var Criteria = specification.GetCriteria ();
+        if (Criteria != null) {
+            source = source.Where (Criteria);
+        }
+        var InCludes = specification.GetInClude ();
+        source = InCludes?.Aggregate (source,
+            (current, include) => current.Include (include));
+
+        var ThenInCludes = specification.GetThenInClude ();
+        source = ThenInCludes?.Aggregate (source,
+            (current, include) => current.Include (include));
+
+        var OrderBy = specification.GetOrderBy ();
+        source = OrderBy?.Aggregate (source, (current, include) => include.Value == ANSHSpecificationOrderBy.ASC? current.OrderBy (include.Key) : current.OrderByDescending (include.Key));
+
+        return source;
     }
 }

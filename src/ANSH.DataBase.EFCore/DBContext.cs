@@ -20,8 +20,9 @@ namespace ANSH.DataBase.EFCore {
         /// 构造函数
         /// </summary>
         /// <param name="dbconnection">数据库连接对象</param>
-        public DBContext (DBConnection dbconnection) {
-            UseConnection (dbconnection);
+        /// <param name="loggers">日志记录</param>
+        public DBContext (DBConnection dbconnection, ILoggerFactory loggers) {
+            UseConnection (dbconnection, loggers);
         }
 
         /// <summary>
@@ -123,14 +124,7 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 数据库链接
         /// </summary>
-        protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder) {
-            OnConfiguringsOptions (optionsBuilder);
-        }
-
-        /// <summary>
-        /// 数据库链接
-        /// </summary>
-        protected abstract void OnConfiguringsOptions (DbContextOptionsBuilder optionsBuilder);
+        new protected abstract void OnConfiguring (DbContextOptionsBuilder optionsBuilder);
 
         /// <summary>
         /// 释放资源

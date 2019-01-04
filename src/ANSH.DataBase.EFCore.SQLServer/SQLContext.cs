@@ -30,7 +30,7 @@ namespace ANSH.DataBase.EFCore.SQLServer {
         /// <summary>
         /// 数据库链接
         /// </summary>
-        protected override void OnConfiguringsOptions (DbContextOptionsBuilder OptionsBuilder) {
+        protected override void OnConfiguring (DbContextOptionsBuilder OptionsBuilder) {
             if (!OptionsBuilder.IsConfigured) {
                 OptionsBuilder
                     .UseSqlServer (DB_Connection.Connection, m => {
@@ -52,14 +52,6 @@ namespace ANSH.DataBase.EFCore.SQLServer {
         /// 模型绑定
         /// </summary>
         /// <param name="modelBuilder">模型绑定</param>
-        protected override void OnModelCreating (ModelBuilder modelBuilder) {
-            OnModelCreating (modelBuilder.Entity<TEntity> ());
-        }
-
-        /// <summary>
-        /// 模型绑定
-        /// </summary>
-        /// <param name="model">当前实例模型</param>
-        protected abstract void OnModelCreating (EntityTypeBuilder<TEntity> model);
+        new protected abstract void OnModelCreating (ModelBuilder modelBuilder);
     }
 }
