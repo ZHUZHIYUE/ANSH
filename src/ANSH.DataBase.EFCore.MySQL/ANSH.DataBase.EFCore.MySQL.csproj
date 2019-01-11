@@ -17,6 +17,10 @@
         <Version>$(VersionProjectInFormation)</Version>
         <PackageId>ANSH.DataBase.EFCore.MySQL</PackageId>
         <Description>$(DescriptionProjectInFormation)</Description>
+        <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+        <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+        <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+        <LangVersion>$(LanguageVersion)</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.EFCore.MySQL.xml</DocumentationFile>

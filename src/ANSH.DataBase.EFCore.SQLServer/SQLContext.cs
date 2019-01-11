@@ -7,7 +7,7 @@ namespace ANSH.DataBase.EFCore.SQLServer {
     /// <summary>
     /// EF操作SqlServer
     /// </summary>
-    public abstract class SQLContext<TEntity> : DBContextOptions<TEntity> where TEntity : DBEntity, new () {
+    public abstract class SQLContext<TEntity> : DBContextOptions<TEntity> where TEntity : class, IDBEntity, new () {
 
         bool UseRowNumberForPaging {
             get;

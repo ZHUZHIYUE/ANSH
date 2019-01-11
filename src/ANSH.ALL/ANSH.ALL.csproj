@@ -9,6 +9,10 @@
     <Version>$(VersionProjectInFormation)</Version>
     <PackageId>ANSH.ALL</PackageId>
     <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,7 +20,6 @@
   </PropertyGroup>
 
    <ItemGroup>
-   <ProjectReference Include="..\ANSH.API\ANSH.API.csproj" />
    <ProjectReference Include="..\ANSH.AspNetCore\ANSH.AspNetCore.csproj" />
    <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
    <ProjectReference Include="..\ANSH.DataBase.EFCore.SQLServer\ANSH.DataBase.EFCore.SQLServer.csproj" />

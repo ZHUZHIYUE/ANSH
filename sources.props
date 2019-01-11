@@ -11,6 +11,7 @@
         <MySqlDataEntityFrameworkCorePackageVersion>8.0.11</MySqlDataEntityFrameworkCorePackageVersion>
         <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>2.1.1</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
         <NewtonsoftJsonPackageVersion>11.0.2</NewtonsoftJsonPackageVersion>
+        <AutoMapperPackageVersion>8.0.0</AutoMapperPackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Label="Project InFormation">
@@ -19,7 +20,11 @@
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
         <VersionProjectInFormation>1.1.0</VersionProjectInFormation>
-        <DescriptionProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</DescriptionProjectInFormation>
+        <DescriptionProjectInFormation>解决方案基于NET Standard 2.0开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
+        <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
+        <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>
+        <PublishRepositoryUrlProjectInFormation>true</PublishRepositoryUrlProjectInFormation>
+        <LanguageVersion>latest</LanguageVersion>
     </PropertyGroup>
 
     <PropertyGroup Label="Base">
