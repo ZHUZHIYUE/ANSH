@@ -45,7 +45,7 @@ namespace ANSH.DDD.Domain.Specifications {
         /// 条件筛选
         /// </summary>
         /// <param name="criteria">条件筛选</param>
-        public void SetCriteria (Expression<Func<TEntity, bool>> criteria) {
+        public virtual void SetCriteria (Expression<Func<TEntity, bool>> criteria) {
             _Criteria = criteria;
         }
 

@@ -7,7 +7,7 @@ namespace ANSH.DataBase.EFCore.SQLServer {
     /// <summary>
     /// EF操作SqlServer
     /// </summary>
-    public abstract class SQLContext<TEntity> : DBContextOptions<TEntity> where TEntity : DBEntity, new () {
+    public abstract class SQLContext<TEntity> : DBContextOptions<TEntity> where TEntity : class, IDBEntity, new () {
 
         bool UseRowNumberForPaging {
             get;
@@ -47,11 +47,5 @@ namespace ANSH.DataBase.EFCore.SQLServer {
                 OptionsBuilder.UseLoggerFactory (Loggers);
             }
         }
-
-        /// <summary>
-        /// 模型绑定
-        /// </summary>
-        /// <param name="modelBuilder">模型绑定</param>
-        new protected abstract void OnModelCreating (ModelBuilder modelBuilder);
     }
 }

@@ -11,16 +11,20 @@
   </ItemGroup>
 
  <PropertyGroup>
-        <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
-        <Authors>$(AuthorsProjectInFormation)</Authors>
-        <Company>$(CompanyProjectInFormation)</Company>
-        <Product>$(ProductProjectInFormation)</Product>
-        <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
-        <Version>$(VersionProjectInFormation)</Version>
-        <PackageId>ANSH.DataBase.ADO.SQLServer</PackageId>
-        <Description>$(DescriptionProjectInFormation)</Description>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.ADO.SQLServer.xml</DocumentationFile>
-    </PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.DataBase.ADO.SQLServer</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.ADO.SQLServer.xml</DocumentationFile>
+  </PropertyGroup>
 </Project>

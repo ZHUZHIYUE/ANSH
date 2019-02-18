@@ -1,9 +1,13 @@
 # SQLServer  
+
 ## 常用命令  
+
 ### 索引使用情况  
-```
+
+```bash
+#!/bin/bash
 USE [DataBase]
-SELECT * FROM 
+SELECT * FROM
 (
 	SELECT
 		objects.name						AS 表名,
@@ -70,8 +74,11 @@ WHERE
 	AND tb.索引名 IS NOT NULL 
 ORDER BY tb.索引使用总数 DESC
 ```  
+
 ### 缺失索引  
-```
+
+```bash
+#!/bin/bash
 USE [master]
 SELECT
 	mig.index_group_handle				AS 索引组
@@ -117,8 +124,11 @@ ORDER BY migs.user_seeks DESC
 	, migs.avg_total_user_cost DESC
 	, mig.index_group_handle ASC
 ```  
+
 ### 实时SQL  
-```
+
+```bash
+#!/bin/bash
 USE [master]
 SELECT
 	m.[session_id]							AS 会话的ID
@@ -199,9 +209,11 @@ CASE
 	m.[status],
 	m.[wait_type]
 ```  
+
 ### 检查活动连接  
-```
+
+```bash
+#!/bin/bash
 USE [master]
 sp_who2 active
 ```  
-###

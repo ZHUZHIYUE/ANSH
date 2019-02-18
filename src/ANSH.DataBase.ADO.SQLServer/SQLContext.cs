@@ -161,12 +161,12 @@ namespace ANSH.DataBase.ADO.SQLServer {
             /// <returns>Page语句</returns>
             public string CreatePageTSQL (string Tsql, string orderby, out DBParameters output, int pageIndex = 1, int pageSize = 20) {
                 string CountSql = $" SELECT @ROWSCOUNT=Count(*) FROM ({Tsql}) countpage";
-                //string PageSql = $"SELECT tbpage.* FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {orderby}) AS tab_Order,* FROM ({Tsql}) AS itmpage ) AS tbpage WHERE tbpage.tab_Order > ${(pageIndex - 1) * pageSize} AND tbpage.tab_Order <= {pageIndex * pageSize};{CountSql.ToString()} ";
-                string PageSql = $@"
-SELECT tbpage.* FROM ({Tsql}) tbpage
-ORDER BY {orderby}
-OFFSET {(pageIndex-1)*pageSize} ROWS
-FETCH NEXT {pageSize} ROWS ONLY ; {CountSql}";
+                string PageSql = $"SELECT tbpage.* FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {orderby}) AS tab_Order,* FROM ({Tsql}) AS itmpage ) AS tbpage WHERE tbpage.tab_Order > ${(pageIndex - 1) * pageSize} AND tbpage.tab_Order <= {pageIndex * pageSize};{CountSql.ToString()} ";
+                //                 string PageSql = $@"
+                // SELECT tbpage.* FROM ({Tsql}) tbpage
+                // ORDER BY {orderby}
+                // OFFSET {(pageIndex-1)*pageSize} ROWS
+                // FETCH NEXT {pageSize} ROWS ONLY ; {CountSql}";
                 output = new DBParameters () {
                     ParameterName = "ROWSCOUNT",
                     Size = 32,

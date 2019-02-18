@@ -11,6 +11,10 @@
     <Version>$(VersionProjectInFormation)</Version>
     <PackageId>ANSH.DDD.Domain.Repository.EFCore</PackageId>
     <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,7 +27,8 @@
     <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
     <ProjectReference Include="..\ANSH.DDD.Domain.Interface\ANSH.DDD.Domain.Interface.csproj" />
     <ProjectReference Include="..\ANSH.DataBase.Connection\ANSH.DataBase.Connection.csproj" />
-    <ProjectReference Include="..\ANSH.DDD.Domain.Specifications\ANSH.DDD.Domain.Specifications.csproj" />
+    <ProjectReference Include="..\ANSH.DDD.Domain.Specifications.EFCore\ANSH.DDD.Domain.Specifications.EFCore.csproj" />
+    <ProjectReference Include="..\ANSH.DDD.Domain.Entities.EFCore\ANSH.DDD.Domain.Entities.EFCore.csproj" />
   </ItemGroup>
   
 </Project>
