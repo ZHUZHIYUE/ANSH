@@ -1,18 +1,18 @@
 #url
 external_url 'http://192.168.1.89:10080/'
 #nginx port
- nginx['listen_port'] = 80
+nginx['listen_port'] = 80
 #SMTP
- gitlab_rails['smtp_enable'] = true
- gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
- gitlab_rails['smtp_port'] = 465
- gitlab_rails['smtp_user_name'] = "zhuxi@bioey.com"
- gitlab_rails['smtp_password'] = "hXrkCcFFWDDDVgMC"
- gitlab_rails['smtp_domain'] = "exmail.qq.com"
- gitlab_rails['smtp_authentication'] = "login"
- gitlab_rails['smtp_enable_starttls_auto'] = true
- gitlab_rails['smtp_tls'] = true
- gitlab_rails['gitlab_email_from'] = "zhuxi@bioey.com"
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+gitlab_rails['smtp_port'] = 465
+gitlab_rails['smtp_user_name'] = "zhuxi@bioey.com"
+gitlab_rails['smtp_password'] = "hXrkCcFFWDDDVgMC"
+gitlab_rails['smtp_domain'] = "exmail.qq.com"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['gitlab_email_from'] = "zhuxi@bioey.com"
  
 ## GitLab configuration settings
 ##! This file is generated during initial installation and **is not** modified

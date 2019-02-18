@@ -18,11 +18,5 @@ namespace ANSH.DataBase.EFCore.MySQL {
                 OptionsBuilder.UseLoggerFactory (Loggers);
             }
         }
-
-        /// <summary>
-        /// 模型绑定
-        /// </summary>
-        /// <param name="modelBuilder">模型绑定</param>
-        new protected abstract void OnModelCreating (ModelBuilder modelBuilder);
     }
 }

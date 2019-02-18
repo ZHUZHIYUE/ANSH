@@ -20,7 +20,9 @@ namespace ANSH.DataBase.EFCore {
             public void Configure (EntityTypeBuilder<TEntity> builder) {
                 builder.HasKey (m => m.Id);
                 builder.Property (m => m.Id).ValueGeneratedOnAdd ();
-                builder.Property (m => m.timestamp).IsRowVersion ();
+                builder.Property (m => m.UpdateTimes).HasDefaultValue(DateTime.Now);
+                builder.Property (m => m.CreateTimes).HasDefaultValue(DateTime.Now);
+                builder.Property (m => m.Timestamp).IsRowVersion ();
                 ConfigureBuilder (builder);
             }
 

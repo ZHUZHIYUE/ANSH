@@ -122,11 +122,6 @@ namespace ANSH.DataBase.EFCore {
         }
 
         /// <summary>
-        /// 数据库链接
-        /// </summary>
-        new protected abstract void OnConfiguring (DbContextOptionsBuilder optionsBuilder);
-
-        /// <summary>
         /// 释放资源
         /// </summary>
         public override void Dispose () {

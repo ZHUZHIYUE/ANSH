@@ -21,7 +21,15 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 创建时间
         /// </summary>
-        DateTime? create_times {
+        DateTime? CreateTimes {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 最近一次修改时间
+        /// </summary>
+        DateTime? UpdateTimes {
             get;
             set;
         }
@@ -29,7 +37,7 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 行版本控制
         /// </summary>
-        byte[] timestamp {
+        byte[] Timestamp {
             get;
             set;
         }

@@ -47,11 +47,5 @@ namespace ANSH.DataBase.EFCore.SQLServer {
                 OptionsBuilder.UseLoggerFactory (Loggers);
             }
         }
-
-        /// <summary>
-        /// 模型绑定
-        /// </summary>
-        /// <param name="modelBuilder">模型绑定</param>
-        new protected abstract void OnModelCreating (ModelBuilder modelBuilder);
     }
 }

@@ -5,8 +5,8 @@ namespace ANSH.DDD.Domain.Entities.EFCore {
     ///  EFCore实体类的抽象实现类，定义实体类的公共属性和行为
     /// </summary>
     /// <typeparam name="TPKey">主键类型</typeparam>
-    public class ANSHEFCoreEntityBase<TPKey> :  IANSHEFCoreEntity<TPKey> where TPKey : struct, IEquatable<TPKey> {
-         /// <summary>
+    public class ANSHEFCoreEntityBase<TPKey> : IANSHEFCoreEntity<TPKey> where TPKey : struct, IEquatable<TPKey> {
+        /// <summary>
         /// 主键
         /// </summary>
         public TPKey? Id {
@@ -17,7 +17,15 @@ namespace ANSH.DDD.Domain.Entities.EFCore {
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime? create_times {
+        public DateTime? CreateTimes {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 最近一次修改时间
+        /// </summary>
+        public DateTime? UpdateTimes {
             get;
             set;
         }
@@ -25,7 +33,7 @@ namespace ANSH.DDD.Domain.Entities.EFCore {
         /// <summary>
         /// 行版本控制
         /// </summary>
-        public byte[] timestamp {
+        public byte[] Timestamp {
             get;
             set;
         }

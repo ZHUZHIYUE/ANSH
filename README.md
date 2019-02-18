@@ -1,4 +1,5 @@
-# Asp.Net Standard Helper (ANSH) 
+# Asp.Net Standard Helper (ANSH)  
+
 [![badge language](https://img.shields.io/badge/language-C%23-green.svg)](https://github.com/ZHUZHIYUE/ANSH)
 [![badge test](https://img.shields.io/badge/test-xunit.net-green.svg)](https://docs.microsoft.com/zh-cn/dotnet/core/testing/unit-testing-with-dotnet-test?view=aspnetcore-2.1)
 [![GitHub license](https://img.shields.io/github/license/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/blob/master/LICENSE)
@@ -7,14 +8,20 @@
 [![GitHub forks](https://img.shields.io/github/forks/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/network)
 [![GitHub stars](https://img.shields.io/github/stars/ZHUZHIYUE/ANSH.svg)](https://github.com/ZHUZHIYUE/ANSH/stargazers)  
 解决方案基于[NET Standard 2.0](https://docs.microsoft.com/zh-cn/dotnet/standard/net-standard)开发，主要是将一些项目开发中常用的方法进行整合。  
-## 准备工作
+
+## 准备工作  
+
 **确保您的操作系统中已经安装[NuGet](/docs/NuGet.md)**  
 在命令行中运行
-```
+
+```bash
+#!/bin/bash
 $ cd ${ANSH.sln}
 $ nuget restore
-```
-## 类库
+```  
+
+## 类库  
+
 * **ANSH.ALL**  
 ANSH所有类库引用
 * **ANSH.API**  

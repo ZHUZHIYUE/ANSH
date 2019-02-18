@@ -18,7 +18,15 @@ namespace ANSH.DDD.Domain.Interface.IEntities {
         /// <summary>
         /// 创建时间
         /// </summary>
-        DateTime? create_times {
+        DateTime? CreateTimes {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// 最近一次修改时间
+        /// </summary>
+        DateTime? UpdateTimes {
             get;
             set;
         }
