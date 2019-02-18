@@ -1,0 +1,24 @@
+version: '2.1'
+
+services:
+  web:
+    build: ./
+    image: zhuxi/aspnetcore:1
+    container_name: ANSH-ASPNETCORE
+    ports: 
+      - 5000:80
+    links: 
+      - db
+    volumes:
+      - ./:/ANSH
+  db:
+    image: mysql:8
+    restart: always
+    container_name: ANSH-MYSQL
+    environment:
+      - MYSQL_ROOT_PASSWORD=Bio*novo!
+      - MYSQL_DATABASE=ANSH
+      - MYSQL_USER=ANSH
+      - MYSQL_PASSWORD=123321
+    ports: 
+     - 3306:3306

@@ -1,0 +1,71 @@
+version: '3.6'
+
+services:
+  portainer:
+    image: portainer/portainer:1.19.2
+    ports:
+      - "9000:9000"
+    command: -H unix:///var/run/docker.sock
+    networks: 
+      swarms:
+        aliases:
+          - portainer
+    volumes:
+      - portainer:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+          - node.labels.identity == leader
+
+  registry:
+    image: registry:2.6.2
+    ports:
+      - "5000:5000"
+    networks: 
+      swarms:
+        aliases:
+          - registry
+    volumes:
+      - registry:/var/lib/registry
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+          - node.labels.identity == leader
+
+
+networks:
+  swarms:
+    external: true 
+
+volumes:
+  portainer:
+    external: true 
+  registry:
+    external: true 

@@ -1,0 +1,81 @@
+version: '3.6'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:11.5.3-ce.0
+    hostname: localhost
+    ports:
+      - "10080:80"
+      - "10022:22"
+    networks: 
+      swarms:
+        aliases:
+          - gitlab
+    volumes:
+      - gitlab-data:/var/opt/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-config:/etc/gitlab/
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+          - node.labels.identity == leader
+  
+
+  runner:
+    image: gitlab/gitlab-runner:v11.5.1
+    networks: 
+      swarms:
+        aliases:
+          - gitlab-runner
+    volumes:
+      - gitlab-runner:/etc/gitlab-runner
+      - gitlab-runner-home:/home/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+          - node.labels.identity == leader
+
+
+networks:
+  swarms:
+    external: true 
+
+volumes:
+  gitlab-data:
+    external: true
+  gitlab-logs:
+    external: true
+  gitlab-config:
+    external: true
+  gitlab-runner:
+    external: true
+  gitlab-runner-home:
+    external: true
+    

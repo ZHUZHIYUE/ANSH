@@ -1,0 +1,15 @@
+.vs/
+.vscode/
+node_modules/
+*bin/
+*obj/
+.dockerignore
+docker-compose.yml
+Dockerfile
+*.pdb
+*Properties/
+*.csproj.user
+appsettings.Development.json
+appsettings.json
+appsettings.Staging.json
+hostsettings.json

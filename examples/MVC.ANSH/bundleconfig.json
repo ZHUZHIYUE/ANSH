@@ -1,0 +1,8 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/js/layout.min.js",
+    "inputFiles": [
+      "wwwroot/assets/plugins/jquery/dist/jquery.js"
+    ]
+  }
+]

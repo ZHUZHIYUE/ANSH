@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\sources.props"/>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="$(MySqlDataEntityFrameworkCorePackageVersion)" />
+    </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+        <Authors>$(AuthorsProjectInFormation)</Authors>
+        <Company>$(CompanyProjectInFormation)</Company>
+        <Product>$(ProductProjectInFormation)</Product>
+        <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+        <Version>$(VersionProjectInFormation)</Version>
+        <PackageId>ANSH.DataBase.EFCore.MySQL</PackageId>
+        <Description>$(DescriptionProjectInFormation)</Description>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.EFCore.MySQL.xml</DocumentationFile>
+    </PropertyGroup>
+</Project>

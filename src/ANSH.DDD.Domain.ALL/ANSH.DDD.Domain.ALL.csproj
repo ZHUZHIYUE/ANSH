@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\sources.props"/>
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.DDD.Domain.ALL</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DDD.Domain.ALL.xml</DocumentationFile>
+  </PropertyGroup>
+
+   <ItemGroup>
+   <ProjectReference Include="..\ANSH.DDD.Domain.Aggregate\ANSH.DDD.Domain.Aggregate.csproj" />
+   <ProjectReference Include="..\ANSH.DDD.Domain.Repository.EFCore\ANSH.DDD.Domain.Repository.EFCore.csproj" />
+ </ItemGroup>
+</Project>

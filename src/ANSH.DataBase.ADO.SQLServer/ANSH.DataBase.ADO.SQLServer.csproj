@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\sources.props"/>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ANSH.DataBase.ADO\ANSH.DataBase.ADO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="$(SystemDataSqlClientPackageVersion)" />
+  </ItemGroup>
+
+ <PropertyGroup>
+        <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+        <Authors>$(AuthorsProjectInFormation)</Authors>
+        <Company>$(CompanyProjectInFormation)</Company>
+        <Product>$(ProductProjectInFormation)</Product>
+        <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+        <Version>$(VersionProjectInFormation)</Version>
+        <PackageId>ANSH.DataBase.ADO.SQLServer</PackageId>
+        <Description>$(DescriptionProjectInFormation)</Description>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.ADO.SQLServer.xml</DocumentationFile>
+    </PropertyGroup>
+</Project>

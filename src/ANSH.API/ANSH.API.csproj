@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\sources.props"/>
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.API</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.API.xml</DocumentationFile>
+  </PropertyGroup>
+
+ <ItemGroup>
+   <ProjectReference Include="..\ANSH.Json\ANSH.Json.csproj" />
+   <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
+ </ItemGroup>
+</Project>

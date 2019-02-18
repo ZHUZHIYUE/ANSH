@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "/Views/_Layout/_BaseLayout.cshtml";
+}
+<!-- TEMPLATE CSS -->
+@section css
+    {
+    <environment include="Development">
+        <link rel="stylesheet" type="text/css" href="/assets/plugins/bootstrap/dist/bootstrap.css" asp-append-version="true">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" type="text/css" href="/css/main.min.css" asp-append-version="true">
+    </environment>
+    @RenderSection("css", required: false)
+}
+<!-- END TEMPLATE CSS -->
+<!-- TEMPLATE SCRIPTS -->
+@section js
+    {
+    <environment include="Development">
+    </environment>
+    <environment exclude="Development">
+        <script type="text/javascript" src="/js/main.min.js" asp-append-version="true"></script>
+    </environment>
+    @RenderSection("js", required: false)
+}
+<!-- END TEMPLATE SCRIPTS -->
