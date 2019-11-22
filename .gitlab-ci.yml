@@ -33,6 +33,7 @@ packages:
   image: docker-repository.bioey.com/dotnet/core/sdk:3.0-alpine
   dependencies: [build]
   script:
+    - mkdir packages
     - cd packages
     - dotnet nuget push **/*.nupkg -k d918751f-561b-3ab5-95af-f39f9c33b885 -s https://repository.bioey.com/repository/nuget-private/
   when: on_success
