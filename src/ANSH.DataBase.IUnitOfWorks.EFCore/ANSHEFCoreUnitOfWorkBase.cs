@@ -55,6 +55,7 @@ namespace ANSH.DataBase.IUnitOfWorks.EFCore {
             base.Dispose ();
             _ANSHDbContextBase?.ForEach (m => m.Dispose ());
             _ANSHDbContextBase?.Clear ();
+            ClearTransactionDBConnectionThreadLocal ();
         }
 
         /// <summary>
@@ -93,8 +94,8 @@ namespace ANSH.DataBase.IUnitOfWorks.EFCore {
         /// 清除事物DBConnection对象
         /// </summary>
         void ClearTransactionDBConnectionThreadLocal () {
-            TransactionDBConnectionThreadLocal.Value.Rollback ();
-            TransactionDBConnectionThreadLocal.Value.Dispose ();
+            TransactionDBConnectionThreadLocal.Value?.Rollback ();
+            TransactionDBConnectionThreadLocal.Value?.Dispose ();
             TransactionDBConnectionThreadLocal.Value = null;
             IsBeginTransactionThreadLocal.Value = false;
             BeginTransactionCount.Value = 0;

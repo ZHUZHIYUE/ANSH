@@ -11,5 +11,5 @@ namespace ANSH.DDD.Domain.Server {
     /// <summary>
     /// 聚合根EFCore仓储服务
     /// </summary>
-    public interface IANSHDomainServer { }
+    public interface IANSHDomainServer : IDisposable { }
 }
