@@ -1,0 +1,41 @@
+
+image: docker-repository.bioey.com/docker:stable
+stages:
+  - build
+  - test
+  - publish
+  - repository
+  - deploy
+  - clearup
+  
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  image: docker-repository.bioey.com/dotnet/core/sdk:3.0-alpine
+  dependencies: []
+  script:
+    - dotnet restore
+    - dotnet msbuild
+    - dotnet pack -o ../../packages/
+  when: on_success
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+        - packages/
+  only:
+    refs:
+      - master
+
+packages:
+  stage: publish
+  image: docker-repository.bioey.com/dotnet/core/sdk:3.0-alpine
+  dependencies: [build]
+  script:
+    - cd packages
+    - dotnet nuget push **/*.nupkg -k d918751f-561b-3ab5-95af-f39f9c33b885 -s https://repository.bioey.com/repository/nuget-private/
+  when: on_success
+  only:
+    refs:
+      - master

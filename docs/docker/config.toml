@@ -1,0 +1,26 @@
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "prescription-online"
+  url = "http://192.168.1.89:10080/"
+  token = "qwzDsjvqqYCuz2xBT1Mn"
+  executor = "docker"
+  builds_dir = "/gitlab/runner-builds"
+  cache_dir = "/gitlab/runner-cache"
+  [runners.custom_build_dir]
+  [runners.docker]
+    tls_verify = false
+    image = "alpine:latest"
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["gitlab.runner.builds:/gitlab/runner-builds","gitlab.runner.cache:/gitlab/runner-cache"]
+    shm_size = 0
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]

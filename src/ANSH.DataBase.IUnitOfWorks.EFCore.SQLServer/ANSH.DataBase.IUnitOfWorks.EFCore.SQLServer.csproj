@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\sources.props"/>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.DataBase.IUnitOfWorks.EFCore.SQLServer</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DataBase.IUnitOfWorks.EFCore.SQLServer.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCoreRelationalPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ANSH.DataBase.IUnitOfWorks.EFCore\ANSH.DataBase.IUnitOfWorks.EFCore.csproj" />
+    <ProjectReference Include="..\ANSH.DataBase.EFCore.SQLServer\ANSH.DataBase.EFCore.SQLServer.csproj" />
+  </ItemGroup>
+
+</Project>

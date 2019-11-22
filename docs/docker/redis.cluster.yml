@@ -1,0 +1,256 @@
+version: '3.6'
+
+services:                 
+#redis cluster conf
+#cluster-enabled yes 是否开启集群
+#cluster-announce-ip ip 网关地址
+#cluster-announce-port 6379 节点映射端口
+#cluster-announce-bus-port 16379 节点总线端
+#创建集群
+#redis-cli  --cluster create 
+#10.0.0.40:7001 10.0.0.21:7002 10.0.0.28:7003 10.0.0.23:7004 10.0.0.26:7005 10.0.0.30:7006 
+#--cluster-replicas  1
+
+  redis-node-1:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7001' ,'--cluster-enabled yes','--cluster-announce-ip 10.0.0.40','--cluster-announce-port 7001','--cluster-announce-bus-port 17001']
+    ports:
+      - target: 7001
+        published: 7001
+        protocol: tcp
+        mode: host
+      - target: 17001
+        published: 17001
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.1
+    volumes:
+      - redis.node.1.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 1
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-node-2:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7002' , '--cluster-enabled yes','--cluster-announce-ip 10.0.0.21','--cluster-announce-port 7002','--cluster-announce-bus-port 17002']
+    ports:
+      - target: 7002
+        published: 7002
+        protocol: tcp
+        mode: host
+      - target: 17002
+        published: 17002
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.2
+    volumes:
+      - redis.node.2.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 1
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-node-3:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7003' , '--cluster-enabled yes','--cluster-announce-ip 10.0.0.28','--cluster-announce-port 7003','--cluster-announce-bus-port 17003']
+    ports:
+      - target: 7003
+        published: 7003
+        protocol: tcp
+        mode: host
+      - target: 17003
+        published: 17003
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.3
+    volumes:
+      - redis.node.3.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 1
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-node-4:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7004' , '--cluster-enabled yes','--cluster-announce-ip 10.0.0.23','--cluster-announce-port 7004','--cluster-announce-bus-port 17004']
+    ports:
+      - target: 7004
+        published: 7004
+        protocol: tcp
+        mode: host
+      - target: 17004
+        published: 17004
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.4
+    volumes:
+      - redis.node.4.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 2
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-node-5:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7005' , '--cluster-enabled yes','--cluster-announce-ip 10.0.0.26','--cluster-announce-port 7005','--cluster-announce-bus-port 17005']
+    ports:
+      - target: 7005
+        published: 7005
+        protocol: tcp
+        mode: host
+      - target: 17005
+        published: 17005
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.5
+    volumes:
+      - redis.node.5.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 2
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-node-6:
+    image: redis:5.0.5
+    command: ['redis-server', '--port 7006' , '--cluster-enabled yes','--cluster-announce-ip 10.0.0.30','--cluster-announce-port 7006','--cluster-announce-bus-port 17006']
+    ports:
+      - target: 7006
+        published: 7006
+        protocol: tcp
+        mode: host
+      - target: 17006
+        published: 17006
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.node.6
+    volumes:
+      - redis.node.6.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 2
+        preferences:
+          - spread: node.labels.swarm.node
+          
+          
+
+
+networks:
+  swarms:
+    external: true 
+
+
+volumes:
+  redis.node.1.data:
+    external: true 
+  redis.node.2.data:
+    external: true 
+  redis.node.3.data:
+    external: true 
+  redis.node.4.data:
+    external: true 
+  redis.node.5.data:
+    external: true 
+  redis.node.6.data:
+    external: true 

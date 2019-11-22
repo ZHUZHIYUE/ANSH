@@ -1,0 +1,89 @@
+version: '3.6'
+
+services:                 
+  redis-replication-master-node-1:
+    image: redis:5.0.5
+    command: ['redis-server','--sentinel']
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+      - target: 26379
+        published: 26379
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.replication.master.node.1
+    volumes:
+      - redis.replication.master.node.1.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 1
+        preferences:
+          - spread: node.labels.swarm.node
+
+  redis-replication-slave-node-1:
+    image: redis:5.0.5
+    command: ['redis-server', '--slaveof redis.replication.master.node.1','--sentinel']
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+      - target: 26379
+        published: 26379
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - redis.replication.slave.node.1
+    volumes:
+      - redis.replication.slave.node.1.data:/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 1s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.node == 2
+        preferences:
+          - spread: node.labels.swarm.node
+          
+
+
+networks:
+  swarms:
+    external: true 
+
+
+volumes:
+  redis.replication.master.node.1.data:
+    external: true 
+  redis.replication.slave.node.1.data:
+    external: true 

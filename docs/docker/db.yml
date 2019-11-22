@@ -1,0 +1,61 @@
+
+version: '3.6'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-CU14-ubuntu
+    ports:
+      - target: 1433
+        published: 1433
+        protocol: tcp
+        mode: host
+    environment:
+      # 环境变量详细说明：https://docs.microsoft.com/zh-cn/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-2017
+      # 在设置为任何值（例如“Y”）时接受 SQL Server 许可协议。
+      - ACCEPT_EULA=Y
+      # MSSQL_SA_PASSWORD
+      - SA_PASSWORD=Bio*novo!
+      # 设置 SQL Server 可使用的内存 （以 mb 为单位） 的最长。 默认情况下它是总物理内存的 80%。
+      - MSSQL_MEMORY_LIMIT_MB=4089
+      # 启用 SQL Server 代理。 例如，启用了 'true' 和 'false' 被禁用。 默认情况下禁用代理。
+      - MSSQL_AGENT_ENABLED=true
+      # 启用可用性组。 例如，"1"已启用，并禁用"0"
+      - MSSQL_ENABLE_HADR=1
+      # 设置 SQL Server 的默认排序规则。 这会重写排序规则的语言 id (LCID) 的默认的映射。
+      - MSSQL_COLLATION=Chinese_PRC_CI_AS
+      # 设置时区
+      - TZ=Asia/Shanghai
+    networks: 
+      swarms:
+        aliases:
+          - mssql
+    volumes:
+      - mssql:/var/opt/mssql:rw
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      resources:
+        reservations:
+          memory: 4089M
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+
+networks:
+  swarms:
+    external: true 
+
+
+volumes:
+  mssql:
+    external: true 

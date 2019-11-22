@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <Import Project="..\sources.props" />
+
+   <ItemGroup>
+    <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.AutoMapper</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.AutoMapper.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="$(AutoMapperPackageVersion)" />
+  </ItemGroup>
+
+</Project>

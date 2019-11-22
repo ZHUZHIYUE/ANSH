@@ -1,0 +1,78 @@
+version: '3.6'
+
+services:
+  portainer:
+    image: portainer/portainer:1.22.1
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: host
+    command: -H unix:///var/run/docker.sock
+    networks: 
+      swarms:
+        aliases:
+          - portainer
+    volumes:
+      - portainer:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        delay: 1s
+
+  repository:
+    image: sonatype/nexus3:3.19.1
+    ports:
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: host
+      - target: 8082
+        published: 8082
+        protocol: tcp
+        mode: host
+      - target: 18082
+        published: 18082
+        protocol: tcp
+        mode: host
+    networks: 
+      swarms:
+        aliases:
+          - repository
+    volumes:
+      - repository:/nexus-data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        delay: 1s
+      placement:
+        constraints: 
+          - node.labels.swarm.cluster == leader
+
+
+networks:
+  swarms:
+    external: true 
+
+volumes:
+  portainer:
+    external: true 
+  repository: 
+    external: true

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\sources.props"/>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
+    <Authors>$(AuthorsProjectInFormation)</Authors>
+    <Company>$(CompanyProjectInFormation)</Company>
+    <Product>$(ProductProjectInFormation)</Product>
+    <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
+    <Version>$(VersionProjectInFormation)</Version>
+    <PackageId>ANSH.DDD.Domain.Entities.EFCore</PackageId>
+    <Description>$(DescriptionProjectInFormation)</Description>
+    <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
+    <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
+    <PublishRepositoryUrl>$(PublishRepositoryUrlProjectInFormation)</PublishRepositoryUrl>
+    <LangVersion>$(LanguageVersion)</LangVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.DDD.Domain.Entities.EFCore.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ANSH.DataBase.EFCore\ANSH.DataBase.EFCore.csproj" />
+    <ProjectReference Include="..\ANSH.DDD.Domain.Interface\ANSH.DDD.Domain.Interface.csproj" />
+  </ItemGroup>
+
+</Project>
