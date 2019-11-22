@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Threading;
 using ANSH.DataBase.Connection;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
 namespace ANSH.DataBase.IUnitOfWorks.EFCore.SQLServer {

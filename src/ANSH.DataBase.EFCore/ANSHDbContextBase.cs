@@ -14,7 +14,8 @@ namespace ANSH.DataBase.EFCore {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public ANSHDbContextBase () { }
+        public ANSHDbContextBase () { 
+        }
 
         /// <summary>
         /// 构造函数

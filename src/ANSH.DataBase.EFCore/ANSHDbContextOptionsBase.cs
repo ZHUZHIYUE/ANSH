@@ -249,6 +249,6 @@ namespace ANSH.DataBase.EFCore {
         /// </summary>
         /// <param name="tSql">sql查询语句</param>
         /// <returns>返回满足条件的实体</returns>
-        public virtual IQueryable<TEntity>  FromSqlInterpolated (FormattableString tSql) => DbEntity.FromSqlInterpolated (tSql);
+        public virtual IQueryable<TEntity> FromSqlInterpolated (FormattableString tSql) => DbEntity.FromSql (tSql);
     }
 }

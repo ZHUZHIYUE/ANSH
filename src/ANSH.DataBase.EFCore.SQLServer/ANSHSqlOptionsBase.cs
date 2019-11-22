@@ -1,5 +1,5 @@
+using System.Data.SqlClient;
 using ANSH.DataBase.Connection;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
 namespace ANSH.DataBase.EFCore.SQLServer {

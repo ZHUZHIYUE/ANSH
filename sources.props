@@ -7,7 +7,6 @@
         <MicrosoftAspNetCoreMvcRazorPagesPackageVersion>2.1.1</MicrosoftAspNetCoreMvcRazorPagesPackageVersion>
         <SystemDataSqlClientPackageVersion>4.5.1</SystemDataSqlClientPackageVersion>
         <MicrosoftExtensionsLoggingConsolePackageVersion>2.1.1</MicrosoftExtensionsLoggingConsolePackageVersion>
-        <MySqlDataEntityFrameworkCorePackageVersion>8.0.18</MySqlDataEntityFrameworkCorePackageVersion>
         <NewtonsoftJsonPackageVersion>12.0.3</NewtonsoftJsonPackageVersion>
         <AutoMapperPackageVersion>9.0.0</AutoMapperPackageVersion>
         <MicrosoftAspNetCoreSignalRPackageVersion>1.1.0</MicrosoftAspNetCoreSignalRPackageVersion>
@@ -20,16 +19,19 @@
         <MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>3.0.0</MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>
         <MicrosoftExtensionsCachingAbstractionsPackageVersion>3.0.0</MicrosoftExtensionsCachingAbstractionsPackageVersion>
         <MicrosoftExtensionsLoggingAbstractionsPackageVersion>3.0.0</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
-        <MicrosoftEntityFrameworkCoreRelationalPackageVersion>3.0.0</MicrosoftEntityFrameworkCoreRelationalPackageVersion>
-        <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>3.0.0</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
         <MicrosoftExtensionsHostingPackageVersion>3.0.0</MicrosoftExtensionsHostingPackageVersion>
         <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.2.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
         <MicrosoftExtensionsDependencyInjectionPackageVersion>3.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
         <MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>3.0.0</MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>
         <MicrosoftAspNetCoreMvcAbstractionsPackageVersion>2.2.0</MicrosoftAspNetCoreMvcAbstractionsPackageVersion>
         <MicrosoftAspNetCoreMvcCorePackageVersion>2.2.0</MicrosoftAspNetCoreMvcCorePackageVersion>
-        <MicrosoftAspNetCoreDataProtectionEntityFrameworkCorePackageVersion>3.0.0</MicrosoftAspNetCoreDataProtectionEntityFrameworkCorePackageVersion>
         <MicrosoftAspNetCoreAuthorizationPackageVersion>3.0.0</MicrosoftAspNetCoreAuthorizationPackageVersion>
+    </PropertyGroup>
+    
+    <PropertyGroup Label="EntityFrameworkCore Package Versions">
+        <MicrosoftEntityFrameworkCoreRelationalPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreRelationalPackageVersion>
+        <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
+        <MySqlDataEntityFrameworkCorePackageVersion>8.0.18</MySqlDataEntityFrameworkCorePackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Label="Project InFormation">
@@ -37,7 +39,7 @@
         <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
-        <VersionProjectInFormation>2.1.0-alpha29</VersionProjectInFormation>
+        <VersionProjectInFormation>2.1.0-alpha32</VersionProjectInFormation>
         <DescriptionProjectInFormation>解决方案基于NET Standard 2.1，NET Core 3.0开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
         <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
         <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>
