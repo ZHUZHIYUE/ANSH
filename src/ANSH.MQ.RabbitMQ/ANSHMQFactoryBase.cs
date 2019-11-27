@@ -94,18 +94,6 @@ namespace ANSH.MQ.RabbitMQ {
         /// 创建队列
         /// </summary>
         /// <param name="queue">队列名称</param>
-        /// <param name="delivery">是否持久</param>
-        /// <param name="auto_delete">是否自动删除</param>
-        /// <param name="root_key">队列绑定routkey</param>
-        /// <param name="bind_args">队列绑定参数</param>
-        public void CreateQueue (string queue, bool delivery, bool auto_delete, string root_key = "", Dictionary<string, object> bind_args = null) {
-            CreateQueue (queue, delivery, auto_delete, "", root_key, bind_args);
-        }
-
-        /// <summary>
-        /// 创建队列
-        /// </summary>
-        /// <param name="queue">队列名称</param>
         /// <param name="queueDX">死信队列名称</param>
         /// <param name="rootKey">ROOTKEY</param>
         /// <param name="queueDxOpen">是否创建死信队列</param>
@@ -124,7 +112,17 @@ namespace ANSH.MQ.RabbitMQ {
         /// </summary>
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
-        void CreateQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase => CreateQueue (message.Queue, message.RootKey, message.QueueDxOpen, message.QueueDX);
+        void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
+            Dictionary<string, object> dxqueue = null;
+            CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
+            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxqueue);
+
+            if (message.QueueDxOpen) {
+                dxqueue = CreateParamFormDeathType (message.ExchangeTypeDX, message.RootKey);
+                CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
+                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, dxqueue);
+            }
+        }
 
         /// <summary>
         /// 创建排他队列
@@ -195,40 +193,23 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 259200000) where TMessage : ANSHMQMessageBase {
-            CreateQueue (message);
-            return PublishMsgConfirm ("", message.RootKey, message, delivery, expiration);
-        }
-
-        /// <summary>
-        /// 生产者
-        /// </summary>
-        /// <param name="exchange">交换机名称</param>
-        /// <param name="routkey">routkey</param>
-        /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
-        /// <typeparam name="TMessage">消息模型</typeparam>
-        /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (string exchange, string routkey, TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : ANSHMQMessageBase {
-            PublishMsg (exchange, routkey, new TMessage[] { message }, delivery, expiration);
+            PublishMsg (new TMessage[] { message }, delivery, expiration);
         }
 
         /// <summary>
         /// 生产者
         /// </summary>
-        /// <param name="exchange">交换机名称</param>
-        /// <param name="routkey">routkey</param>
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : ANSHMQMessageBase {
             using (var model = IConnection.CreateModel ()) {
-                PublishMsg (model, exchange, routkey, message, delivery, expiration);
+                PublishMsg (model, message, delivery, expiration);
             }
         }
 
@@ -236,14 +217,12 @@ namespace ANSH.MQ.RabbitMQ {
         /// 生产者
         /// </summary>
         /// <param name="model">AMQP操作模型</param>
-        /// <param name="exchange">交换机名称</param>
-        /// <param name="routkey">routkey</param>
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (IModel model, string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : ANSHMQMessageBase {
             var props = model.CreateBasicProperties ();
             props.Expiration = (expiration).ToString ();
@@ -252,8 +231,9 @@ namespace ANSH.MQ.RabbitMQ {
             props.ContentEncoding = "utf-8";
             if (message?.Length > 0) {
                 foreach (var message_item in message) {
-                    model.BasicPublish (string.IsNullOrWhiteSpace (exchange) ? "amq.direct" : exchange,
-                        routkey,
+                    CreateExchangeAndQueue (message_item);
+                    model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
+                        message_item.RootKey,
                         props,
                         ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
                 }
@@ -263,33 +243,29 @@ namespace ANSH.MQ.RabbitMQ {
         /// <summary>
         /// 生产者（确认模式）
         /// </summary>
-        /// <param name="exchange">交换机名称</param>
-        /// <param name="routkey">routkey</param>
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (string exchange, string routkey, TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : ANSHMQMessageBase {
-            return PublishMsgConfirm (exchange, routkey, new TMessage[] { message }, delivery, expiration);
+            return PublishMsgConfirm (new TMessage[] { message }, delivery, expiration);
         }
 
         /// <summary>
         /// 生产者（确认模式）
         /// </summary>
-        /// <param name="exchange">交换机名称</param>
-        /// <param name="routkey">routkey</param>
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (string exchange, string routkey, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
         where TMessage : ANSHMQMessageBase {
             using (var model = IConnection.CreateModel ()) {
                 model.ConfirmSelect ();
-                PublishMsg (model, exchange, routkey, message, delivery, expiration);
+                PublishMsg (model, message, delivery, expiration);
                 if (message?.Length > 0) {
                     if (message.Length == 1) {
                         return model.WaitForConfirms ();
@@ -314,7 +290,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
         public void RetrievingMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
-            CreateQueue (message);
+            CreateExchangeAndQueue (message);
             RetrievingMessages (message.Queue, received, requeue, prefetchCount, cancellationToken);
         }
 
@@ -327,10 +303,8 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
         public void RetrievingDXMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
-            if (message.QueueDxOpen) {
-                CreateQueue (message);
-                RetrievingMessages (message.QueueDX, received, requeue, prefetchCount, cancellationToken);
-            }
+            CreateExchangeAndQueue (message);
+            RetrievingMessages (message.QueueDX, received, requeue, prefetchCount, cancellationToken);
         }
 
         /// <summary>

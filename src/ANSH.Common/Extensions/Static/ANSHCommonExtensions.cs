@@ -627,16 +627,6 @@ public static class ANSHCommonExtensions {
 
     #region 时间戳
     /// <summary>
-    /// 将此实例值转换成时间戳
-    /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
-    /// </summary>
-    /// <param name="value">当前实例值</param>
-    /// <returns>返回时间戳值</returns>
-    public static double ToTimeStamp (this DateTime value) {
-        return value.Subtract (TimeZoneInfo.ConvertTime (new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc), TimeZoneInfo.Local)).TotalSeconds;
-    }
-
-    /// <summary>
     /// 将此时间戳实例值转换成时间
     /// <para>时间戳:格林威治时间从1970年01月01日00时00分00秒起至现在的总秒数</para>
     /// </summary>

@@ -9,6 +9,25 @@ namespace ANSH.MQ.RabbitMQ {
     [JsonObject (MemberSerialization.OptOut)]
     public abstract class ANSHMQMessageBase {
         /// <summary>
+        /// 交换机名称
+        /// </summary>
+        public virtual string Exchange => "ansh.direct";
+
+        /// <summary>
+        /// 交换机类型
+        /// </summary>
+        public virtual string ExchangeType => "direct";
+        /// <summary>
+        /// 死信交换机名称
+        /// </summary>
+        public virtual string ExchangeDX => $"{Exchange}.dx";
+
+        /// <summary>
+        /// 死信交换机类型
+        /// </summary>
+        public virtual string ExchangeTypeDX => ExchangeType;
+
+        /// <summary>
         /// 队列名称
         /// </summary>
         public abstract string Queue { get; }
