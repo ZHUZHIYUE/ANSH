@@ -115,12 +115,14 @@ namespace ANSH.MQ.RabbitMQ {
         void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
+            if (message.QueueDxOpen) {
+                dxqueue = CreateParamFormDeathType (message.ExchangeTypeDX, message.RootKey);
+            }
             CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxqueue);
 
             if (message.QueueDxOpen) {
-                dxqueue = CreateParamFormDeathType (message.ExchangeTypeDX, message.RootKey);
                 CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
-                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, dxqueue);
+                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
             }
         }
 
