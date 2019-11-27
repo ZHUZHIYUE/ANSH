@@ -29,7 +29,7 @@ public static class ANSHCommonExtensionsDateTime {
     ///  <param name="endTime">结束时间</param>
     /// <returns>返回指定实例与结束时间所在区域</returns>
     public static (DateTime, DateTime) [] ToTimePartition (this DateTime beginTime, int timeSpanSave, DateTime? endTime) {
-        if (endTime <= beginTime) {
+        if (endTime.HasValue && endTime <= beginTime) {
             throw new Exception ("结束时间必须大于当前实例值");
         }
         List < (DateTime, DateTime) > result = new List < (DateTime, DateTime) > ();
