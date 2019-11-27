@@ -99,7 +99,7 @@ namespace ANSH.MQ.RabbitMQ {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
             if (message.QueueDxOpen) {
-                dxqueue = CreateParamFormDeathType (message.ExchangeTypeDX, message.RootKey);
+                dxqueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
             }
             CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxqueue);
 
