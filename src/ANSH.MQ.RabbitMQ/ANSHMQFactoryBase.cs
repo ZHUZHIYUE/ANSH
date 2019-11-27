@@ -93,23 +93,6 @@ namespace ANSH.MQ.RabbitMQ {
         /// <summary>
         /// 创建队列
         /// </summary>
-        /// <param name="queue">队列名称</param>
-        /// <param name="queueDX">死信队列名称</param>
-        /// <param name="rootKey">ROOTKEY</param>
-        /// <param name="queueDxOpen">是否创建死信队列</param>
-        void CreateQueue (string queue, string rootKey, bool queueDxOpen, string queueDX) {
-            Dictionary<string, object> dxqueue = null;
-            if (queueDxOpen) {
-                CreateDurableExchange ("dead.lettered", "direct", true, false);
-                CreateQueue (queueDX, true, false, "dead.lettered", rootKey);
-                dxqueue = CreateParamFormDeathType ("dead.lettered", rootKey);
-            }
-            CreateQueue (queue, true, false, "", rootKey, dxqueue);
-        }
-
-        /// <summary>
-        /// 创建队列
-        /// </summary>
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
         void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
