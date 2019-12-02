@@ -25,7 +25,7 @@ public static class ANSHCommonExtensionsDateTime {
     /// 按指定区域分区
     /// </summary>
     ///  <param name="beginTime">当前实例值</param>
-    ///  <param name="timeSpanSave">指定时间区域，单位分钟</param>
+    ///  <param name="timeSpanSave">指定时间区域，单位秒</param>
     ///  <param name="endTime">结束时间</param>
     /// <returns>返回指定实例与结束时间所在区域</returns>
     public static (DateTime, DateTime) [] ToTimePartition (this DateTime beginTime, int timeSpanSave, DateTime? endTime) {

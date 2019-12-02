@@ -128,8 +128,7 @@ ORDER BY migs.user_seeks DESC
 ### 实时SQL  
 
 ```bash
-#!/bin/bash
-USE [master]
+#!/bin/bashUSE [master]
 SELECT
 	m.[session_id]							AS 会话的ID
 	,m.[status]								AS 运行状态
@@ -142,6 +141,16 @@ SELECT
 	,DB_NAME( m.[database_id] )				AS 数据库
 	,m.[wait_time]							AS [等待时间（毫秒）]
 	,m.[wait_type]							AS 等待类型
+	,(
+		CASE m.[blocking_session_id]
+		WHEN -2 THEN N'阻塞资源由孤立的分布式事务拥有'
+		WHEN -3 THEN N'阻塞资源由延迟的恢复事务拥有'
+		WHEN -4 THEN N'由于内部闩锁状态转换而导致此时无法确定阻塞闩锁所有者的会话 ID'
+		WHEN NULL THEN N'请求未被阻塞，或锁定会话的会话信息不可用（或无法进行标识）'
+		WHEN 0 THEN N'请求未被阻塞，或锁定会话的会话信息不可用（或无法进行标识）'
+		ELSE  CONVERT(NVARCHAR,m.[blocking_session_id])
+		END
+	) 										AS 正在阻塞请求的会话的ID
 	,m.[wait_resource]						AS 等待资源
 	,CASE
 		WHEN m.[wait_resource] LIKE 'OBJECT:%' THEN
@@ -166,16 +175,6 @@ SELECT
 	,m.[statement_end_offset]				AS 指示当前正在执行的语句结束位置的字符数
 	,m.[user_id]							AS 提交请求的用户的ID
 	,m.[connection_id]						AS 请求到达时所采用的连接的ID
-	,(
-		CASE m.[blocking_session_id]
-		WHEN -2 THEN N'阻塞资源由孤立的分布式事务拥有'
-		WHEN -3 THEN N'阻塞资源由延迟的恢复事务拥有'
-		WHEN -4 THEN N'由于内部闩锁状态转换而导致此时无法确定阻塞闩锁所有者的会话 ID'
-		WHEN NULL THEN N'请求未被阻塞，或锁定会话的会话信息不可用（或无法进行标识）'
-		WHEN 0 THEN N'请求未被阻塞，或锁定会话的会话信息不可用（或无法进行标识）'
-		ELSE  N'未知'
-		END
-	) 										AS 正在阻塞请求的会话的ID
 	,m.[open_transaction_count]				AS 打开的事务数
 	,m.[open_resultset_count]				AS 打开结果集数
 	,m.[transaction_id]						AS 事务的ID

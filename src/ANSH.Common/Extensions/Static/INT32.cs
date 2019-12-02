@@ -51,4 +51,18 @@ public static class ANSHCommonExtensionsINT32 {
         result = is_parse ? parse_result : default (int);
         return is_parse;
     }
+
+    /// <summary>
+    /// 将此此实例值转换成分页相关数据
+    /// </summary>
+    /// <param name="dataCount">当前实例值，分页数据总条数</param>
+    /// <param name="pageCount">满足指定条件数据可分页总数</param>
+    /// <param name="hasNext">是否还有下一页</param>
+    /// <param name="pageIndex">页数</param>
+    /// <param name="pageSize">每页数据条数</param>
+    public static void ToPage (this int dataCount, int pageIndex, int pageSize, out int pageCount, out bool hasNext) {
+        pageCount = (int) Math.Ceiling (dataCount / (double) pageSize);
+        hasNext = pageIndex < pageCount;
+    }
+
 }

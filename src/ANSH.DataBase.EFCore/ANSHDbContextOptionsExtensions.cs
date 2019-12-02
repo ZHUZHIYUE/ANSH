@@ -25,9 +25,20 @@ public static class ANSHDbContextOptionsExtensions {
     /// <returns>返回分页处理后的查询结果</returns>
     public static IQueryable<TEntity> ToPage<TEntity> (this IQueryable<TEntity> iqueryable, out int dataCount, out int pageCount, out bool hasNext, int pageIndex = 1, int pageSize = 20) {
         dataCount = iqueryable.Count ();
-        pageCount = (int) Math.Ceiling (dataCount / (double) pageSize);
-        hasNext = pageIndex < pageCount;
-        return iqueryable.Skip ((pageIndex - 1) * pageSize).Take (pageSize);
+        dataCount.ToPage (pageIndex, pageSize, out pageCount, out hasNext);
+        return iqueryable.ToTake (pageSize, (pageIndex - 1) * pageSize);
+    }
+
+    /// <summary>
+    /// 将指定的查询结果取出指定条数
+    /// </summary>
+    /// <typeparam name="TEntity">实体模型</typeparam>
+    /// <param name="iqueryable">将指定的查询结果</param>
+    /// <param name="take">取多少条</param>
+    /// <param name="skip">忽略前面几个</param>
+    /// <returns>返回指定条数的查询结果</returns>
+    public static IQueryable<TEntity> ToTake<TEntity> (this IQueryable<TEntity> iqueryable, int take = 20, int skip = 0) {
+        return iqueryable.Skip (skip).Take (take);
     }
 
     /// <summary>

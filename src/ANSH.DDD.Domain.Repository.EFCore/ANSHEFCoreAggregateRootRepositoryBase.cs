@@ -33,21 +33,21 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// </summary>
             /// <param name="TAggregateRoots">需要添加的实体</param>
             /// <returns>添加后的实体</returns>
-            public virtual TAggregateRoot[] Insert (params TAggregateRoot[] TAggregateRoots) => Work.Register<TAggregateRootContxt> ().Insert (TAggregateRoots);
+            public virtual TAggregateRoot[] Insert (params TAggregateRoot[] TAggregateRoots) => base.DBContxt.Insert (TAggregateRoots);
 
             /// <summary>
             /// 批量添加实体
             /// </summary>
             /// <param name="model">需要添加的实体</param>
             /// <returns>添加后的实体</returns>
-            public TAggregateRoot Insert (TAggregateRoot model) => Work.Register<TAggregateRootContxt> ().Insert (model);
+            public TAggregateRoot Insert (TAggregateRoot model) => base.DBContxt.Insert (model);
 
             /// <summary>
             /// 添加实体
             /// </summary>
             /// <param name="action">需要添加的实体</param>
             /// <returns>添加后的实体</returns>
-            public virtual TAggregateRoot Insert (Action<TAggregateRoot> action) => Work.Register<TAggregateRootContxt> ().Insert (action);
+            public virtual TAggregateRoot Insert (Action<TAggregateRoot> action) => base.DBContxt.Insert (action);
 
             /// <summary>
             /// 修改指定实体
@@ -65,7 +65,7 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// </summary>
             /// <param name="action">需要修改的项</param>
             /// <param name="specification">规约</param>
-            public virtual void Update (Action<TAggregateRoot> action, IANSHSpecificationCommit<TAggregateRoot> specification = null) => Work.Register<TAggregateRootContxt> ().Update (action, specification);
+            public virtual void Update (Action<TAggregateRoot> action, IANSHSpecificationCommit<TAggregateRoot> specification = null) => base.DBContxt.Update (action, specification);
 
             /// <summary>
             /// 修改指定实体
@@ -88,7 +88,7 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 删除指定实体
             /// </summary>
             /// <param name="specification">规约</param>
-            public virtual void Delete (IANSHSpecificationCommit<TAggregateRoot> specification = null) => Work.Register<TAggregateRootContxt> ().Delete (specification);
+            public virtual void Delete (IANSHSpecificationCommit<TAggregateRoot> specification = null) => base.DBContxt.Delete (specification);
 
             /// <summary>
             /// 删除指定实体

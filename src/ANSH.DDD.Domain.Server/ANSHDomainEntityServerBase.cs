@@ -26,6 +26,7 @@ namespace ANSH.DDD.Domain.Server {
                 get;
             }
 
+            #region GetList
             /// <summary>
             /// 获取指定实体
             /// </summary>
@@ -87,7 +88,9 @@ namespace ANSH.DDD.Domain.Server {
             /// <returns>返回满足条件的实体</returns>
             public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector)
             where TResult : class => IRepository.GetListAsync (criteria, selector);
+            #endregion
 
+            #region GetListToPage
             /// <summary>
             /// 获取指定实体
             /// </summary>
@@ -210,7 +213,104 @@ namespace ANSH.DDD.Domain.Server {
             /// <param name="pagesize">每页数据条数</param>
             /// <returns>返回满足条件的实体</returns>
             public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TResult : class => IRepository.GetListAsync (criteria, selector, out datacount, out pagecount, out hasnext, page, pagesize);
+            #endregion
 
+            #region GetListToTake
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="specification">规约</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual List<Entity> GetList (IANSHSpecification<Entity> specification, int take, int skip = 0) => IRepository.GetList (specification, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="specification">规约</param>
+            /// <param name="selector">返回指定实体类型</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual List<TResult> GetList<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0)
+            where TResult : class => IRepository.GetList (specification, selector, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual List<Entity> GetList (int take, int skip = 0) => IRepository.GetList (take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="criteria">条件</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual List<Entity> GetList (Expression<Func<Entity, bool>> criteria, int take, int skip = 0) => IRepository.GetList (criteria, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="criteria">条件</param>
+            /// <param name="selector">返回指定实体类型</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual List<TResult> GetList<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class => IRepository.GetList (criteria, selector, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual Task<List<Entity>> GetListAsync (int take, int skip = 0) => IRepository.GetListAsync (take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="specification">规约</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, int take, int skip = 0) => IRepository.GetListAsync (specification, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="specification">规约</param>
+            /// <param name="selector">返回指定实体类型</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class => IRepository.GetListAsync (specification, selector, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="criteria">条件</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, int take, int skip = 0) => IRepository.GetListAsync (criteria, take, skip);
+
+            /// <summary>
+            /// 获取指定实体
+            /// </summary>
+            /// <param name="criteria">条件</param>
+            /// <param name="selector">返回指定实体类型</param>
+            /// <param name="take">取多少条</param>
+            /// <param name="skip">忽略前面几个</param>
+            /// <returns>返回满足条件的实体</returns>
+            public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class => IRepository.GetListAsync (criteria, selector, take, skip);
+            #endregion
+
+            #region GetOne
             /// <summary>
             /// 获取指定实体
             /// </summary>
@@ -299,6 +399,7 @@ namespace ANSH.DDD.Domain.Server {
             /// <param name="selector">返回指定实体类型</param>
             /// <returns>返回满足条件的实体</returns>
             public virtual Task<TResult> GetOneAsync<TResult> (TPKey Id, Expression<Func<Entity, TResult>> selector) where TResult : class => IRepository.GetOneAsync (m => m.Id.Equals (Id), selector);
+            #endregion
 
             /// <summary>
             /// 获取指定实体数量

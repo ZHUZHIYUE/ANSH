@@ -20,6 +20,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ANSH.DataBase.Connection\ANSH.DataBase.Connection.csproj" />
+    <ProjectReference Include="..\ANSH.Common\ANSH.Common.csproj" />
     <ProjectReference Include="..\ANSH.DDD.Domain.Specifications\ANSH.DDD.Domain.Specifications.csproj" />
   </ItemGroup>
   <ItemGroup>
