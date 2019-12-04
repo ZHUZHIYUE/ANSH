@@ -95,7 +95,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// </summary>
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
-        void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
+        public void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
             if (message.QueueDxOpen) {
@@ -205,9 +205,10 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessageBase {
             var props = model.CreateBasicProperties ();
             props.Expiration = (expiration).ToString ();
@@ -216,7 +217,9 @@ namespace ANSH.MQ.RabbitMQ {
             props.ContentEncoding = "utf-8";
             if (message?.Length > 0) {
                 foreach (var message_item in message) {
-                    CreateExchangeAndQueue (message_item);
+                    if (createExchangeAndQueue) {
+                        CreateExchangeAndQueue (message_item);
+                    }
                     model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
                         message_item.RootKey,
                         props,
@@ -231,11 +234,12 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessageBase {
-            return PublishMsgConfirm (new TMessage[] { message }, delivery, expiration);
+            return PublishMsgConfirm (new TMessage[] { message }, delivery, expiration, createExchangeAndQueue);
         }
 
         /// <summary>
@@ -244,13 +248,14 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="message">消息内容</param>
         /// <param name="delivery">消息是否持久</param>
         /// <param name="expiration">消息有效处理时间单位毫秒</param>
+        /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessageBase {
             using (var model = IConnection.CreateModel ()) {
                 model.ConfirmSelect ();
-                PublishMsg (model, message, delivery, expiration);
+                PublishMsg (model, message, delivery, expiration, createExchangeAndQueue);
                 if (message?.Length > 0) {
                     if (message.Length == 1) {
                         return model.WaitForConfirms ();
@@ -273,9 +278,12 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="received">消费处理</param>
         /// <param name="requeue">消费失败时是否重新进入队列</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
+        /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <param name="cancellationToken">Task取消</param>
-        public void RetrievingMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
-            CreateExchangeAndQueue (message);
+        public void RetrievingMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
+            if (createExchangeAndQueue) {
+                CreateExchangeAndQueue (message);
+            }
             RetrievingMessages (message.Queue, received, requeue, prefetchCount, cancellationToken);
         }
 
@@ -286,9 +294,12 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="received">消费处理</param>
         /// <param name="requeue">消费失败时是否重新进入队列</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
+        /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <param name="cancellationToken">Task取消</param>
-        public void RetrievingDXMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
-            CreateExchangeAndQueue (message);
+        public void RetrievingDXMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
+            if (createExchangeAndQueue) {
+                CreateExchangeAndQueue (message);
+            }
             RetrievingMessages (message.QueueDX, received, requeue, prefetchCount, cancellationToken);
         }
 
@@ -324,7 +335,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="requeue">消费失败时是否重新进入队列</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
-        public virtual void RetrievingMessages (string queue, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) => RetrievingMessages (queue, (param) => received (param).Result, requeue, prefetchCount, cancellationToken);
+        void RetrievingMessages (string queue, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) => RetrievingMessages (queue, (param) => received (param).Result, requeue, prefetchCount, cancellationToken);
 
         /// <summary>
         /// 消费者
@@ -343,7 +354,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="received">消费处理，Item1：操作是否成功，Item2：操作失败是否重新进入队列。</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
-        public virtual void RetrievingMessages (string queue, Func < string, (bool, bool) > received, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) {
+        void RetrievingMessages (string queue, Func < string, (bool, bool) > received, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) {
             var ItemCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
             Task.Run (() => {
                 do {
@@ -366,7 +377,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="received">消费处理，Item1：操作是否成功，Item2：操作失败是否重新进入队列。</param>
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="cancellationToken">Task取消</param>
-        public virtual void RetrievingMessages (string queue, Func < string, Task < (bool, bool) >> received, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) => RetrievingMessages (queue, (param) => received (param).Result, prefetchCount, cancellationToken);
+        void RetrievingMessages (string queue, Func < string, Task < (bool, bool) >> received, ushort prefetchCount, CancellationToken cancellationToken = default (CancellationToken)) => RetrievingMessages (queue, (param) => received (param).Result, prefetchCount, cancellationToken);
 
         /// <summary>
         /// 消费者
