@@ -25,11 +25,15 @@ namespace ANSH.Caches {
         /// 设置缓存
         /// </summary>
         /// <param name="cachesBase">缓存内容</param>
-        /// <typeparam name="TANSHCachesBase">缓存基类</typeparam>
+        /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Set<TANSHCachesBase, TModel> (TANSHCachesBase cachesBase) where TANSHCachesBase : ANSHCachesModelBase<TModel> {
+        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) {
             if (cachesBase.CachesValue != null) {
-                DistributedCache.SetString (cachesBase.CacheKey, cachesBase.CachesValue.ToJson (), cachesBase.CacheOptions);
+                if (refresh || Get (cachesBase) == null) {
+                    DistributedCache.SetString (cachesBase.CacheKey, cachesBase.CachesValue.ToJson (), cachesBase.CacheOptions);
+                } else {
+                    DistributedCache.SetString (cachesBase.CacheKey, cachesBase.CachesValue.ToJson ());
+                }
             }
         }
 
@@ -39,14 +43,14 @@ namespace ANSH.Caches {
         /// <param name="cachesBase">缓存内容</param>
         /// <param name="existsCachesBase">返回已存在相同CacheKey的缓存内容</param>
         /// <param name="replace">若有相同CacheKey的缓存内容是否替换</param>
-        /// <typeparam name="TANSHCachesBase">缓存基类</typeparam>
+        /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Set<TANSHCachesBase, TModel> (TANSHCachesBase cachesBase, out TANSHCachesBase existsCachesBase, bool replace = true) where TANSHCachesBase : ANSHCachesModelBase<TModel> {
+        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, out TModel existsCachesBase, bool replace = true, bool refresh = false) {
 
-            existsCachesBase = Get<TANSHCachesBase, TModel> (cachesBase);
+            existsCachesBase = Get (cachesBase);
 
             if (replace) {
-                Set<TANSHCachesBase, TModel> (cachesBase);
+                Set (cachesBase);
             }
         }
 
@@ -54,23 +58,21 @@ namespace ANSH.Caches {
         /// 获取缓存
         /// </summary>
         /// <param name="cache">缓存</param>
-        /// <typeparam name="TANSHCachesBase">缓存基类</typeparam>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public TANSHCachesBase Get<TANSHCachesBase, TModel> (TANSHCachesBase cache) where TANSHCachesBase : ANSHCachesModelBase<TModel> {
+        public TModel Get<TModel> (ANSHCachesModelBase<TModel> cache) {
             string cacheValue = DistributedCache.GetString (cache.CacheKey);
             if (!string.IsNullOrWhiteSpace (cacheValue)) {
-                cache.CachesValue = cacheValue.ToJsonObj<TModel> ();
+                return cacheValue.ToJsonObj<TModel> ();
             } else {
-                cache.CachesValue = default (TModel);
+                return default (TModel);
             }
-            return cache;
         }
 
         /// <summary>
         /// 删除缓存
         /// </summary>
         /// <param name="cache">缓存</param>
-        /// <typeparam name="TANSHCachesBase">缓存基类</typeparam>
-        public void Remove<TANSHCachesBase> (TANSHCachesBase cache) where TANSHCachesBase : ANSHCachesBase => DistributedCache.Remove (cache.CacheKey);
+        /// <typeparam name="TModel">缓存值模型</typeparam>
+        public void Remove<TModel> (ANSHCachesModelBase<TModel> cache) => DistributedCache.Remove (cache.CacheKey);
     }
 }

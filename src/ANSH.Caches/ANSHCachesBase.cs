@@ -18,7 +18,7 @@ namespace ANSH.Caches {
         /// </summary>
         /// <param name="cacheKey">缓存键</param>
         public ANSHCachesBase (string cacheKey) {
-            CacheKey = cacheKey.MD5Encryp ().ToX2String ();
+            CacheKey = cacheKey;
         }
 
         /// <summary>
