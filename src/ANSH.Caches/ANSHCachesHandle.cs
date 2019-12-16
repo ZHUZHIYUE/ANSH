@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ANSH.Caches {
 
@@ -27,11 +28,19 @@ namespace ANSH.Caches {
         /// <param name="cachesBase">缓存内容</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) {
+        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) => SetAsync (cachesBase, refresh).Wait ();
+
+        /// <summary>
+        /// 设置缓存
+        /// </summary>
+        /// <param name="cachesBase">缓存内容</param>
+        /// <param name="refresh">是否刷新缓存时间</param>
+        /// <typeparam name="TModel">缓存值模型</typeparam>
+        public async Task SetAsync<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) {
             if (refresh || Get (cachesBase) == null) {
-                DistributedCache.SetString (cachesBase.CacheKey, cachesBase.CachesValue?.ToJson () ?? "unknown", cachesBase.CacheOptions);
+                await DistributedCache.SetStringAsync (cachesBase.CacheKey, cachesBase.CachesValue?.ToJson () ?? "unknown", cachesBase.CacheOptions);
             } else {
-                DistributedCache.SetString (cachesBase.CacheKey, cachesBase.CachesValue?.ToJson () ?? "unknown");
+                await DistributedCache.SetStringAsync (cachesBase.CacheKey, cachesBase.CachesValue?.ToJson () ?? "unknown");
             }
         }
 
@@ -59,7 +68,7 @@ namespace ANSH.Caches {
         /// <param name="breakDown">缓存击穿</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
         public TModel Get<TModel> (ANSHCachesModelBase<TModel> cache, out bool breakDown) {
-            string cacheValue = DistributedCache.GetString (cache.CacheKey);
+            string cacheValue = DistributedCache.GetStringAsync (cache.CacheKey).Result;
             if (!string.IsNullOrWhiteSpace (cacheValue)) {
                 breakDown = false;
                 return cacheValue == "unknown" ? default (TModel) : cacheValue.ToJsonObj<TModel> ();
@@ -81,6 +90,13 @@ namespace ANSH.Caches {
         /// </summary>
         /// <param name="cache">缓存</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Remove<TModel> (ANSHCachesModelBase<TModel> cache) => DistributedCache.Remove (cache.CacheKey);
+        public void Remove<TModel> (ANSHCachesModelBase<TModel> cache) => RemoveAsync (cache).Wait ();
+
+        /// <summary>
+        /// 删除缓存
+        /// </summary>
+        /// <param name="cache">缓存</param>
+        /// <typeparam name="TModel">缓存值模型</typeparam>
+        public async Task RemoveAsync<TModel> (ANSHCachesModelBase<TModel> cache) => await DistributedCache.RemoveAsync (cache.CacheKey);
     }
 }
