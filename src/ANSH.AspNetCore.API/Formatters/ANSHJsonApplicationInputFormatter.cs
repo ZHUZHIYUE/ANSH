@@ -39,7 +39,7 @@ namespace ANSH.AspNetCore.API.Formatters {
             }
             var request = context.HttpContext.Request;
             using (var reader = new StreamReader (request.Body, encoding)) {
-                string body_str = reader.ReadToEnd ();
+                string body_str = await reader.ReadToEndAsync ();
                 _Action?.Invoke (context.HttpContext.RequestServices, body_str, context.ModelType);
                 return await InputFormatterResult.SuccessAsync (body_str.ToJsonObj (context.ModelType));
             }
