@@ -7,8 +7,7 @@ using ANSH.SDK.API.ResponseContracts.Models;
 
 namespace ANSH.SDK.API.ResponseContracts {
     /// <summary>
-    /// 响应
-    /// <para>分页</para>
+    /// Get分页响应多条记录基类
     /// </summary>
     /// <typeparam name="TANSHModelResponse">响应模型</typeparam>
     /// <typeparam name="TANSHPageResponesModel">分页信息模型</typeparam>

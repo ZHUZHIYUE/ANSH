@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace ANSH.SDK.API.ResponseContracts {
     /// <summary>
-    /// 响应
+    /// Get响应多条记录基类
     /// </summary>
     /// <typeparam name="TANSHModelResponse">响应模型</typeparam>
     public abstract class ANSHGetListResponseBase<TANSHModelResponse> : ANSHResponseBase where TANSHModelResponse : class {

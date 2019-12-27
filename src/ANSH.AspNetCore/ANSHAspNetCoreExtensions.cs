@@ -69,4 +69,14 @@ public static class ANSHAspNetCoreExtensions {
         services.AddSingleton<IAuthorizationPolicyProvider, ANSHAuthorizationPolicyProvider> ();
         action (services);
     }
+
+    /// <summary>
+    /// 添加身份验证策略
+    /// <remark></remark>
+    /// </summary>
+    public static void AddANSHAuthorization<TIAuthorizationPolicyProvider> (this IServiceCollection services, Action<IServiceCollection> action)
+    where TIAuthorizationPolicyProvider : class, IAuthorizationPolicyProvider {
+        services.AddSingleton<IAuthorizationPolicyProvider, TIAuthorizationPolicyProvider> ();
+        action (services);
+    }
 }

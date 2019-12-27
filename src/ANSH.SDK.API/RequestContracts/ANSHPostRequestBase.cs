@@ -8,13 +8,13 @@ using ANSH.SDK.API.ResponseContracts.Models;
 using Newtonsoft.Json;
 namespace ANSH.SDK.API.RequestContracts {
     /// <summary>
-    /// 请求
+    /// Post请求单条记录基类
     /// </summary>
-    /// <typeparam name="TANSHTResponse">响应</typeparam>
-    /// <typeparam name="TANSHMODELRequest">请求模型</typeparam>
+    /// <typeparam name="TANSHResponse">Post响应单条记录基类</typeparam>
+    /// <typeparam name="TANSHMODELRequest">Post请求单条模型</typeparam>
     /// <typeparam name="TANSHModelResponse">响应模型</typeparam>
-    public abstract class ANSHPostRequestBase<TANSHTResponse, TANSHMODELRequest, TANSHModelResponse> : ANSHRequestBase<TANSHTResponse>
-        where TANSHTResponse : ANSHPostResponseBase<TANSHModelResponse>
+    public abstract class ANSHPostRequestBase<TANSHResponse, TANSHMODELRequest, TANSHModelResponse> : ANSHRequestBase<TANSHResponse>
+        where TANSHResponse : ANSHPostResponseBase<TANSHModelResponse>
         where TANSHMODELRequest : ANSHPostRequestModelBase
     where TANSHModelResponse : class {
 

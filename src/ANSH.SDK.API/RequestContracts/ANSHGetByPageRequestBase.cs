@@ -8,8 +8,7 @@ using ANSH.SDK.API.ResponseContracts.Models;
 
 namespace ANSH.SDK.API.RequestContracts {
     /// <summary>
-    /// 请求
-    /// <para>分页</para>
+    /// Get分页请求多条记录基类
     /// </summary>
     /// <typeparam name="TANSHQueryRequest">查询参数</typeparam>
     /// <typeparam name="TANSHResponse">响应</typeparam>

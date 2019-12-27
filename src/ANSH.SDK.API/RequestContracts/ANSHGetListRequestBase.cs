@@ -8,13 +8,13 @@ using ANSH.SDK.API.ResponseContracts.Models;
 
 namespace ANSH.SDK.API.RequestContracts {
     /// <summary>
-    /// 请求
+    /// Get请求多条记录基类
     /// </summary>
-    /// <typeparam name="TANSHQueryRequest">查询参数</typeparam>
-    /// <typeparam name="TANSHResponse">响应</typeparam>
-    /// <typeparam name="TANSHModelResponse">响应模型</typeparam>
-    public abstract class ANSHGetListRequestBase<TANSHQueryRequest, TANSHResponse, TANSHModelResponse> : ANSHRequestBase<TANSHResponse>
-        where TANSHResponse : ANSHGetListResponseBase<TANSHModelResponse>
+    /// <typeparam name="TANSHQueryRequest">Get请求查询模型基类</typeparam>
+    /// <typeparam name="TANSHGetListResponse">Get响应多条记录基类</typeparam>
+    /// <typeparam name="TANSHModelResponse">响应模型基类</typeparam>
+    public abstract class ANSHGetListRequestBase<TANSHQueryRequest, TANSHGetListResponse, TANSHModelResponse> : ANSHRequestBase<TANSHGetListResponse>
+        where TANSHGetListResponse : ANSHGetListResponseBase<TANSHModelResponse>
         where TANSHModelResponse : class
     where TANSHQueryRequest : ANSHGetRequestModelBase {
 

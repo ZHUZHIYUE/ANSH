@@ -36,7 +36,7 @@ namespace ANSH.AspNetCore.Authorization {
         /// </summary>
         /// <param name="policyName">策略名称</param>
         /// <returns></returns>
-        public Task<AuthorizationPolicy> GetPolicyAsync (string policyName) {
+        public virtual Task<AuthorizationPolicy> GetPolicyAsync (string policyName) {
             if (policyName.StartsWith (_Policy, StringComparison.OrdinalIgnoreCase)) {
                 var policy = new AuthorizationPolicyBuilder ();
                 policy.AddRequirements (new ANSHRequirement ());

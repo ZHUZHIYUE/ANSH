@@ -4,8 +4,7 @@ using System.Text;
 
 namespace ANSH.SDK.API.ResponseContracts {
     /// <summary>
-    /// 响应
-    /// <para>数组POST</para>
+    /// Post响应多条记录基类
     /// </summary>
     /// <typeparam name="TANSHModelResponse">响应模型</typeparam>
     public abstract class ANSHPostArrayResponseBase<TANSHModelResponse> : ANSHResponseBase where TANSHModelResponse : Models.ANSHPostArrayResponseModelBase {
