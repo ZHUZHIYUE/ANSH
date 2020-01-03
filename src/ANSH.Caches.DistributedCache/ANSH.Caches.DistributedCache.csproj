@@ -9,7 +9,7 @@
     <Product>$(ProductProjectInFormation)</Product>
     <GeneratePackageOnBuild>$(GeneratePackageOnBuildProjectInFormation)</GeneratePackageOnBuild>
     <Version>$(VersionProjectInFormation)</Version>
-    <PackageId>ANSH.SDK.ANSH.Redis</PackageId>
+    <PackageId>ANSH.Caches.DistributedCache</PackageId>
     <Description>$(DescriptionProjectInFormation)</Description>
     <RepositoryType>$(RepositoryTypeProjectInFormation)</RepositoryType>
     <RepositoryUrl>$(RepositoryUrlProjectInFormation)</RepositoryUrl>
@@ -18,16 +18,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.SDK.ANSH.Redis.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.Caches.DistributedCache.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="$(StackExchangeRedisPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="$(MicrosoftExtensionsCachingAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(MicrosoftExtensionsCachingStackExchangeRedisPackageVersion)"/>
   </ItemGroup>
 
- 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+   <ProjectReference Include="..\ANSH.Caches\ANSH.Caches.csproj" />
   </ItemGroup>
 
 </Project>

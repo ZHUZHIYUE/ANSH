@@ -14,25 +14,10 @@ namespace ANSH.Caches {
         public ANSHCachesBase () { }
 
         /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="cacheKey">缓存键</param>
-        public ANSHCachesBase (string cacheKey) {
-            CacheKey = cacheKey;
-        }
-
-        /// <summary>
         /// 缓存键
         /// </summary>
         /// <value></value>
         [JsonIgnore]
-        public virtual string CacheKey { get; }
-
-        /// <summary>
-        /// 缓存配置
-        /// </summary>
-        /// <value></value>
-        [JsonIgnore]
-        public abstract DistributedCacheEntryOptions CacheOptions { get; }
+        public abstract string CacheKey { get; }
     }
 }

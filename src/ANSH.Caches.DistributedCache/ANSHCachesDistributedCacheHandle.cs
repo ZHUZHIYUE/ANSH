@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace ANSH.Caches {
+namespace ANSH.Caches.DistributedCache {
 
     /// <summary>
     /// 缓存操作
     /// </summary>
-    public class ANSHCachesHandle {
+    public class ANSHCachesDistributedCacheHandle {
 
         /// <summary>
         /// 缓存操作接口
@@ -18,7 +18,7 @@ namespace ANSH.Caches {
         /// 构造函数
         /// </summary>
         /// <param name="distributedCache">缓存操作接口</param>
-        public ANSHCachesHandle (IDistributedCache distributedCache) {
+        public ANSHCachesDistributedCacheHandle (IDistributedCache distributedCache) {
             DistributedCache = distributedCache;
         }
 
@@ -28,7 +28,7 @@ namespace ANSH.Caches {
         /// <param name="cachesBase">缓存内容</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) => SetAsync (cachesBase, refresh).Wait ();
+        public void Set<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cachesBase, bool refresh = false) => SetAsync (cachesBase, refresh).Wait ();
 
         /// <summary>
         /// 设置缓存
@@ -36,7 +36,7 @@ namespace ANSH.Caches {
         /// <param name="cachesBase">缓存内容</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public async Task SetAsync<TModel> (ANSHCachesModelBase<TModel> cachesBase, bool refresh = false) {
+        public async Task SetAsync<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cachesBase, bool refresh = false) {
             if (refresh || Get (cachesBase) == null) {
                 await DistributedCache.SetStringAsync (cachesBase.CacheKey, cachesBase.CachesValue?.ToJson () ?? "unknown", cachesBase.CacheOptions);
             } else {
@@ -52,7 +52,7 @@ namespace ANSH.Caches {
         /// <param name="replace">若有相同CacheKey的缓存内容是否替换</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Set<TModel> (ANSHCachesModelBase<TModel> cachesBase, out TModel existsCachesBase, bool replace = true, bool refresh = false) {
+        public void Set<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cachesBase, out TModel existsCachesBase, bool replace = true, bool refresh = false) {
 
             existsCachesBase = Get (cachesBase);
 
@@ -67,7 +67,7 @@ namespace ANSH.Caches {
         /// <param name="cache">缓存</param>
         /// <param name="breakDown">缓存击穿</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public TModel Get<TModel> (ANSHCachesModelBase<TModel> cache, out bool breakDown) {
+        public TModel Get<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cache, out bool breakDown) {
             string cacheValue = DistributedCache.GetStringAsync (cache.CacheKey).Result;
             if (!string.IsNullOrWhiteSpace (cacheValue)) {
                 breakDown = false;
@@ -83,20 +83,20 @@ namespace ANSH.Caches {
         /// </summary>
         /// <param name="cache">缓存</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public TModel Get<TModel> (ANSHCachesModelBase<TModel> cache) => Get (cache, out _);
+        public TModel Get<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cache) => Get (cache, out _);
 
         /// <summary>
         /// 删除缓存
         /// </summary>
         /// <param name="cache">缓存</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public void Remove<TModel> (ANSHCachesModelBase<TModel> cache) => RemoveAsync (cache).Wait ();
+        public void Remove<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cache) => RemoveAsync (cache).Wait ();
 
         /// <summary>
         /// 删除缓存
         /// </summary>
         /// <param name="cache">缓存</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public async Task RemoveAsync<TModel> (ANSHCachesModelBase<TModel> cache) => await DistributedCache.RemoveAsync (cache.CacheKey);
+        public async Task RemoveAsync<TModel> (ANSHCachesDistributedCacheModelBase<TModel> cache) => await DistributedCache.RemoveAsync (cache.CacheKey);
     }
 }
