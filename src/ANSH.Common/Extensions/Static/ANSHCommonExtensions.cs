@@ -304,6 +304,16 @@ public static class ANSHCommonExtensions {
     public static byte[] FromBase64 (this String value) {
         return Convert.FromBase64String (value);
     }
+
+    /// <summary>
+    /// 将此实例值（它将二进制数据编码为 Base64 数字）转换为等效的8位无符号整数数组
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns> 与此实例值等效的8位无符号整数数组</returns>
+    public static Stream FromBase64Stream (this String value) {
+        return Convert.FromBase64String (value).ToStream ();
+    }
+
     /// <summary>
     /// 将此实例值（它将二进制数据编码为 Base64 数字）转换为等效的8位无符号整数数组
     /// </summary>
@@ -320,6 +330,15 @@ public static class ANSHCommonExtensions {
     /// <returns> 与此实例值字符串表示形式，以Base64表示</returns>
     public static string ToBase64String (this byte[] value) {
         return Convert.ToBase64String (value);
+    }
+
+    /// <summary>
+    /// 将此实例值为其用Base64数字编码的等效字符串表示形式
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns> 与此实例值字符串表示形式，以Base64表示</returns>
+    public static string ToBase64String (this Stream value) {
+        return Convert.ToBase64String (value.ToByte ());
     }
 
     /// <summary>
@@ -366,12 +385,18 @@ public static class ANSHCommonExtensions {
         if (!value?.CanRead??false) {
             throw new NotSupportedException ("Stream不能读取");
         }
-        if (value.Position != 0) {
-            throw new Exception ("Stream位置为0");
+        using (var writeStream = new MemoryStream ()) {
+            int length = 4 * 1024;
+            var readByte = new byte[length];
+            do {
+                length = value.Read (readByte, 0, length);
+                writeStream.Write (readByte, 0, length);
+            } while (length != 0);
+            writeStream.Seek (0, SeekOrigin.Begin);
+            byte[] bytes = new byte[writeStream.Length];
+            writeStream.Read (bytes, 0, bytes.Length);
+            return bytes;
         }
-        byte[] bytes = new byte[value.Length];
-        value.Read (bytes, 0, bytes.Length);
-        return bytes;
     }
     #endregion
 
@@ -381,7 +406,7 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     public static Stream ToStream (this byte[] value) {
-        Stream stream = new MemoryStream (value);
+        Stream stream = new MemoryStream (value, 0, value.Length);
         return stream;
     }
     #endregion
@@ -873,7 +898,6 @@ public static class ANSHCommonExtensions {
     /// <param name="value">虚拟路径</param>
     /// <returns>物理路径</returns>
     public static string ToPhysicalPathBeginRoot (this string value) => $"{Directory.GetCurrentDirectory().TrimEnd('/', '\\')}{value?.TrimStart('/', '\\') ?? string.Empty}";
-
 
     /// <summary>
     /// 按照Path合并字符串
