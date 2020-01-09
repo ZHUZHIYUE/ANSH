@@ -189,11 +189,7 @@ namespace ANSH.SDK.API {
             string typeOfQueryPrefix = string.Empty;
             var queryProperties = request.GetType ().GetProperty (nameof (request.Query));
 
-            if (queryProperties.IsDefined (typeof (FromQueryAttribute))) {
-                typeOfQueryPrefix = ((FromQueryAttribute) queryProperties.GetCustomAttribute (typeof (FromQueryAttribute))).Name;
-            } else {
-                typeOfQueryPrefix = queryProperties.Name;
-            }
+            typeOfQueryPrefix = queryProperties.Name;
 
             var typeOfQuery = request.Query.GetType ();
             var propertiesOfQuery = typeOfQuery.GetProperties ();
@@ -214,13 +210,7 @@ namespace ANSH.SDK.API {
                             typeof (Enum).IsAssignableFrom (propertiesOfType) ||
                             typeof (bool).IsAssignableFrom (propertiesOfType)
                         ) {
-                            string propertiesOfQueryItemKey, propertiesOfQueryItemValue = string.Empty;
-                            if (propertiesOfQueryItem.IsDefined (typeof (FromQueryAttribute))) {
-                                var propertiesOfQueryAttribute = (FromQueryAttribute) propertiesOfQueryItem.GetCustomAttribute (typeof (FromQueryAttribute));
-                                propertiesOfQueryItemKey = propertiesOfQueryAttribute.Name;
-                            } else {
-                                propertiesOfQueryItemKey = propertiesOfQueryItem.Name;
-                            }
+                            string propertiesOfQueryItemKey = string.Empty, propertiesOfQueryItemValue = string.Empty;
 
                             if (typeof (Enum).IsAssignableFrom (propertiesOfType)) {
                                 if (propertiesOfQueryItem.IsDefined (typeof (ANSHCustomEnumConverAttribute))) {
@@ -231,8 +221,16 @@ namespace ANSH.SDK.API {
                                         propertiesOfQueryItemValue = ((int?) System.Enum.Parse (propertiesOfType, propertiesOfQueryItemValue))?.ToString ();
                                     }
                                 } else {
-                                    propertiesOfQueryItemValue = propertiesOfQueryItem.GetValue (request.Query, null)?.ToString () ?? string.Empty;
+                                    propertiesOfQueryItemValue = propertiesOfQueryItem.GetValue (request.Query)?.ToString () ?? string.Empty;
                                 }
+                            } else {
+                                if (propertiesOfQueryItem.IsDefined (typeof (FromQueryAttribute))) {
+                                    var propertiesOfQueryAttribute = (FromQueryAttribute) propertiesOfQueryItem.GetCustomAttribute (typeof (FromQueryAttribute));
+                                    propertiesOfQueryItemKey = propertiesOfQueryAttribute.Name;
+                                } else {
+                                    propertiesOfQueryItemKey = propertiesOfQueryItem.Name;
+                                }
+                                propertiesOfQueryItemValue = propertiesOfQueryItem.GetValue (request.Query)?.ToString () ?? string.Empty;
                             }
 
                             parametersOfQuery.Add ($"{typeOfQueryPrefix}.{propertiesOfQueryItemKey}={propertiesOfQueryItemValue}");
