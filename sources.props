@@ -23,16 +23,16 @@
         <MicrosoftAspNetCoreMvcCorePackageVersion>2.2.0</MicrosoftAspNetCoreMvcCorePackageVersion>
 
 
-        <MicrosoftAspNetCoreSignalRStackExchangeRedisPackageVersion>3.1.0</MicrosoftAspNetCoreSignalRStackExchangeRedisPackageVersion>
-        <MicrosoftAspNetCoreSignalRProtocolsNewtonsoftJsonPackageVersion>3.1.0</MicrosoftAspNetCoreSignalRProtocolsNewtonsoftJsonPackageVersion>
-        <MicrosoftAspNetCoreAuthorizationPackageVersion>3.1.0</MicrosoftAspNetCoreAuthorizationPackageVersion>
-        <MicrosoftExtensionsDependencyInjectionPackageVersion>3.1.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
-        <MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>3.1.0</MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>
-        <MicrosoftExtensionsHostingPackageVersion>3.1.0</MicrosoftExtensionsHostingPackageVersion>
-        <MicrosoftAspNetCoreDataProtectionPackageVersion>3.1.0</MicrosoftAspNetCoreDataProtectionPackageVersion>
-        <MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>3.1.0</MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>
-        <MicrosoftExtensionsCachingAbstractionsPackageVersion>3.1.0</MicrosoftExtensionsCachingAbstractionsPackageVersion>
-        <MicrosoftExtensionsLoggingAbstractionsPackageVersion>3.1.0</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+        <MicrosoftAspNetCoreSignalRStackExchangeRedisPackageVersion>3.1.1</MicrosoftAspNetCoreSignalRStackExchangeRedisPackageVersion>
+        <MicrosoftAspNetCoreSignalRProtocolsNewtonsoftJsonPackageVersion>3.1.1</MicrosoftAspNetCoreSignalRProtocolsNewtonsoftJsonPackageVersion>
+        <MicrosoftAspNetCoreAuthorizationPackageVersion>3.1.1</MicrosoftAspNetCoreAuthorizationPackageVersion>
+        <MicrosoftExtensionsDependencyInjectionPackageVersion>3.1.1</MicrosoftExtensionsDependencyInjectionPackageVersion>
+        <MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>3.1.1</MicrosoftAspNetCoreDataProtectionStackExchangeRedisPackageVersion>
+        <MicrosoftExtensionsHostingPackageVersion>3.1.1</MicrosoftExtensionsHostingPackageVersion>
+        <MicrosoftAspNetCoreDataProtectionPackageVersion>3.1.1</MicrosoftAspNetCoreDataProtectionPackageVersion>
+        <MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>3.1.1</MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>
+        <MicrosoftExtensionsCachingAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsCachingAbstractionsPackageVersion>
+        <MicrosoftExtensionsLoggingAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
     </PropertyGroup>
     
     <PropertyGroup Label="EntityFrameworkCore Package Versions">
@@ -46,7 +46,7 @@
         <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
-        <VersionProjectInFormation>2.1.0-alpha71</VersionProjectInFormation>
+        <VersionProjectInFormation>2.1.0-alpha72</VersionProjectInFormation>
         <DescriptionProjectInFormation>解决方案基于NET Standard 2.1，NET Core 3.1开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
         <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
         <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>
