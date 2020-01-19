@@ -41,11 +41,11 @@ namespace ANSH.JWT {
                 return false;
             }
 
-            if (outPayload.Exp <= DateTime.Now.ToTimeStamp ()) {
+            if (DateTime.Now.ToTimeStamp () >= outPayload.Exp) {
                 return false;
             }
 
-            if (outPayload.Nbf <= DateTime.Now.ToTimeStamp ()) {
+            if (DateTime.Now.ToTimeStamp () <= outPayload.Nbf) {
                 return false;
             }
             return true;
