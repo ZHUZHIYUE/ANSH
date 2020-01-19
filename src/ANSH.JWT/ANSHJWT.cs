@@ -40,6 +40,14 @@ namespace ANSH.JWT {
             if (jwtString != Encode (outPayload, secretKey)) {
                 return false;
             }
+
+            if (outPayload.Exp <= DateTime.Now.ToTimeStamp ()) {
+                return false;
+            }
+
+            if (outPayload.Nbf <= DateTime.Now.ToTimeStamp ()) {
+                return false;
+            }
             return true;
         }
 
