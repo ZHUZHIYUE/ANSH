@@ -17,19 +17,19 @@ namespace ANSH.JWT {
         /// 到期时间，时间戳
         /// </summary>
         [JsonProperty ("exp")]
-        public long? Exp { get; set; } = (int) DateTime.Now.AddMinutes (20).ToTimeStamp ();
+        public double? Exp { get; set; } = DateTime.Now.AddMinutes (20).ToTimeStamp ();
 
         /// <summary>
         /// 在此时间之前不可用，时间戳
         /// </summary>
         [JsonProperty ("nbf")]
-        public long? Nbf { get; set; } = (int) DateTime.Now.ToTimeStamp ();
+        public double? Nbf { get; set; } = DateTime.Now.ToTimeStamp ();
 
         /// <summary>
         ///发布时间，时间戳
         /// </summary>
         [JsonProperty ("iat")]
-        public long? Iat { get; set; } = (int) DateTime.Now.ToTimeStamp ();
+        public double? Iat { get; set; } = DateTime.Now.ToTimeStamp ();
 
         /// <summary>
         /// 主题

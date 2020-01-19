@@ -156,7 +156,7 @@ namespace ANSH.OAuth {
             jwtPayload.Authorize = authorize;
             jwtPayload.Authorized = authorized;
             jwtPayload.TokenType = tokenType;
-            jwtPayload.Iat = (int) Math.Ceiling (DateTime.Now.ToTimeStamp ());
+            jwtPayload.Iat = DateTime.Now.ToTimeStamp ();
             return ANSHJWT.Encode (jwtPayload, secretKey);
         }
 
