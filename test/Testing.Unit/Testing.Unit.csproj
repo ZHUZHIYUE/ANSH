@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ANSH.Caches.Redis\ANSH.Caches.Redis.csproj" />
+    <ProjectReference Include="..\..\src\ANSH.JWT\ANSH.JWT.csproj" />
   </ItemGroup>
 
 </Project>
