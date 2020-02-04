@@ -151,7 +151,7 @@ namespace ANSH.OAuth {
         /// <returns>AccessToken</returns>
         static string CreateAccessToken (string authorize, string authorized, TokenTypes tokenType, string secretKey, int expires) {
             var jwtPayload = new ANSHAccessToken ();
-            jwtPayload.Exp += expires * 60 * 1000;
+            jwtPayload.Exp += expires * 60;
             jwtPayload.Jti = Guid.NewGuid ().ToString ("N");
             jwtPayload.Authorize = authorize;
             jwtPayload.Authorized = authorized;
