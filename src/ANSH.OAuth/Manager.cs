@@ -15,16 +15,17 @@ namespace ANSH.OAuth {
         #region 授权码
         /// <summary>
         /// 创建授权码
-        /// <param name="authorize">授权人</param>
-        /// <param name="authorized">被授权人</param>
+        /// <param name="claims">自定义内容</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="expires">有效时间（单位分）</param>
         /// </summary>
-        public TokenCode CreateCODE (string authorize, string authorized, string secretKey, int expires = 2) {
+        public TokenCode CreateCODE<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires = 2)
+        where TANSHAccessToken : ANSHAccessToken {
+            claims.TokenType = TokenTypes.code;
             TokenCode tokenCode = new TokenCode () {
-            Code = CreateAccessToken (authorize, authorized, TokenTypes.code, secretKey, expires),
-            Create_Times = DateTime.Now,
-            Expires_IN = expires
+                Code = CreateAccessToken (claims, secretKey, expires),
+                Create_Times = DateTime.Now,
+                Expires_IN = expires
             };
             return tokenCode;
         }
@@ -35,8 +36,9 @@ namespace ANSH.OAuth {
         /// <param name="CODE">授权码值</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="accessTokenModel">accessToken内容</param>
-        bool VerifyCODE (string CODE, string secretKey, out ANSHAccessToken accessTokenModel) {
-            if (VerifyAccessToken (CODE, secretKey, out accessTokenModel) && accessTokenModel.TokenType == TokenTypes.code) {
+        bool VerifyCODE<TANSHAccessToken> (string CODE, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel)
+        where TANSHAccessToken : ANSHAccessToken {
+            if (VerifyAccessToken (CODE, secretKey, out accessTokenModel) && accessTokenModel.Claims.TokenType == TokenTypes.code) {
                 return true;
             }
             return false;
@@ -46,16 +48,17 @@ namespace ANSH.OAuth {
         #region 刷新令牌
         /// <summary>
         /// 创建刷新令牌
-        /// <param name="authorize">授权人</param>
-        /// <param name="authorized">被授权人</param>
+        /// <param name="claims">自定义内容</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="expires">有效时间（单位分）</param>
         /// </summary>
-        RefreshToken CreateRefreshToken (string authorize, string authorized, string secretKey, int expires = 60 * 24 * 7) {
+        RefreshToken CreateRefreshToken<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires = 60 * 24 * 7)
+        where TANSHAccessToken : ANSHAccessToken {
+            claims.TokenType = TokenTypes.reftoken;
             RefreshToken refreshToken = new RefreshToken () {
-            Refresh_Token = CreateAccessToken (authorize, authorized, TokenTypes.reftoken, secretKey, expires),
-            Create_Times = DateTime.Now,
-            Expires_IN = expires
+                Refresh_Token = CreateAccessToken (claims, secretKey, expires),
+                Create_Times = DateTime.Now,
+                Expires_IN = expires
             };
             return refreshToken;
         }
@@ -66,8 +69,8 @@ namespace ANSH.OAuth {
         /// <param name="REFRESH_TOKEN">刷新令牌值</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="accessTokenModel">accessToken内容</param>
-        bool VerifyRefreshToken (string REFRESH_TOKEN, string secretKey, out ANSHAccessToken accessTokenModel) {
-            if (VerifyAccessToken (REFRESH_TOKEN, secretKey, out accessTokenModel) && accessTokenModel.TokenType == TokenTypes.reftoken) {
+        bool VerifyRefreshToken<TANSHAccessToken> (string REFRESH_TOKEN, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel) where TANSHAccessToken : ANSHAccessToken {
+            if (VerifyAccessToken (REFRESH_TOKEN, secretKey, out accessTokenModel) && accessTokenModel.Claims.TokenType == TokenTypes.reftoken) {
                 return true;
             }
             return false;
@@ -83,41 +86,39 @@ namespace ANSH.OAuth {
         /// <param name="grant_type">授权方式</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="token">令牌值</param>
+        /// <param name="jwt">jwt内容</param>
         /// <param name="access_token_expires">access_token有效时间（单位分钟）</param>
         /// <param name="refresh_token_expires">refresh_token有效时间（单位分钟）</param>
         /// <returns>成功创建令牌返回True，反之false</returns>
-        public bool CreateToken (string grant_key, GrantTypes grant_type, string secretKey, out Token token, int access_token_expires = 120, int refresh_token_expires = 120) {
+        public bool CreateToken<TANSHAccessToken> (string grant_key, GrantTypes grant_type, string secretKey, out Token token, out ANSHJWTPayload<TANSHAccessToken> jwt, int access_token_expires = 120, int refresh_token_expires = 120)
+        where TANSHAccessToken : ANSHAccessToken {
             token = null;
-            ANSHAccessToken accessTokenModel = null;
+            jwt = null;
 
             string refresh_token = string.Empty;
-            string authorize = string.Empty, authorized = string.Empty;
             int access_token_expires_new = access_token_expires, refresh_token_expires_new = refresh_token_expires;
 
             switch (grant_type) {
                 case GrantTypes.authorization_code:
                     {
-                        if (!VerifyCODE (grant_key, secretKey, out accessTokenModel)) return false;
-                        authorize = accessTokenModel.Authorize;
-                        authorized = accessTokenModel.Authorized;
-                        var refToken = CreateRefreshToken (authorize, authorized, secretKey, refresh_token_expires_new);
+                        if (!VerifyCODE (grant_key, secretKey, out jwt)) return false;
+                        var refToken = CreateRefreshToken (jwt.Claims, secretKey, refresh_token_expires_new);
                         refresh_token = refToken.Refresh_Token;
                         refresh_token_expires_new = refToken.Expires_IN;
                     }
                     break;
                 case GrantTypes.refresh_token:
                     {
-                        if (!VerifyRefreshToken (grant_key, secretKey, out accessTokenModel)) return false;
-                        authorize = accessTokenModel.Authorize;
-                        authorized = accessTokenModel.Authorized;
-                        access_token_expires_new = refresh_token_expires_new = (accessTokenModel.Exp.Value.ToTimeStamp () - DateTime.Now).Minutes;
+                        if (!VerifyRefreshToken (grant_key, secretKey, out jwt)) return false;
+                        access_token_expires_new = refresh_token_expires_new = (jwt.Exp.Value.ToTimeStamp () - DateTime.Now).Minutes;
                         refresh_token = grant_key;
                     }
                     break;
             }
 
+            jwt.Claims.TokenType = TokenTypes.token;
             token = new Token () {
-                Access_Token = CreateAccessToken (authorize, authorized, TokenTypes.token, secretKey, access_token_expires_new),
+                Access_Token = CreateAccessToken (jwt.Claims, secretKey, access_token_expires_new),
                 Create_Times = DateTime.Now,
                 Expires_IN = access_token_expires_new,
                 Refresh_Token = refresh_token,
@@ -132,8 +133,8 @@ namespace ANSH.OAuth {
         /// <param name="access_token">令牌值</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="accessTokenModel">accessToken内容</param>
-        public bool VerifyToken (string access_token, string secretKey, out ANSHAccessToken accessTokenModel) {
-            if (VerifyAccessToken (access_token, secretKey, out accessTokenModel) && accessTokenModel.TokenType == TokenTypes.token) {
+        public bool VerifyToken<TANSHAccessToken> (string access_token, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel) where TANSHAccessToken : ANSHAccessToken {
+            if (VerifyAccessToken (access_token, secretKey, out accessTokenModel) && accessTokenModel.Claims.TokenType == TokenTypes.token) {
                 return true;
             }
             return false;
@@ -143,20 +144,17 @@ namespace ANSH.OAuth {
         /// <summary>
         /// 创建AccessToken
         /// </summary>
-        /// <param name="authorize">授权人</param>
-        /// <param name="authorized">被授权人</param>
-        /// <param name="tokenType">令牌类型</param>
+        /// <param name="claims">自定义内容</param>
         /// <param name="secretKey">密匙</param>
         /// <param name="expires">有效时间（单位分钟）</param>
         /// <returns>AccessToken</returns>
-        static string CreateAccessToken (string authorize, string authorized, TokenTypes tokenType, string secretKey, int expires) {
-            var jwtPayload = new ANSHAccessToken ();
+        static string CreateAccessToken<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires)
+        where TANSHAccessToken : ANSHAccessToken {
+            var jwtPayload = new ANSHJWTPayload<TANSHAccessToken> ();
             jwtPayload.Exp += expires * 60;
             jwtPayload.Jti = Guid.NewGuid ().ToString ("N");
-            jwtPayload.Authorize = authorize;
-            jwtPayload.Authorized = authorized;
-            jwtPayload.TokenType = tokenType;
             jwtPayload.Iat = DateTime.Now.ToTimeStamp ();
+            jwtPayload.Claims = claims;
             return ANSHJWT.Encode (jwtPayload, secretKey);
         }
 
@@ -167,6 +165,6 @@ namespace ANSH.OAuth {
         /// <param name="secretKey">密匙</param>
         /// <param name="accessTokenModel">accessToken内容</param>
         /// <returns>AccessToken</returns>
-        static bool VerifyAccessToken (string access_token, string secretKey, out ANSHAccessToken accessTokenModel) => ANSHJWT.Decode (access_token, secretKey, out accessTokenModel);
+        static bool VerifyAccessToken<TANSHAccessToken> (string access_token, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel) where TANSHAccessToken : ANSHAccessToken => ANSHJWT.Decode (access_token, secretKey, out accessTokenModel);
     }
 }

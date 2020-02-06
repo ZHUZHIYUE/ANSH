@@ -5,7 +5,7 @@ namespace ANSH.JWT {
     /// <summary>
     /// JWT有效载荷
     /// </summary>
-    public class ANSHJWTPayload {
+    public class ANSHJWTPayload<Tclaims> {
 
         /// <summary>
         /// 发行人
@@ -49,5 +49,10 @@ namespace ANSH.JWT {
         [JsonProperty ("jti")]
         public string Jti { get; set; }
 
+        /// <summary>
+        /// 自定义内容
+        /// </summary>
+        [JsonProperty ("claims")]
+        public Tclaims Claims { get; set; }
     }
 }

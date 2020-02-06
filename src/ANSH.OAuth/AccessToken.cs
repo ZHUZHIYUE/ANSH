@@ -9,7 +9,7 @@ namespace ANSH.OAuth {
     /// <summary>
     /// 令牌值
     /// </summary>
-    public class ANSHAccessToken : ANSHJWTPayload {
+    public class ANSHAccessToken {
 
         /// <summary>
         /// 授权人

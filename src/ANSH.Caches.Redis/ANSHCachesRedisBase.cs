@@ -36,5 +36,12 @@ namespace ANSH.Caches.Redis {
         /// <value></value>
         [JsonIgnore]
         public abstract string CacheKeyPrefix { get; }
+
+        /// <summary>
+        /// 过期时间
+        /// </summary>
+        /// <value></value>
+        [JsonIgnore]
+        public virtual TimeSpan? AbsoluteExpirationRelativeToNow { get; }
     }
 }

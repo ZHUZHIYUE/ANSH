@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ANSH.Caches.Redis;
 using StackExchange.Redis;
@@ -7,7 +8,7 @@ using Xunit;
 namespace Testing.Unit {
     public class ANSHCachesRedisTesting {
         ConnectionMultiplexer _Redis = null;
-        ConnectionMultiplexer Redis => _Redis = _Redis?? ConnectionMultiplexer.Connect ("192.168.1.89:6379,192.168.1.90:6379");
+        ConnectionMultiplexer Redis => _Redis = _Redis?? ConnectionMultiplexer.Connect ("192.168.1.78:7301");
 
         public class TestListPushAndPopCache : ANSHCachesRedisListBase<int> {
 
@@ -35,6 +36,24 @@ namespace Testing.Unit {
             public TestSortedSetCache () : base ("TestSortedSetCache") {
 
             }
+        }
+
+        public class TestStringIncrementCache : ANSHCachesRedisCounterBase {
+
+            public TestStringIncrementCache () : base ("TestStringIncrementCache") {
+
+            }
+
+        }
+
+        public class TestStringIncrementExpirCache : ANSHCachesRedisCounterBase {
+
+            public TestStringIncrementExpirCache () : base ("TestStringIncrementExpirCache") {
+
+            }
+
+            public override TimeSpan? AbsoluteExpirationRelativeToNow => TimeSpan.FromSeconds (1);
+
         }
 
         [Fact]
@@ -105,7 +124,8 @@ namespace Testing.Unit {
             ANSHCachesRedisHandle.ListRightPushAdnTrim (cacheBase, 3, save : 1);
 
             var result = ANSHCachesRedisHandle.ListRange (cacheBase);
-            Assert.Equal (ANSHCachesRedisHandle.ListLength (cacheBase), result.Count);
+
+            Assert.Equal (1, ANSHCachesRedisHandle.ListLength (cacheBase));
             Assert.Equal (1, result.Count);
             Assert.Equal (0, result[0]);
         }
@@ -134,6 +154,53 @@ namespace Testing.Unit {
                 Assert.Equal (2, result.Count);
                 Assert.Equal (0, result[0]);
                 Assert.Equal (1, result[1]);
+            }
+        }
+
+        [Fact]
+        public void TestStringIncrement () {
+            var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
+            var cacheBase = new TestStringIncrementCache ();
+            ANSHCachesRedisHandle.KeyDelete (cacheBase);
+
+            {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (1, result);
+            }
+
+            {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (2, result);
+            }
+
+            {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (3, result);
+            }
+        }
+
+        [Fact]
+        public void TestStringIncrementExpir () {
+            var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
+            var cacheBase = new TestStringIncrementExpirCache ();
+            ANSHCachesRedisHandle.KeyDelete (cacheBase);
+
+            {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (1, result);
+                Thread.Sleep (1000);
+            } {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (1, result);
+                Thread.Sleep (500);
+            } {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase, refresh : true);
+                Assert.Equal (2, result);
+                Thread.Sleep (500);
+            } {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (3, result);
+                Thread.Sleep (500);
             }
         }
     }
