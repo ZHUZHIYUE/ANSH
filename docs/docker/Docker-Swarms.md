@@ -54,6 +54,8 @@ Docker Swarms是Docker容器的集群。
     $ sudo systemctl start docker
 
     注意：这种方法必须先启动 docker-tcp.socket，再启动 Docker，一定要注意启动顺序！
+
+    docker swarm init --force-new-cluster 是在保留配置数据的情况下重建集群
     ```
 
 4. 启动端口  

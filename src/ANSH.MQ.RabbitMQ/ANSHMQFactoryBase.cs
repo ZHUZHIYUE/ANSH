@@ -95,7 +95,16 @@ namespace ANSH.MQ.RabbitMQ {
         /// </summary>
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
-        public void CreateExchangeAndQueue<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase {
+        public void InitPublish<TMessage> (TMessage message) where TMessage : ANSHMQMessagePublishBase {
+            CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
+        }
+
+        /// <summary>
+        /// 创建队列
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <returns>队列名</returns>
+        public void InitRetrieving<TMessage> (TMessage message) where TMessage : ANSHMQMessageRetrievingBase {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
             if (message.QueueDxOpen) {
@@ -108,6 +117,13 @@ namespace ANSH.MQ.RabbitMQ {
                 CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
             }
         }
+
+        /// <summary>
+        /// 创建队列
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <returns>队列名</returns>
+        public void InitMessage<TMessage> (TMessage message) where TMessage : ANSHMQMessageBase => InitRetrieving (message);
 
         /// <summary>
         /// 创建排他队列
@@ -179,7 +195,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
         public virtual void PublishMsg<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
-        where TMessage : ANSHMQMessageBase {
+        where TMessage : ANSHMQMessagePublishBase {
             PublishMsg (new TMessage[] { message }, delivery, expiration);
         }
 
@@ -192,7 +208,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
         public virtual void PublishMsg<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
-        where TMessage : ANSHMQMessageBase {
+        where TMessage : ANSHMQMessagePublishBase {
             using (var model = IConnection.CreateModel ()) {
                 PublishMsg (model, message, delivery, expiration);
             }
@@ -209,7 +225,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
         public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
-        where TMessage : ANSHMQMessageBase {
+        where TMessage : ANSHMQMessagePublishBase {
             var props = model.CreateBasicProperties ();
             props.Expiration = (expiration).ToString ();
             props.DeliveryMode = (byte) (delivery ? 2 : 1);
@@ -218,7 +234,7 @@ namespace ANSH.MQ.RabbitMQ {
             if (message?.Length > 0) {
                 foreach (var message_item in message) {
                     if (createExchangeAndQueue) {
-                        CreateExchangeAndQueue (message_item);
+                        InitPublish (message_item);
                     }
                     model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
                         message_item.RootKey,
@@ -238,7 +254,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
         public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
-        where TMessage : ANSHMQMessageBase {
+        where TMessage : ANSHMQMessagePublishBase {
             return PublishMsgConfirm (new TMessage[] { message }, delivery, expiration, createExchangeAndQueue);
         }
 
@@ -252,7 +268,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
         public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
-        where TMessage : ANSHMQMessageBase {
+        where TMessage : ANSHMQMessagePublishBase {
             using (var model = IConnection.CreateModel ()) {
                 model.ConfirmSelect ();
                 PublishMsg (model, message, delivery, expiration, createExchangeAndQueue);
@@ -280,9 +296,9 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <param name="cancellationToken">Task取消</param>
-        public void RetrievingMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
+        public void RetrievingMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageRetrievingBase {
             if (createExchangeAndQueue) {
-                CreateExchangeAndQueue (message);
+                InitRetrieving (message);
             }
             RetrievingMessages (message.Queue, received, requeue, prefetchCount, cancellationToken);
         }
@@ -296,9 +312,9 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="prefetchCount">同时处理几条消息</param>
         /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <param name="cancellationToken">Task取消</param>
-        public void RetrievingDXMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageBase {
+        public void RetrievingDXMessages<TMessage> (TMessage message, Func<string, Task<bool>> received, bool requeue, ushort prefetchCount, bool createExchangeAndQueue = false, CancellationToken cancellationToken = default (CancellationToken)) where TMessage : ANSHMQMessageRetrievingBase {
             if (createExchangeAndQueue) {
-                CreateExchangeAndQueue (message);
+                InitRetrieving (message);
             }
             RetrievingMessages (message.QueueDX, received, requeue, prefetchCount, cancellationToken);
         }
