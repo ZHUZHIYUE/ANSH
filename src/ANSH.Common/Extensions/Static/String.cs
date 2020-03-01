@@ -76,7 +76,7 @@ public static class ANSHCommonExtensionsString {
         for (int i = 0; i < removeCount; i++) {
             result.Append ($"{addresses[i]?.Trim()} ");
         }
-        
+
         result.Append ($"{PrivacyTxtMiddle (string.Join (' ', _addresses),beginReserved,endReserved,least)?.Trim()}");
 
         return result.ToString ();
@@ -117,4 +117,47 @@ public static class ANSHCommonExtensionsString {
     /// <param name="phone">电话号码</param>
     /// <returns>隐匿后的字符串</returns>
     public static string PrivacyTxtPhone (this string phone) => PrivacyTxtMiddle (phone, 3, 4, 4);
+
+    /// <summary>
+    /// 获取拼音首字母
+    /// </summary>
+    /// <param name="value">汉字字符串</param>
+    /// <returns>相对应的汉语拼音首字母串</returns>
+    public static string ToPingYinInitial (this string value) {
+        string strTemp = "";
+        int iLen = value?.Length??0;
+        int i = 0;
+        for (i = 0; i <= iLen - 1; i++) {
+            strTemp += GetPingYinInitial (value.Substring (i, 1)).ToUpper ();
+        }
+        return strTemp;
+    }
+
+    /// <summary>
+    /// 得到一个汉字的拼音第一个字母，如果是一个英文字母则直接返回大写字母
+    /// </summary>
+    /// <param name="cnChar">单个汉字</param>
+    /// <returns>单个大写字母</returns>
+    static string GetPingYinInitial (string cnChar) {
+        System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
+        byte[] arrCN = Encoding.GetEncoding ("gb2312").GetBytes (cnChar);
+        if (arrCN.Length > 1) {
+            int area = (short) arrCN[0];
+            int pos = (short) arrCN[1];
+            int code = (area << 8) + pos;
+            int[] areacode = { 45217, 45253, 45761, 46318, 46826, 47010, 47297, 47614, 48119, 48119, 49062, 49324, 49896, 50371, 50614, 50622, 50906, 51387, 51446, 52218, 52698, 52698, 52698, 52980, 53689, 54481 };
+            for (int i = 0; i < 26; i++) {
+                int max = 55290;
+                if (i != 25) max = areacode[i + 1];
+                if (areacode[i] <= code && code < max) {
+                    return Encoding.Default.GetString (new byte[] {
+                        (byte) (65 + i)
+                    });
+                }
+            }
+            return " ";
+        } else {
+            return cnChar;
+        };
+    }
 }

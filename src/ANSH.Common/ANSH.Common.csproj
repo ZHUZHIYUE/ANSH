@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\sources.props"/>
+  <Import Project="..\sources.props" />
   <PropertyGroup>
     <TargetFramework>netstandard$(NetstandardBase)</TargetFramework>
     <Authors>$(AuthorsProjectInFormation)</Authors>
@@ -18,5 +18,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard$(NetstandardBase)\ANSH.Common.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
+  </ItemGroup>
 
 </Project>
