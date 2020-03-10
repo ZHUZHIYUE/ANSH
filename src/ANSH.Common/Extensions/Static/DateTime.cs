@@ -56,4 +56,34 @@ public static class ANSHCommonExtensionsDateTime {
     ///  <param name="timeSpanSave">指定时间区域，单位分钟</param>
     /// <returns>返回指定实例所在区域</returns>
     public static (DateTime, DateTime) ToTimePartition (this DateTime beginTime, int timeSpanSave) => beginTime.ToTimePartition (timeSpanSave, null).FirstOrDefault ();
+
+    /// <summary>
+    /// 按指定区域分区
+    /// </summary>
+    ///  <param name="beginTime">当前实例值</param>
+    ///  <param name="timeSpanSave">指定时间区域，单位月</param>
+    /// <returns>返回指定实例与结束时间所在区域</returns>
+    public static (DateTime, DateTime) ToTimePartitionByMonths (this DateTime beginTime, int timeSpanSave) => ToTimePartitionByMonths (beginTime, timeSpanSave, out _);
+    /// <summary>
+    /// 按指定区域分区
+    /// </summary>
+    ///  <param name="beginTime">当前实例值</param>
+    ///  <param name="timeSpanSave">指定时间区域，单位月</param>
+    ///  <param name="result">所有区间</param>
+    /// <returns>返回指定实例与结束时间所在区域</returns>
+    public static (DateTime, DateTime) ToTimePartitionByMonths (this DateTime beginTime, int timeSpanSave, out List < (DateTime, DateTime) > result) {
+        if (12 % timeSpanSave > 0) {
+            throw new Exception ("不能按照指定区间来对月份进行平分");
+        }
+        result = new List < (DateTime, DateTime) > ();
+        DateTime beginTimeItem, endTimeItem;
+
+        for (int i = 0; i < 12 / timeSpanSave; i++) {
+            beginTimeItem = new DateTime (beginTime.Year, i * timeSpanSave + 1, 1);
+            endTimeItem = beginTimeItem;
+            endTimeItem = endTimeItem.AddMonths (timeSpanSave);
+            result.Add ((beginTimeItem, endTimeItem));
+        }
+        return result.FirstOrDefault (m => m.Item1 <= beginTime && beginTime < m.Item2);
+    }
 }

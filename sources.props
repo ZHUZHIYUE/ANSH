@@ -47,7 +47,7 @@
         <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
-        <VersionProjectInFormation>2.1.0-alpha108</VersionProjectInFormation>
+        <VersionProjectInFormation>2.1.0-alpha114</VersionProjectInFormation>
         <DescriptionProjectInFormation>解决方案基于NET Standard 2.1，NET Core 3.1开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
         <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
         <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>
