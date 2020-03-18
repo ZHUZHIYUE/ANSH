@@ -108,17 +108,15 @@ namespace ANSH.MQ.RabbitMQ {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
 
-            message.RootKey?.ToList ()?.ForEach (rootKey => {
-                if (message.QueueDxOpen) {
-                    dxqueue = CreateParamFormDeathType (message.ExchangeDX, rootKey);
-                }
-                CreateQueue (message.Queue, true, false, message.Exchange, rootKey, dxqueue);
+            if (message.QueueDxOpen) {
+                dxqueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
+            }
+            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxqueue);
 
-                if (message.QueueDxOpen) {
-                    CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
-                    CreateQueue (message.QueueDX, true, false, message.ExchangeDX, rootKey, null);
-                }
-            });
+            if (message.QueueDxOpen) {
+                CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
+                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
+            }
         }
 
         /// <summary>
@@ -241,12 +239,10 @@ namespace ANSH.MQ.RabbitMQ {
                         InitPublish (message_item);
                     }
 
-                    message_item.RootKey?.ToList ()?.ForEach (rootKey => {
-                        model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
-                            rootKey,
-                            props,
-                            ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
-                    });
+                    model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
+                        message_item.RootKey,
+                        props,
+                        ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
                 }
             }
         }
