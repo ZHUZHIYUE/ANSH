@@ -21,7 +21,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <summary>
         /// 消息rootkey
         /// </summary>
-        public abstract string RootKey { get; }
+        public abstract string[] RootKey { get; }
 
         /// <summary>
         /// 操作方式

@@ -7,7 +7,7 @@ namespace ANSH.MQ.RabbitMQ {
     /// 消息模型基类
     /// </summary>
     [JsonObject (MemberSerialization.OptOut)]
-    public abstract class ANSHMQMessageRetrievingBase : ANSHMQMessagePublishBase {
+    public abstract class ANSHMQMessageRetrievingBase :ANSHMQMessagePublishBase{
         /// <summary>
         /// 死信交换机名称
         /// </summary>

@@ -107,15 +107,18 @@ namespace ANSH.MQ.RabbitMQ {
         public void InitRetrieving<TMessage> (TMessage message) where TMessage : ANSHMQMessageRetrievingBase {
             Dictionary<string, object> dxqueue = null;
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
-            if (message.QueueDxOpen) {
-                dxqueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
-            }
-            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxqueue);
 
-            if (message.QueueDxOpen) {
-                CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
-                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
-            }
+            message.RootKey?.ToList ()?.ForEach (rootKey => {
+                if (message.QueueDxOpen) {
+                    dxqueue = CreateParamFormDeathType (message.ExchangeDX, rootKey);
+                }
+                CreateQueue (message.Queue, true, false, message.Exchange, rootKey, dxqueue);
+
+                if (message.QueueDxOpen) {
+                    CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
+                    CreateQueue (message.QueueDX, true, false, message.ExchangeDX, rootKey, null);
+                }
+            });
         }
 
         /// <summary>
@@ -233,13 +236,17 @@ namespace ANSH.MQ.RabbitMQ {
             props.ContentEncoding = "utf-8";
             if (message?.Length > 0) {
                 foreach (var message_item in message) {
+
                     if (createExchangeAndQueue) {
                         InitPublish (message_item);
                     }
-                    model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
-                        message_item.RootKey,
-                        props,
-                        ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
+
+                    message_item.RootKey?.ToList ()?.ForEach (rootKey => {
+                        model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
+                            rootKey,
+                            props,
+                            ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
+                    });
                 }
             }
         }
