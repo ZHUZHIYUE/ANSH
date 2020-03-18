@@ -13,7 +13,7 @@ variables:
 
 build:
   stage: build
-  image: docker-repository.bioey.com/dotnet/core/sdk:3.1-alpine
+  image: docker-repository.bioey.com/dotnet/core/sdk:3.1
   dependencies: []
   script:
     - dotnet restore
@@ -30,7 +30,7 @@ build:
 
 packages:
   stage: publish
-  image: docker-repository.bioey.com/dotnet/core/sdk:3.1-alpine
+  image: docker-repository.bioey.com/dotnet/core/sdk:3.1
   dependencies: [build]
   script:
     - cd packages
