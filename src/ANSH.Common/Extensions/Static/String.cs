@@ -168,23 +168,36 @@ public static class ANSHCommonExtensionsString {
     /// <param name="birthday">生日</param>
     /// <param name="age">年龄</param>
     /// <param name="gender">性别</param>
-    public static void ANSHAnalyzeIdentityNo (this string value, out DateTime birthday, out int age, out string gender) {
+    public static bool ANSHAnalyzeIdentityNo (this string value, out DateTime birthday, out int age, out string gender) {
+        age = 0;
+        gender = "男";
+        birthday = DateTime.Now;
         DateTime now = DateTime.Now;
+        
         if (!value.RegexCheck (ANSHRegexType.身份证)) {
-            throw new Exception ("未能识别的证件号");
+            return false;
         }
 
         if (value.Length == 18) {
             gender = Convert.ToBoolean (value.Substring (16, 1).ToInt () % 2) ? "男" : "女";
-            birthday = DateTime.Parse ($"{value.Substring (6, 4)}-{value.Substring (10, 2)}-{value.Substring (12, 2)}");
+            if (!DateTime.TryParse ($"{value.Substring (6, 4)}-{value.Substring (10, 2)}-{value.Substring (12, 2)}", out birthday)) {
+                return false;
+            }
         } else {
             gender = Convert.ToBoolean (value.Substring (14, 1).ToInt () % 2) ? "男" : "女";
-            birthday = DateTime.Parse ($"19{value.Substring (6, 2)}-{value.Substring (8, 2)}-{value.Substring (10, 2)}");
+            if (!DateTime.TryParse ($"19{value.Substring (6, 2)}-{value.Substring (8, 2)}-{value.Substring (10, 2)}", out birthday)) {
+                return false;
+            }
         }
-        
+
         age = (now.Year - birthday.Year);
         if (now.Month < birthday.Month || (now.Month == birthday.Month && now.Day < birthday.Day)) {
             age--;
         }
+
+        if (age < 0) {
+            return false;
+        }
+        return true;
     }
 }
