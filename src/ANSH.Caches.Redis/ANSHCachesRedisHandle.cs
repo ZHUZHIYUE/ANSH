@@ -45,7 +45,9 @@ namespace ANSH.Caches.Redis {
         public async Task<bool> SortedSetAddAsync<TModel> (ANSHCachesRedisSortedSetBase<TModel> cachesBase, TModel cacheValue, double score, When when = When.Always, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
+            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey) ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cachesBase.CacheKey)).HasValue)
+            ) {
                 refresh = true;
             }
 
@@ -132,7 +134,9 @@ namespace ANSH.Caches.Redis {
         public async Task<long> StringIncrementAsync (string cackeKey, long step = 1, TimeSpan? absoluteExpirationRelativeToNow = null, bool refresh = false, int dataBaseIndex = 0) {
             var dataBase = Redis.GetDatabase (dataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cackeKey)) {
+            if (!await dataBase.KeyExistsAsync (cackeKey) ||
+                (absoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cackeKey)).HasValue)
+            ) {
                 refresh = true;
             }
 
@@ -173,23 +177,25 @@ namespace ANSH.Caches.Redis {
         /// <summary>
         /// 计数递减
         /// </summary>
-        /// <param name="cackeKey">缓存Key</param>
+        /// <param name="cacheKey">缓存Key</param>
         /// <param name="step">步长</param>
         /// <param name="absoluteExpirationRelativeToNow">绝对过期时间</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <param name="dataBaseIndex">DataBase</param>
-        public async Task<long> StringDecrementAsync (string cackeKey, long step = 1, TimeSpan? absoluteExpirationRelativeToNow = null, bool refresh = false, int dataBaseIndex = 0) {
+        public async Task<long> StringDecrementAsync (string cacheKey, long step = 1, TimeSpan? absoluteExpirationRelativeToNow = null, bool refresh = false, int dataBaseIndex = 0) {
 
             var dataBase = Redis.GetDatabase (dataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cackeKey)) {
+            if (!await dataBase.KeyExistsAsync (cacheKey) ||
+                (absoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cacheKey)).HasValue)
+            ) {
                 refresh = true;
             }
 
-            var result = await dataBase.StringDecrementAsync (cackeKey, step);
+            var result = await dataBase.StringDecrementAsync (cacheKey, step);
 
             if (refresh) {
-                await KeyExpireAsync (dataBase, cackeKey, absoluteExpirationRelativeToNow);
+                await KeyExpireAsync (dataBase, cacheKey, absoluteExpirationRelativeToNow);
             }
             return result;
         }
@@ -241,14 +247,11 @@ namespace ANSH.Caches.Redis {
         /// <typeparam name="TModel">缓存值模型</typeparam>
         public async Task<TModel> ListLeftPopAsync<TModel> (ANSHCachesRedisListBase<TModel> cachesBase, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
-                refresh = true;
-            }
-
             var result = StringToModel<TModel> (await dataBase.ListLeftPopAsync (cachesBase.CacheKey), out _);
-
-            if (refresh) {
-                await KeyExpireAsync (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
+            if (refresh ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !dataBase.KeyTimeToLive (cachesBase.CacheKey).HasValue)
+            ) {
+                KeyExpire (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
             }
             return result;
         }
@@ -274,7 +277,9 @@ namespace ANSH.Caches.Redis {
         public async Task<long> ListLeftPushAsync<TModel> (ANSHCachesRedisListBase<TModel> cachesBase, TModel cacheValue, When when = When.Always, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
+            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey) ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cachesBase.CacheKey)).HasValue)
+            ) {
                 refresh = true;
             }
             var result = await dataBase.ListLeftPushAsync (cachesBase.CacheKey, StringToModel (cacheValue), when);
@@ -329,12 +334,11 @@ namespace ANSH.Caches.Redis {
         /// <typeparam name="TModel">缓存值模型</typeparam>
         public async Task<TModel> ListRightPopAsync<TModel> (ANSHCachesRedisListBase<TModel> cachesBase, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
-                refresh = true;
-            }
             var result = StringToModel<TModel> (await dataBase.ListRightPopAsync (cachesBase.CacheKey), out _);
-            if (refresh) {
-                await KeyExpireAsync (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
+            if (refresh ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !dataBase.KeyTimeToLive (cachesBase.CacheKey).HasValue)
+            ) {
+                KeyExpire (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
             }
             return result;
         }
@@ -360,7 +364,9 @@ namespace ANSH.Caches.Redis {
         public async Task<long> ListRightPushAsync<TModel> (ANSHCachesRedisListBase<TModel> cachesBase, TModel cacheValue, When when = When.Always, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
+            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey) ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cachesBase.CacheKey)).HasValue)
+            ) {
                 refresh = true;
             }
 
@@ -500,7 +506,9 @@ namespace ANSH.Caches.Redis {
         public async Task StringSetAsync<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, TModel cacheValue, When when = When.Always, bool refresh = false) {
             var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
 
-            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey)) {
+            if (!await dataBase.KeyExistsAsync (cachesBase.CacheKey) ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !(await dataBase.KeyTimeToLiveAsync (cachesBase.CacheKey)).HasValue)
+            ) {
                 refresh = true;
             }
 
@@ -525,20 +533,17 @@ namespace ANSH.Caches.Redis {
         /// <summary>
         /// 获取缓存
         /// </summary>
-        /// <param name="cache">缓存</param>
+        /// <param name="cachesBase">缓存</param>
         /// <param name="breakDown">缓存击穿</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public TModel StringGet<TModel> (ANSHCachesRedisModelBase<TModel> cache, out bool breakDown, bool refresh = false) {
-            var dataBase = Redis.GetDatabase (cache.DataBaseIndex);
-            if (!dataBase.KeyExists (cache.CacheKey)) {
-                refresh = true;
-            }
-            
-            var cacheValue = dataBase.StringGetAsync (cache.CacheKey).Result;
-
-            if (refresh) {
-                KeyExpire (dataBase, cache.CacheKey, cache.AbsoluteExpirationRelativeToNow);
+        public TModel StringGet<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, out bool breakDown, bool refresh = false) {
+            var dataBase = Redis.GetDatabase (cachesBase.DataBaseIndex);
+            var cacheValue = dataBase.StringGetAsync (cachesBase.CacheKey).Result;
+            if (refresh ||
+                (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !dataBase.KeyTimeToLive (cachesBase.CacheKey).HasValue)
+            ) {
+                KeyExpire (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
             }
             return StringToModel<TModel> (cacheValue, out breakDown);
         }
