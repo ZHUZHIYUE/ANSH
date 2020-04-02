@@ -551,45 +551,45 @@ namespace ANSH.Caches.Redis {
         /// <typeparam name="TModel">缓存值模型</typeparam>
         public TModel StringGet<TModel> (ANSHCachesRedisModelBase<TModel> cache, bool refresh = false) => StringGet (cache, out _, refresh);
 
-        /// <summary>
-        /// 获取缓存
-        /// </summary>
-        /// <param name="cache">缓存</param>
-        /// <param name="refresh">是否刷新缓存时间</param>
-        /// <typeparam name="TModel">缓存值模型</typeparam>
-        public List<TModel> StringGet<TModel> (ANSHCachesRedisModelBase<TModel>[] cache, bool refresh = false) => StringGetAsync (cache, refresh).Result;
+        // /// <summary>
+        // /// 获取缓存
+        // /// </summary>
+        // /// <param name="cache">缓存</param>
+        // /// <param name="refresh">是否刷新缓存时间</param>
+        // /// <typeparam name="TModel">缓存值模型</typeparam>
+        // public List<TModel> StringGet<TModel> (ANSHCachesRedisModelBase<TModel>[] cache, bool refresh = false) => StringGetAsync (cache, refresh).Result;
 
-        /// <summary>
-        /// 获取缓存
-        /// </summary>
-        /// <param name="cache">缓存</param>
-        /// <param name="refresh">是否刷新缓存时间</param>
-        /// <typeparam name="TModel">缓存值模型</typeparam>
-        public async Task<List<TModel>> StringGetAsync<TModel> (ANSHCachesRedisModelBase<TModel>[] cache, bool refresh = false) {
-            List<TModel> result = null;
-            if (cache?.Length > 0) {
-                result = new List<TModel> ();
-                foreach (var cacheGroup in cache.GroupBy (m => m.DataBaseIndex)) {
-                    var dataBase = Redis.GetDatabase (cacheGroup.Key);
-                    var cacheValue = await dataBase.StringGetAsync (cacheGroup.Select (m => (RedisKey) m.CacheKey).ToArray ());
-                    bool refreshItem = refresh;
-                    foreach (var cacheGroupItem in cacheGroup) {
-                        if (!await KeyExpireAsync (cacheGroupItem)) {
-                            refreshItem = true;
-                        }
+        // /// <summary>
+        // /// 获取缓存
+        // /// </summary>
+        // /// <param name="cache">缓存</param>
+        // /// <param name="refresh">是否刷新缓存时间</param>
+        // /// <typeparam name="TModel">缓存值模型</typeparam>
+        // public async Task<List<TModel>> StringGetAsync<TModel> (ANSHCachesRedisModelBase<TModel>[] cache, bool refresh = false) {
+        //     List<TModel> result = null;
+        //     if (cache?.Length > 0) {
+        //         result = new List<TModel> ();
+        //         foreach (var cacheGroup in cache.GroupBy (m => m.DataBaseIndex)) {
+        //             var dataBase = Redis.GetDatabase (cacheGroup.Key);
+        //             var cacheValue = await dataBase.StringGetAsync (cacheGroup.Select (m => (RedisKey) m.CacheKey).ToArray ());
+        //             bool refreshItem = refresh;
+        //             foreach (var cacheGroupItem in cacheGroup) {
+        //                 if (!await KeyExpireAsync (cacheGroupItem)) {
+        //                     refreshItem = true;
+        //                 }
 
-                        if (refreshItem) {
-                            await KeyExpireAsync (dataBase, cacheGroupItem.CacheKey, cacheGroupItem.AbsoluteExpirationRelativeToNow);
-                        }
-                    }
-                    foreach (var cacheValueItem in cacheValue) {
-                        result.Add (StringToModel<TModel> (cacheValueItem.ToString ().ToJson (), out _));
-                    }
-                }
-            }
-            result.RemoveAll (m => m == null);
-            return result;
-        }
+        //                 if (refreshItem) {
+        //                     await KeyExpireAsync (dataBase, cacheGroupItem.CacheKey, cacheGroupItem.AbsoluteExpirationRelativeToNow);
+        //                 }
+        //             }
+        //             foreach (var cacheValueItem in cacheValue) {
+        //                 result.Add (StringToModel<TModel> (cacheValueItem.ToString ().ToJson (), out _));
+        //             }
+        //         }
+        //     }
+        //     result.RemoveAll (m => m == null);
+        //     return result;
+        // }
 
         /// <summary>
         /// 分布式锁
