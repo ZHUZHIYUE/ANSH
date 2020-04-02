@@ -56,6 +56,16 @@ namespace Testing.Unit {
 
         }
 
+        public class TestStringExpirCache : ANSHCachesRedisModelBase<int?> {
+
+            public TestStringExpirCache () : base ("TestStringExpirCache") {
+
+            }
+
+            public override TimeSpan? AbsoluteExpirationRelativeToNow => TimeSpan.FromSeconds (1);
+
+        }
+
         [Fact]
         public void TestListPushAndPop () {
             var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
@@ -200,6 +210,39 @@ namespace Testing.Unit {
             } {
                 var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
                 Assert.Equal (3, result);
+                Thread.Sleep (1000);
+            } {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (1, result);
+                Thread.Sleep (500);
+            } {
+                var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                Assert.Equal (2, result);
+                Thread.Sleep (500);
+            } {
+                // long i = 0, result = 0;
+                // do {
+                //     result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
+                //     Assert.Equal (++i, result);
+                // } while (true);
+            }
+        }
+
+        [Fact]
+        public void TestStringExpir () {
+            var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
+            var cacheBase = new TestStringExpirCache ();
+            ANSHCachesRedisHandle.KeyDelete (cacheBase);
+            ANSHCachesRedisHandle.StringSet (cacheBase, 1);
+
+            {
+                Assert.Equal (1, ANSHCachesRedisHandle.StringGet (cacheBase));
+                Thread.Sleep (500);
+            } {
+                Assert.Equal (1, ANSHCachesRedisHandle.StringGet (cacheBase));
+                Thread.Sleep (500);
+            } {
+                Assert.Null (ANSHCachesRedisHandle.StringGet (cacheBase));
                 Thread.Sleep (500);
             }
         }
