@@ -62,17 +62,20 @@ namespace ANSH.JWT {
             header = null;
             payload = null;
             signature = null;
-            var jwtArray = jwtString.Split (".", StringSplitOptions.RemoveEmptyEntries);
+            try {
+                var jwtArray = jwtString.Split (".", StringSplitOptions.RemoveEmptyEntries);
 
-            if (jwtArray?.Length != 3) {
+                if (jwtArray?.Length != 3) {
+                    return false;
+                }
+
+                header = jwtArray[0].FromBase64UrlString (Encoding.UTF8).ToJsonObj<ANSHJWTHeader> ();
+                payload = jwtArray[1].FromBase64UrlString (Encoding.UTF8).ToJsonObj<ANSHJWTPayload<Tclaims>> ();
+                signature = jwtArray[2].FromBase64UrlString (Encoding.UTF8);
+                return true;
+            } catch {
                 return false;
             }
-
-            header = jwtArray[0].FromBase64UrlString (Encoding.UTF8).ToJsonObj<ANSHJWTHeader> ();
-            payload = jwtArray[1].FromBase64UrlString (Encoding.UTF8).ToJsonObj<ANSHJWTPayload<Tclaims>> ();
-            signature = jwtArray[2].FromBase64UrlString (Encoding.UTF8);
-
-            return true;
         }
     }
 }
