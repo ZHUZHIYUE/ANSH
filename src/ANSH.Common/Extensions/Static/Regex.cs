@@ -32,7 +32,7 @@ public static class ANSHCommonExtensionsRegex {
     /// /// 正则表达式集合
     /// </summary>
     static Dictionary<ANSHRegexType, string> _RegexList = new Dictionary<ANSHRegexType, string> () {
-        [ANSHRegexType.空或正整数] = @"^[1-9]\d*$|(^\s*$)", [ANSHRegexType.文件名字符串] = "^[A-z0-9\u4e00-\u9fa5 ]{0,}$", [ANSHRegexType.正整数] = @"^[1-9]\d*$", [ANSHRegexType.身份证] = "(^[0-9]{15}$)|(^[0-9]{18}$)|(^[0-9]{17}([0-9]|X|x)$)", [ANSHRegexType.文件路径] = @"[a-zA-Z]:(\\([0-9a-zA-Z]+))+|(\/([0-9a-zA-Z]+))+", [ANSHRegexType.URL路径] = @"http(s)?://(([0-9]{1,3}\.){3}[0-9]{1,3}(:([0-9]{1,4}))?|([\w-]+\.)+[\w-]+)(/[\w- ./?%&=]*)?", [ANSHRegexType.密码] = "^(?![A-Za-z]+$)(?![A-Z\\d]+$)(?![A-Z\\W]+$)(?![a-z\\d]+$)(?![a-z\\W]+$)(?![\\d\\W]+$)\\S{6,16}$", [ANSHRegexType.手机号] = "^[1][356789][0-9]{9}$"
+        [ANSHRegexType.空或正整数] = @"^[1-9]\d*$|(^\s*$)", [ANSHRegexType.文件名字符串] = "^[A-z0-9\u4e00-\u9fa5 ]{0,}$", [ANSHRegexType.正整数] = @"^[1-9]\d*$", [ANSHRegexType.身份证] = "(^[0-9]{15}$)|(^[0-9]{18}$)|(^[0-9]{17}([0-9]|X|x)$)", [ANSHRegexType.文件路径] = @"[a-zA-Z]:(\\([0-9a-zA-Z]+))+|(\/([0-9a-zA-Z]+))+", [ANSHRegexType.URL路径] = @"http(s)?://(([0-9]{1,3}\.){3}[0-9]{1,3}(:([0-9]{1,4}))?|([\w-]+\.)+[\w-]+)(/[\w- ./?%&=]*)?", [ANSHRegexType.密码] = "^(?![A-Za-z]+$)(?![A-Z\\d]+$)(?![A-Z\\W]+$)(?![a-z\\d]+$)(?![a-z\\W]+$)(?![\\d\\W]+$)\\S{6,16}$", [ANSHRegexType.手机号] = "^[1][3456789][0-9]{9}$"
     };
 }
 
