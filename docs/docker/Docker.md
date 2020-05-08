@@ -51,15 +51,3 @@ $ docker save -o /opt/docker/backups/gitlab-ce-rc-backups.tar ${镜像ID或名�
 ```
 $ docker exec -it ${containername} bash
 ```
-### 重新加载配置信息
-```
-$ docker exec -it gitlab gitlab-ctl reconfigure
-```
-### 备份
-```
-$ docker exec -it gitlab gitlab-rake gitlab:backup:create
-```
-### 恢复
-```
-$ docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=${文件名称}
-```
