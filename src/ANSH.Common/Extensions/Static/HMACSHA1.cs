@@ -31,6 +31,20 @@ public static class ANSHCommonExtensionsHMACSHA1 {
     /// HMACSHA1加密
     /// </summary>
     /// <param name="value">当前实例值</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static byte[] SHA1 (this string value) => ASCIIEncoding.UTF8.GetBytes (value).SHA1 ();
+
+    /// <summary>
+    /// HMACSHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>SHA1加密数据值</returns>
+    public static byte[] SHA1 (this byte[] value) => System.Security.Cryptography.SHA1.Create ().ComputeHash (value);
+
+    /// <summary>
+    /// HMACSHA1加密
+    /// </summary>
+    /// <param name="value">当前实例值</param>
     /// <param name="key">密钥参数</param>
     /// <returns>SHA1加密数据值</returns>
     public static byte[] HMACSHA1Encryp (this Stream value, string key) => value.ToByte ().HMACSHA1Encryp (key);
