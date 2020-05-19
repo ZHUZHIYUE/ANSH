@@ -353,8 +353,6 @@ public static class ANSHCommonExtensions {
 
     #endregion
 
-    
-
     #region ToX2
     /// <summary>
     /// 将此实例值转换为16进制字符串
@@ -560,77 +558,6 @@ public static class ANSHCommonExtensions {
         result += newVaule;
         result += value.Substring (length + startIndex + 1);
         return result;
-    }
-    #endregion
-
-    #region 截取字符串
-
-    /// <summary>
-    /// 从此实例检索子字符串。子字符串从指定的字符位置开始。
-    /// <para>字节</para>
-    /// </summary>
-    /// <param name="length">要截取的字节长度</param>
-    /// <param name="value">当前实例值</param>
-    /// <returns>与value等效的指定引用类型值，如果value为null是返回null</returns>
-    public static string SubStrByte (this String value, int length) {
-        return value.SubStrByte (length, "");
-    }
-
-    /// <summary>
-    /// 从此实例检索子字符串。子字符串从指定的字符位置开始。
-    /// <para>字节</para>
-    /// </summary>
-    /// <param name="length">要截取的字节长度</param>
-    /// <param name="endstr">后缀字符</param>
-    /// <param name="value">当前实例值</param>
-    /// <returns>与value等效的指定引用类型值，如果value为null是返回null</returns>
-    public static string SubStrByte (this String value, int length, string endstr) {
-        if (string.IsNullOrWhiteSpace (value.Trim ())) return "";
-
-        byte[] bytes = System.Text.Encoding.Unicode.GetBytes (value);
-        int n = 0; //  表示当前的字节数
-        int i = 0; //  要截取的字节数
-        for (; i < bytes.GetLength (0) && n < length; i++) {
-            //偶数位置，如0、2、4等，为UCS2编码中两个字节的第一个字节
-            if (i % 2 == 0) {
-                n++; //  在UCS2第一个字节时n加1
-            } else {
-                //  当UCS2编码的第二个字节大于0时，该UCS2字符为汉字，一个汉字算两个字节
-                if (bytes[i] > 0) n++;
-            }
-        }
-        //  如果i为奇数时，处理成偶数
-        if (i % 2 == 1) {
-            //  该UCS2字符是汉字时，去掉这个截一半的汉字
-            if (bytes[i] > 0) i = i - 1; //  该UCS2字符是字母或数字，则保留该字符
-            else i = i + 1;
-        }
-        return System.Text.Encoding.Unicode.GetString (bytes, 0, i) + (i < bytes.Length ? endstr : "");
-    }
-
-    /// <summary>
-    /// 从此实例检索子字符串。子字符串从指定的字符位置开始。
-    /// <para>字符</para>
-    /// </summary>
-    /// <param name="length">要截取的字符长度</param>
-    /// <param name="value">当前实例值</param>
-    /// <returns>与value等效的指定引用类型值，如果value为null是返回null</returns>
-    public static string SubStrChar (this String value, int length) {
-        return value.SubStrChar (length, "");
-    }
-
-    /// <summary>
-    /// 从此实例检索子字符串。子字符串从指定的字符位置开始。
-    /// <para>字符</para>
-    /// </summary>
-    /// <param name="length">要截取的字符长度</param>
-    /// <param name="endstr">后缀字符</param>
-    /// <param name="value">当前实例值</param>
-    /// <returns>与value等效的指定引用类型值，如果value为null是返回null</returns>
-    public static string SubStrChar (this String value, int length, string endstr) {
-        if (string.IsNullOrWhiteSpace (value.Trim ())) return "";
-
-        return value.Length > length ? value.Substring (0, length) + endstr : value;
     }
     #endregion
 
