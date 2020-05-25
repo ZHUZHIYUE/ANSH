@@ -108,10 +108,10 @@ namespace ANSH.Common.IO {
         /// <returns>返回文件</returns>
         public static byte[] WriteCSV (List<List<string>> value, Encoding encoding) {
             using (MemoryStream stream = new MemoryStream ()) {
-                foreach (List<string> in_group in value) {
-                    List<string> groupItem = new List<string> ();
-                    in_group?.ForEach (m => groupItem.Add ($"\"{m.Replace("\"","\"\"")}\""));
-                    using (StreamWriter streamWriter = new StreamWriter (stream, encoding)) {
+                using (StreamWriter streamWriter = new StreamWriter (stream, encoding)) {
+                    foreach (List<string> in_group in value) {
+                        List<string> groupItem = new List<string> ();
+                        in_group?.ForEach (m => groupItem.Add ($"\"{m.Replace("\"","\"\"")}\""));
                         streamWriter.WriteLine (string.Join (",", groupItem));
                     }
                 }
