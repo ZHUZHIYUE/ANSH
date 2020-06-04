@@ -5,7 +5,7 @@ using ANSH.MQ.RabbitMQ;
 
 namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
     /// <summary>
-    /// 事件
+    /// 订阅事件
     /// </summary>
     /// <typeparam name="TANSHRibbitMQIntegrationEvent">事件类型</typeparam>
     public abstract class ANSHRabbitMQIntegrationEventHandler<TANSHRibbitMQIntegrationEvent> : ANSHMQMessageRetrievingBase

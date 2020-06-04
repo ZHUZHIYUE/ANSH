@@ -2,7 +2,7 @@ using ANSH.MQ.RabbitMQ;
 
 namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
     /// <summary>
-    /// 订阅事件
+    /// 发布事件
     /// </summary>
     /// <typeparam name="TModel">数据模型</typeparam>
     public abstract class ANSHRibbitMQIntegrationEvent<TModel> : ANSHMQMessagePublishBase {
