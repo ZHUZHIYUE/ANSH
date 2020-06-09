@@ -76,30 +76,33 @@ namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
                 return success;
             }, false, 1, true);
 
+            bool successDX;
+            int repeatDX = 0;
             ANSHMQFactoryBase.RetrievingDXMessages (retrievingMessages, async (message) => {
                 try {
-                    if (repeat > 0) {
+                    if (repeatDX > 0) {
                         System.Threading.Thread.Sleep (1000);
                     }
 
                     var messageType = message.ToJsonObj<TANSHRibbitMQIntegrationEvent> ();
                     if (messageType == null || messageType.Body == null) {
-                        success = func (default (TModel));
+                        successDX = func (default (TModel));
                     } else {
-                        success = func (messageType.Body);
+                        successDX = func (messageType.Body);
                     }
                     await Task.CompletedTask;
-                    if (success) {
-                        repeat = 0;
+                    if (successDX) {
+                        repeatDX = 0;
                     } else {
-                        repeat++;
+                        repeatDX++;
                     }
                 } catch {
-                    repeat++;
-                    success = false;
+                    repeatDX++;
+                    successDX = false;
                 }
-                return success;
+                return successDX;
             }, true, 1, true);
+
         }
     }
 }
