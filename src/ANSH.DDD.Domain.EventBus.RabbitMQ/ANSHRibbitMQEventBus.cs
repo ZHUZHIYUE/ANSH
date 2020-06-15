@@ -46,9 +46,9 @@ namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
         where TANSHRibbitMQIntegrationEvent : ANSHRibbitMQIntegrationEvent<TModel>, new ()
         where TANSHRabbitMQIntegrationEventHandler : ANSHRabbitMQIntegrationEventHandler<TANSHRibbitMQIntegrationEvent>, new () {
             var retrievingMessages = new TANSHRabbitMQIntegrationEventHandler ();
-            bool success;
             int repeat = 0;
             ANSHMQFactoryBase.RetrievingMessages (retrievingMessages, async (message) => {
+                bool success = false;
                 try {
                     if (repeat >= 5) {
                         repeat = 0;
@@ -76,9 +76,9 @@ namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
                 return success;
             }, false, 1, true);
 
-            bool successDX;
             int repeatDX = 0;
             ANSHMQFactoryBase.RetrievingDXMessages (retrievingMessages, async (message) => {
+                bool successDX = false;
                 try {
                     if (repeatDX > 0) {
                         System.Threading.Thread.Sleep (1000);
