@@ -21,7 +21,7 @@ namespace ANSH.Caches.Redis {
         /// 存储数据库位置
         /// </summary>
         [JsonIgnore]
-        public int DataBaseIndex { get; set; } = 0;
+        public virtual int DataBaseIndex { get; set; } = 0;
 
         /// <summary>
         /// 缓存键

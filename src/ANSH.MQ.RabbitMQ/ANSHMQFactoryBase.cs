@@ -18,7 +18,7 @@ namespace ANSH.MQ.RabbitMQ {
         /// <summary>
         /// 工厂类
         /// </summary>
-        ConnectionFactory Factory => _Factory = _Factory?? new ConnectionFactory () { AutomaticRecoveryEnabled = true };
+        ConnectionFactory Factory => _Factory = _Factory?? new ConnectionFactory () { AutomaticRecoveryEnabled = true, TopologyRecoveryEnabled = true };
         IConnection _IConnection;
         /// <summary>
         /// 连接类
