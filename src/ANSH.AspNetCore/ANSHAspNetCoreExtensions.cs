@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 /// <summary>
 /// 拓展类方法
@@ -68,6 +69,18 @@ public static class ANSHAspNetCoreExtensions {
     public static void AddANSHAuthorization (this IServiceCollection services, Action<IServiceCollection> action) {
         services.AddSingleton<IAuthorizationPolicyProvider, ANSHAuthorizationPolicyProvider> ();
         action (services);
+    }
+
+    /// <summary>
+    /// 添加后台托管任务
+    /// </summary>
+    /// <typeparam name="THostedService">后台托管任务</typeparam>
+    /// <param name="services"></param>
+    /// <param name="replicas">复制多少份</param>
+    public static void AddHostedService<THostedService> (this IServiceCollection services, int replicas) where THostedService : class, IHostedService {
+        for (int i = 0; i < replicas; i++) {
+            services.AddHostedService<THostedService> ();
+        }
     }
 
     /// <summary>
