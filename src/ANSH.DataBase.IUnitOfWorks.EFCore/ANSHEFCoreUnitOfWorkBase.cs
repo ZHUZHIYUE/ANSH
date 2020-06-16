@@ -74,16 +74,24 @@ namespace ANSH.DataBase.IUnitOfWorks.EFCore {
         /// </summary>
         /// <param name="Method">事物保护的方法</param>
         /// <param name="isolationLevel">隔离级别</param>
-        public override void ExecuteTransaction (Action Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) {
+        public override void ExecuteTransaction(Action Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) => ExecuteTransaction<int>(() => { Method(); return 0; }, isolationLevel);
+
+        /// <summary>
+        /// 事物保护
+        /// </summary>
+        /// <param name="Method">事物保护的方法</param>
+        /// <param name="isolationLevel">隔离级别</param>
+        public override TResult ExecuteTransaction<TResult> (Func<TResult> Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) {
             try {
                 ++BeginTransactionCount.Value;
                 TransactionDBConnectionThreadLocal.Value = TransactionDBConnectionThreadLocal.Value??CreateDBConnection ();
                 TransactionDBConnectionThreadLocal.Value.BeginTransaction (isolationLevel);
                 IsBeginTransactionThreadLocal.Value = true;
-                Method ();
+                TResult result = Method ();
                 TransactionDBConnectionThreadLocal.Value.Commit ();
                 --BeginTransactionCount.Value;
                 if (BeginTransactionCount.Value == 0) { ClearTransactionDBConnectionThreadLocal (); }
+                return result;
             } catch (Exception ex) {
                 ClearTransactionDBConnectionThreadLocal ();
                 throw ex;
