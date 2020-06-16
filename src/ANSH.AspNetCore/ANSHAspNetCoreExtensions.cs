@@ -79,7 +79,7 @@ public static class ANSHAspNetCoreExtensions {
     /// <param name="replicas">复制多少份</param>
     public static void AddHostedService<THostedService> (this IServiceCollection services, int replicas) where THostedService : class, IHostedService {
         for (int i = 0; i < replicas; i++) {
-            services.AddHostedService<THostedService> ();
+            services.AddSingleton<IHostedService, THostedService> ();
         }
     }
 
