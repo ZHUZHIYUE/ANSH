@@ -39,7 +39,6 @@ namespace ANSH.DataBase.IUnitOfWorks {
         /// </summary>
         public virtual void Dispose () {
             DBconnection?.Dispose ();
-
         }
 
         /// <summary>
