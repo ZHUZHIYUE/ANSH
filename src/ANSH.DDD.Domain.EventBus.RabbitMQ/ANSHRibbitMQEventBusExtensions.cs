@@ -16,7 +16,7 @@ public static class ANSHRibbitMQEventBusExtensions {
     /// <param name="virtualhost">虚拟地址</param>
     /// <param name="hostname">主机名称</param>
     public static IServiceCollection AddANSHRibbitMQEventBus (this IServiceCollection services, string username, string password, int port, string virtualhost, string hostname) {
-        services.AddSingleton<IANSHRibbitMQEventBus> ((service) => {
+        services.AddTransient<IANSHRibbitMQEventBus> ((service) => {
             return new ANSHRibbitMQEventBus (username, password, port, virtualhost, hostname);
         });
         return services;
