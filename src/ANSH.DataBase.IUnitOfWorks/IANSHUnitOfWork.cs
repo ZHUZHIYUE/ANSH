@@ -28,5 +28,12 @@ namespace ANSH.DataBase.IUnitOfWorks {
         /// <param name="Method">事物保护的方法</param>
         /// <param name="isolationLevel">隔离级别</param>
         void ExecuteTransaction (Action Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
+
+        /// <summary>
+        /// 事物保护
+        /// </summary>
+        /// <param name="Method">事物保护的方法</param>
+        /// <param name="isolationLevel">隔离级别</param>
+        TResult ExecuteTransaction<TResult> (Func<TResult> Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
     }
 }
