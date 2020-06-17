@@ -46,60 +46,38 @@ namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
         where TANSHRibbitMQIntegrationEvent : ANSHRibbitMQIntegrationEvent<TModel>, new ()
         where TANSHRabbitMQIntegrationEventHandler : ANSHRabbitMQIntegrationEventHandler<TANSHRibbitMQIntegrationEvent>, new () {
             var retrievingMessages = new TANSHRabbitMQIntegrationEventHandler ();
-            int repeat = 0;
             ANSHMQFactoryBase.RetrievingMessages (retrievingMessages, async (message) => {
                 bool success = false;
                 try {
-                    if (repeat >= 5) {
-                        repeat = 0;
-                        return true;
-                    }
-                    if (repeat > 0) {
-                        System.Threading.Thread.Sleep (1000);
-                    }
                     var messageType = message.ToJsonObj<TANSHRibbitMQIntegrationEvent> ();
                     if (messageType == null || messageType.Body == null) {
                         success = func (default (TModel));
                     } else {
                         success = func (messageType.Body);
                     }
-                    await Task.CompletedTask;
-                    if (success) {
-                        repeat = 0;
-                    } else {
-                        repeat++;
-                    }
                 } catch {
-                    repeat++;
                     success = false;
                 }
+                await Task.CompletedTask;
                 return success;
             }, false, 1, true);
 
-            int repeatDX = 0;
             ANSHMQFactoryBase.RetrievingDXMessages (retrievingMessages, async (message) => {
                 bool successDX = false;
                 try {
-                    if (repeatDX > 0) {
-                        System.Threading.Thread.Sleep (1000);
-                    }
-
                     var messageType = message.ToJsonObj<TANSHRibbitMQIntegrationEvent> ();
                     if (messageType == null || messageType.Body == null) {
                         successDX = func (default (TModel));
                     } else {
                         successDX = func (messageType.Body);
                     }
-                    await Task.CompletedTask;
-                    if (successDX) {
-                        repeatDX = 0;
-                    } else {
-                        repeatDX++;
-                    }
                 } catch {
-                    repeatDX++;
                     successDX = false;
                 }
+                if (!successDX) {
+                    System.Threading.Thread.Sleep (1000);
+                }
+                await Task.CompletedTask;
                 return successDX;
             }, true, 1, true);
 
