@@ -12,11 +12,10 @@ public static class ANSHCachesRedisExtensions {
     /// <param name="services">服务</param>
     /// <param name="connectString">redis链接地址</param>
     public static IServiceCollection AddANSHRedisCache (this IServiceCollection services, string connectString) {
-        services.AddSingleton<ConnectionMultiplexer> ((service) => {
+        services.AddScoped<ANSHCachesRedisHandle> ((service) => {
             var options = ConfigurationOptions.Parse (connectString);
-            return ConnectionMultiplexer.Connect (options);
+            return new ANSHCachesRedisHandle (options);
         });
-        services.AddSingleton<ANSHCachesRedisHandle> ();
         return services;
     }
 }

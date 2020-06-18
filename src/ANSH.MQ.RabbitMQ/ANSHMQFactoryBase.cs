@@ -24,7 +24,14 @@ namespace ANSH.MQ.RabbitMQ {
         /// 连接类
         /// </summary>
         /// <returns>连接</returns>
-        IConnection IConnection => _IConnection = _IConnection??(HostName?.Count > 0 ? Factory.CreateConnection (HostName) : throw new ArgumentNullException ("没有设置终节点。"));
+        IConnection IConnection {
+            get {
+                if (_IConnection == null || !_IConnection.IsOpen) {
+                    _IConnection = (HostName?.Count > 0 ? Factory.CreateConnection (HostName) : throw new ArgumentNullException ("没有设置终节点。"));
+                }
+                return _IConnection;
+            }
+        }
 
         /// <summary>
         /// 终节点

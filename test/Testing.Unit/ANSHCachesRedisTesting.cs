@@ -10,8 +10,8 @@ using Xunit;
 
 namespace Testing.Unit {
     public class ANSHCachesRedisTesting {
-        ConnectionMultiplexer _Redis = null;
-        ConnectionMultiplexer Redis => _Redis = _Redis?? ConnectionMultiplexer.Connect ("192.168.1.78:7301");
+        ConfigurationOptions _Redis = null;
+        ConfigurationOptions Redis => _Redis = _Redis?? ConfigurationOptions.Parse ("192.168.1.78:7301");
 
         public class TestListPushAndPopCache : ANSHCachesRedisListBase<int> {
 
