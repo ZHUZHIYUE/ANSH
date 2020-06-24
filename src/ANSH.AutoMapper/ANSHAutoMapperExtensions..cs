@@ -60,7 +60,7 @@ public static class ANSHAutoMapper {
         mcfe.AddProfile<TypeConverterProfile> ();
         config (mcfe);
         var mcf = new MapperConfiguration (mcfe);
-        mcf.AssertConfigurationIsValid ();
+        
         return mcf;
     }
 }

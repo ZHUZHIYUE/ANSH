@@ -13,6 +13,7 @@
         <MicrosoftAspNetCoreSignalRProtocolsMessagePackPackageVersion>1.1.5</MicrosoftAspNetCoreSignalRProtocolsMessagePackPackageVersion>
         <RabbitMQClientPackageVersion>5.1.2</RabbitMQClientPackageVersion>
         <StackExchangeRedisPackageVersion>2.0.601</StackExchangeRedisPackageVersion>
+        <SystemComponentModelAnnotationsPackageVersion>4.7.0</SystemComponentModelAnnotationsPackageVersion>
 
 
 
@@ -36,7 +37,7 @@
         <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
         <MicrosoftExtensionsDiagnosticsHealthChecksVersion>3.1.1</MicrosoftExtensionsDiagnosticsHealthChecksVersion>
     </PropertyGroup>
-    
+
     <PropertyGroup Label="EntityFrameworkCore Package Versions">
         <MicrosoftEntityFrameworkCoreRelationalPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreRelationalPackageVersion>
         <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
@@ -48,7 +49,7 @@
         <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
-        <VersionProjectInFormation>2.1.0-alpha170</VersionProjectInFormation>
+        <VersionProjectInFormation>2.1.0-alpha172</VersionProjectInFormation>
         <DescriptionProjectInFormation>解决方案基于NET Standard 2.1，NET Core 3.1开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
         <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
         <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>

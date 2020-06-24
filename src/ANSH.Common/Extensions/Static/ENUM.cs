@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -89,5 +92,24 @@ public static class ANSHCommonExtensionsENUM {
         bool is_parse = Enum.TryParse (value, out T parse_result) && Enum.IsDefined (typeof (T), parse_result);
         result = is_parse ? parse_result : default (T);
         return is_parse;
+    }
+
+    /// <summary>
+    /// 获取枚举DisplayName值
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <returns>DisplayName值</returns>
+    public static string GetDisplayName<T> (this T value) where T : Enum {
+        if (value == null) {
+            return null;
+        } else {
+            var t = value.GetType ().GetFields ().SingleOrDefault (w => w.Name == value.ToString ()).CustomAttributes.SingleOrDefault (w => w.AttributeType == typeof (DisplayAttribute));
+            if (t != null) {
+                return t.NamedArguments[0].TypedValue.Value.ToString ();
+            } else {
+                return value.ToString ();
+            }
+
+        }
     }
 }
