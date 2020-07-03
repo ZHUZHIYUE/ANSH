@@ -280,17 +280,14 @@ namespace ANSH.MQ.RabbitMQ {
         public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessagePublishBase {
             using (var model = IConnection.CreateModel ()) {
-                model.ConfirmSelect ();
-                PublishMsg (model, message, delivery, expiration, createExchangeAndQueue);
                 if (message?.Length > 0) {
-                    if (message.Length == 1) {
-                        return model.WaitForConfirms ();
-                    } else {
-                        try {
-                            model.WaitForConfirmsOrDie ();
-                        } catch {
-                            return false;
-                        }
+                    model.ConfirmSelect ();
+                    PublishMsg (model, message, delivery, expiration, createExchangeAndQueue);
+                    try {
+                        model.WaitForConfirmsOrDie ();
+                        return true;
+                    } catch {
+                        return false;
                     }
                 }
             }
