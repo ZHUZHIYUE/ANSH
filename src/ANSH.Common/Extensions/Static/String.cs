@@ -271,4 +271,24 @@ public static class ANSHCommonExtensionsString {
         }
         return true;
     }
+
+    /// <summary>
+    /// 将此8位无符号整数数组转换成字符串
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="encoding">编码</param>
+    /// <returns> 与8位无符号整数数组等效的字符串</returns>
+    public static string FromByteToString (this byte[] value, Encoding encoding = null) {
+        return (encoding??Encoding.UTF8).GetString (value);
+    }
+
+    /// <summary>
+    /// 将字符串转换成此8位无符号整数数组
+    /// </summary>
+    /// <param name="value">当前实例值</param>
+    /// <param name="encoding">编码</param>
+    /// <returns> 8位无符号整数数组</returns>
+    public static byte[] ToByte (this String value, Encoding encoding = null) {
+        return (encoding??Encoding.UTF8).GetBytes (value);
+    }
 }

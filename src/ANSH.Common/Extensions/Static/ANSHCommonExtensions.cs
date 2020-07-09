@@ -301,7 +301,7 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns> 与此实例值等效的8位无符号整数数组</returns>
-    public static byte[] FromBase64 (this String value) {
+    public static byte[] FromBase64StringToBytes (this String value) {
         return Convert.FromBase64String (value);
     }
 
@@ -310,7 +310,7 @@ public static class ANSHCommonExtensions {
     /// </summary>
     /// <param name="value">当前实例值</param>
     /// <returns> 与此实例值等效的8位无符号整数数组</returns>
-    public static Stream FromBase64Stream (this String value) {
+    public static Stream FromBase64StringToStream (this String value) {
         return Convert.FromBase64String (value).ToStream ();
     }
 
@@ -320,9 +320,13 @@ public static class ANSHCommonExtensions {
     /// <param name="value">当前实例值</param>
     /// <param name="encoding">编码</param>
     /// <returns> 与此实例值等效的8位无符号整数数组</returns>
-    public static string FromBase64String (this String value, Encoding encoding) {
-        return encoding.GetString (value.FromBase64 ());
+    public static string FromBase64StringToString (this String value, Encoding encoding) {
+        return value.FromBase64StringToBytes ().FromByteToString (encoding);
     }
+    #endregion
+
+    #region ToBase64String
+
     /// <summary>
     /// 将此实例值为其用Base64数字编码的等效字符串表示形式
     /// </summary>

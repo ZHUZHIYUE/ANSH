@@ -11,7 +11,7 @@ using Xunit;
 namespace Testing.Unit {
     public class ANSHCachesRedisTesting {
         ConfigurationOptions _Redis = null;
-        ConfigurationOptions Redis => _Redis = _Redis?? ConfigurationOptions.Parse ("192.168.1.78:7301");
+        ConfigurationOptions Redis => _Redis = _Redis?? ConfigurationOptions.Parse ("192.168.168.239:7301");
 
         public class TestListPushAndPopCache : ANSHCachesRedisListBase<int> {
 
