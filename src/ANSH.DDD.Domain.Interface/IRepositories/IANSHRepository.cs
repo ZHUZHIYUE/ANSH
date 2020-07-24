@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using ANSH.DDD.Domain.Interface.IEntities;
 using ANSH.DDD.Domain.Specifications;
@@ -50,30 +51,34 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// 获取指定实体
         /// </summary>
         /// <param name="specification">规约</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification = null);
+        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default);
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="specification">规约</param>
         /// <param name="selector">返回指定实体类型</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector)
+        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default)
         where TResult : class;
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="criteria">条件</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria);
+        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="criteria">条件</param>
         /// <param name="selector">返回指定实体类型</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector)
+        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default)
         where TResult : class;
         #endregion
 
@@ -148,8 +153,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="hasnext">是否还有下一页</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数据条数</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20);
+        Task<List<Entity>> GetListAsync (out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -160,8 +166,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="hasnext">是否还有下一页</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数据条数</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20);
+        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -173,8 +180,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="hasnext">是否还有下一页</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数据条数</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TResult : class;
+        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) where TResult : class;
 
         /// <summary>
         /// 获取指定实体
@@ -185,8 +193,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="hasnext">是否还有下一页</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数据条数</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20);
+        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -198,8 +207,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="hasnext">是否还有下一页</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数据条数</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TResult : class;
+        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) where TResult : class;
         #endregion
 
         #region GetListToTake
@@ -255,8 +265,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// </summary>
         /// <param name="take">取多少条</param>
         /// <param name="skip">忽略前面几个</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (int take, int skip = 0);
+        Task<List<Entity>> GetListAsync (int take, int skip = 0, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -264,8 +275,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="specification">规约</param>
         /// <param name="take">取多少条</param>
         /// <param name="skip">忽略前面几个</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, int take, int skip = 0);
+        Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, int take, int skip = 0, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -274,8 +286,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="selector">返回指定实体类型</param>
         /// <param name="take">取多少条</param>
         /// <param name="skip">忽略前面几个</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class;
+        Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0, CancellationToken cancellationToken = default) where TResult : class;
 
         /// <summary>
         /// 获取指定实体
@@ -283,8 +296,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="criteria">条件</param>
         /// <param name="take">取多少条</param>
         /// <param name="skip">忽略前面几个</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, int take, int skip = 0);
+        Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, int take, int skip = 0, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
@@ -293,8 +307,9 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// <param name="selector">返回指定实体类型</param>
         /// <param name="take">取多少条</param>
         /// <param name="skip">忽略前面几个</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class;
+        Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0, CancellationToken cancellationToken = default) where TResult : class;
         #endregion
 
         #region GetOne
@@ -332,31 +347,35 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// 获取指定实体
         /// </summary>
         /// <param name="specification">规约</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<Entity> GetOneAsync (IANSHSpecification<Entity> specification = null);
+        Task<Entity> GetOneAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="specification">规约</param>
         /// <param name="selector">返回指定实体类型</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<TResult> GetOneAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector) where TResult : class;
+        Task<TResult> GetOneAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class;
 
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="criteria">条件</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<Entity> GetOneAsync (Expression<Func<Entity, bool>> criteria);
+        Task<Entity> GetOneAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="criteria">条件</param>
         /// <param name="selector">返回指定实体类型</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<TResult> GetOneAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector) where TResult : class;
+        Task<TResult> GetOneAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class;
 
         /// <summary>
         /// 获取指定实体
@@ -377,15 +396,17 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// 获取指定实体
         /// </summary>
         /// <param name="Id">主键</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<Entity> GetOneAsync (TPKey Id);
+        Task<Entity> GetOneAsync (TPKey Id, CancellationToken cancellationToken = default);
         /// <summary>
         /// 获取指定实体
         /// </summary>
         /// <param name="Id">主键</param>
         /// <param name="selector">返回指定实体类型</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体</returns>
-        Task<TResult> GetOneAsync<TResult> (TPKey Id, Expression<Func<Entity, TResult>> selector) where TResult : class;
+        Task<TResult> GetOneAsync<TResult> (TPKey Id, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class;
         #endregion
 
         /// <summary>
@@ -406,14 +427,16 @@ namespace ANSH.DDD.Domain.Interface.IRepositories {
         /// 获取指定实体数量
         /// </summary>
         /// <param name="specification">规约</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体数量</returns>
-        Task<int> CountAsync (IANSHSpecification<Entity> specification = null);
+        Task<int> CountAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 获取指定实体数量
         /// </summary>
         /// <param name="criteria">条件</param>
+        /// <param name="cancellationToken">取消令牌</param>
         /// <returns>返回满足条件的实体数量</returns>
-        Task<int> CountAsync (Expression<Func<Entity, bool>> criteria);
+        Task<int> CountAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default);
     }
 }

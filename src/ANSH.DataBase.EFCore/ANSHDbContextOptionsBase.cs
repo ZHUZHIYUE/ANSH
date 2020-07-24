@@ -7,6 +7,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using ANSH.DataBase.Connection;
 using ANSH.DDD.Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
@@ -52,12 +54,35 @@ namespace ANSH.DataBase.EFCore {
 
         /// <summary>
         /// 批量添加实体
+        /// /// </summary>
+        /// <param name="entity">需要添加的实体</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <returns>添加后的实体</returns>
+        public virtual async Task<TEntity[]> InsertAsync (TEntity[] entity, CancellationToken cancellationToken = default) {
+            if ((entity ?? new TEntity[0]).Length > 0) {
+                DbEntity.AddRange (entity);
+                await base.SaveChangesAsync (cancellationToken);
+                return entity;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 批量添加实体
         /// </summary>
         /// <param name="entity">需要添加的实体</param>
         /// <returns>添加后的实体</returns>
-        public virtual TEntity Insert (TEntity entity) {
+        public virtual TEntity Insert (TEntity entity) => InsertAsync (entity).Result;
+
+        /// <summary>
+        /// 批量添加实体
+        /// </summary>
+        /// <param name="entity">需要添加的实体</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <returns>添加后的实体</returns>
+        public virtual async Task<TEntity> InsertAsync (TEntity entity, CancellationToken cancellationToken = default) {
             DbEntity.Add (entity);
-            base.SaveChanges ();
+            await base.SaveChangesAsync (cancellationToken);
             return entity;
         }
 
@@ -66,14 +91,22 @@ namespace ANSH.DataBase.EFCore {
         /// </summary>
         /// <param name="entity">需要添加的实体</param>
         /// <returns>添加后的实体</returns>
-        public virtual TEntity Insert (Action<TEntity> entity) {
+        public virtual TEntity Insert (Action<TEntity> entity) => InsertAsync (entity).Result;
+
+        /// <summary>
+        /// 添加实体
+        /// </summary>
+        /// <param name="entity">需要添加的实体</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <returns>添加后的实体</returns>
+        public virtual async Task<TEntity> InsertAsync (Action<TEntity> entity, CancellationToken cancellationToken = default) {
             var insert = new TEntity ();
             entity?.Invoke (insert);
             if (insert == null) {
                 return null;
             }
             DbEntity.Add (insert);
-            base.SaveChanges ();
+            await base.SaveChangesAsync (cancellationToken);
             return insert;
         }
 
@@ -95,6 +128,22 @@ namespace ANSH.DataBase.EFCore {
         /// 修改指定实体
         /// </summary>
         /// <param name="entity">需要修改的项</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <param name="wheres">指定条件</param>
+        public virtual async Task UpdateAsync (Action<TEntity> entity, Expression<Func<TEntity, bool>> wheres, CancellationToken cancellationToken = default) {
+            var result = await Get (wheres, tracking : true).ToListAsync (cancellationToken);
+            result?.ForEach ((item) => {
+                entity (item);
+                DbEntity.Update (item);
+            });
+
+            await SaveChangesCoverageAsync (cancellationToken);
+        }
+
+        /// <summary>
+        /// 修改指定实体
+        /// </summary>
+        /// <param name="entity">需要修改的项</param>
         /// <param name="specification">规约</param>
         public virtual void Update (Action<TEntity> entity, IANSHSpecificationCommit<TEntity> specification) {
             Get (specification, tracking : true).ToList ().ForEach ((item) => {
@@ -110,6 +159,26 @@ namespace ANSH.DataBase.EFCore {
         }
 
         /// <summary>
+        /// 修改指定实体
+        /// </summary>
+        /// <param name="entity">需要修改的项</param>
+        /// <param name="specification">规约</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        public virtual async Task UpdateAsync (Action<TEntity> entity, IANSHSpecificationCommit<TEntity> specification, CancellationToken cancellationToken = default) {
+            var result = await Get (specification, tracking : true).ToListAsync (cancellationToken);
+            result?.ForEach ((item) => {
+                entity (item);
+                DbEntity.Update (item);
+            });
+
+            if (specification?.CommitSaveChanges == CommitSaveChangesTypes.Reload) {
+                await SaveChangesReloadAsync (cancellationToken);
+            } else {
+                await SaveChangesCoverageAsync (cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// 删除指定实体
         /// </summary>
         /// <param name="wheres">指定条件</param>
@@ -119,6 +188,19 @@ namespace ANSH.DataBase.EFCore {
             if (cascade != null) iqueryable = cascade (iqueryable);
             DbEntity.RemoveRange (iqueryable);
             SaveChangesCoverage ();
+        }
+
+        /// <summary>
+        /// 删除指定实体
+        /// </summary>
+        /// <param name="wheres">指定条件</param>
+        /// <param name="cascade">联级删除</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        public virtual async Task DeleteAsync (Expression<Func<TEntity, bool>> wheres, Func<IQueryable<TEntity>, IQueryable<TEntity>> cascade = null, CancellationToken cancellationToken = default) {
+            var iqueryable = Get (wheres, tracking : true);
+            if (cascade != null) iqueryable = cascade (iqueryable);
+            DbEntity.RemoveRange (iqueryable);
+            await SaveChangesCoverageAsync (cancellationToken);
         }
 
         /// <summary>
@@ -139,6 +221,24 @@ namespace ANSH.DataBase.EFCore {
         }
 
         /// <summary>
+        /// 删除指定实体
+        /// </summary>
+        /// <param name="specification">规约</param>
+        /// <param name="cascade">联级删除</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        public virtual async Task DeleteAsync (IANSHSpecificationCommit<TEntity> specification = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> cascade = null, CancellationToken cancellationToken = default) {
+            var iqueryable = Get (specification, tracking : true);
+            if (cascade != null) iqueryable = cascade (iqueryable);
+            DbEntity.RemoveRange (iqueryable);
+
+            if (specification?.CommitSaveChanges == CommitSaveChangesTypes.Reload) {
+                await SaveChangesReloadAsync (cancellationToken);
+            } else {
+                await SaveChangesCoverageAsync (cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// 保存修改
         /// <para>解决乐观并发冲突，用提交数据覆盖数据库数据</para>
         /// </summary>
@@ -151,7 +251,41 @@ namespace ANSH.DataBase.EFCore {
                 } catch (DbUpdateConcurrencyException ex) {
                     foreach (var entry in ex.Entries) {
                         if (entry.Entity is TEntity) {
-                            entry.OriginalValues.SetValues (entry.GetDatabaseValues ());
+                            var databaseVaules = entry.GetDatabaseValues ();
+                            if (databaseVaules != null) {
+                                entry.OriginalValues.SetValues (databaseVaules);
+                            }
+                        } else {
+                            throw new NotSupportedException (
+                                "Don't know how to handle concurrency conflicts for " +
+                                entry.Metadata.Name);
+                        }
+                    }
+                    if (repeat++ >= 10) {
+                        throw new ApplicationException ("尝试处理并发冲突次数超过10次。");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 保存修改
+        /// <para>解决乐观并发冲突，用提交数据覆盖数据库数据</para>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// </summary>
+        async Task SaveChangesCoverageAsync (CancellationToken cancellationToken = default) {
+            int repeat = 0;
+            while (true) {
+                try {
+                    await base.SaveChangesAsync (cancellationToken);
+                    break;
+                } catch (DbUpdateConcurrencyException ex) {
+                    foreach (var entry in ex.Entries) {
+                        if (entry.Entity is TEntity) {
+                            var databaseVaules = entry.GetDatabaseValues ();
+                            if (databaseVaules != null) {
+                                entry.OriginalValues.SetValues (databaseVaules);
+                            }
                         } else {
                             throw new NotSupportedException (
                                 "Don't know how to handle concurrency conflicts for " +
@@ -174,6 +308,34 @@ namespace ANSH.DataBase.EFCore {
             while (true) {
                 try {
                     base.SaveChanges ();
+                    break;
+                } catch (DbUpdateConcurrencyException ex) {
+                    foreach (var entry in ex.Entries) {
+                        if (entry.Entity is TEntity) {
+                            ex.Entries.Single ().Reload ();
+                        } else {
+                            throw new NotSupportedException (
+                                "Don't know how to handle concurrency conflicts for " +
+                                entry.Metadata.Name);
+                        }
+                    }
+                    if (repeat++ >= 10) {
+                        throw new ApplicationException ("尝试处理并发冲突次数超过10次。");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 保存修改
+        /// <para>解决乐观并发冲突，重新加载数据库中的数据覆盖提交数据</para>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// </summary>
+        async Task SaveChangesReloadAsync (CancellationToken cancellationToken = default) {
+            int repeat = 0;
+            while (true) {
+                try {
+                    await base.SaveChangesAsync (cancellationToken);
                     break;
                 } catch (DbUpdateConcurrencyException ex) {
                     foreach (var entry in ex.Entries) {

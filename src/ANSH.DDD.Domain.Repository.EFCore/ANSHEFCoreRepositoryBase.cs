@@ -86,33 +86,37 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 获取指定实体
             /// </summary>
             /// <param name="specification">规约</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification = null) => DBContxt.Get (specification).ToListAsync ();
+            public virtual async Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default) => await DBContxt.Get (specification).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="specification">规约</param>
             /// <param name="selector">返回指定实体类型</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector)
-            where TResult : class => DBContxt.Get (specification, selector).ToListAsync ();
+            public virtual async Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default)
+            where TResult : class => await DBContxt.Get (specification, selector).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="criteria">条件</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria) => DBContxt.Get (criteria).ToListAsync ();
+            public virtual async Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default) => await DBContxt.Get (criteria).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="criteria">条件</param>
             /// <param name="selector">返回指定实体类型</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector)
-            where TResult : class => DBContxt.Get (criteria, selector).ToListAsync ();
+            public virtual async Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default)
+            where TResult : class => await DBContxt.Get (criteria, selector).ToListAsync (cancellationToken);
             #endregion
 
             #region GetListToPage
@@ -186,8 +190,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="hasnext">是否还有下一页</param>
             /// <param name="page">页数</param>
             /// <param name="pagesize">每页数据条数</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) => DBContxt.Get ().ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync ();
+            public virtual Task<List<Entity>> GetListAsync (out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) => DBContxt.Get ().ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -198,8 +203,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="hasnext">是否还有下一页</param>
             /// <param name="page">页数</param>
             /// <param name="pagesize">每页数据条数</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) => DBContxt.Get (specification).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync ();
+            public virtual Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) => DBContxt.Get (specification).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -211,8 +217,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="hasnext">是否还有下一页</param>
             /// <param name="page">页数</param>
             /// <param name="pagesize">每页数据条数</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TResult : class => DBContxt.Get (specification, selector).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync ();
+            public virtual Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) where TResult : class => DBContxt.Get (specification, selector).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -223,8 +230,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="hasnext">是否还有下一页</param>
             /// <param name="page">页数</param>
             /// <param name="pagesize">每页数据条数</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) => DBContxt.Get (criteria).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync ();
+            public virtual Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) => DBContxt.Get (criteria).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -236,8 +244,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="hasnext">是否还有下一页</param>
             /// <param name="page">页数</param>
             /// <param name="pagesize">每页数据条数</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20) where TResult : class => DBContxt.Get (criteria, selector).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync ();
+            public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, out int datacount, out int pagecount, out bool hasnext, int page = 1, int pagesize = 20, CancellationToken cancellationToken = default) where TResult : class => DBContxt.Get (criteria, selector).ToPage (out datacount, out pagecount, out hasnext, page, pagesize).ToListAsync (cancellationToken);
             #endregion
 
             #region GetListToTake
@@ -293,8 +302,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// </summary>
             /// <param name="take">取多少条</param>
             /// <param name="skip">忽略前面几个</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (int take, int skip = 0) => DBContxt.Get ().ToTake (take, skip).ToListAsync ();
+            public virtual async Task<List<Entity>> GetListAsync (int take, int skip = 0, CancellationToken cancellationToken = default) => await DBContxt.Get ().ToTake (take, skip).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -302,8 +312,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="specification">规约</param>
             /// <param name="take">取多少条</param>
             /// <param name="skip">忽略前面几个</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, int take, int skip = 0) => DBContxt.Get (specification).ToTake (take, skip).ToListAsync ();
+            public virtual async Task<List<Entity>> GetListAsync (IANSHSpecification<Entity> specification, int take, int skip = 0, CancellationToken cancellationToken = default) => await DBContxt.Get (specification).ToTake (take, skip).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -312,8 +323,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="selector">返回指定实体类型</param>
             /// <param name="take">取多少条</param>
             /// <param name="skip">忽略前面几个</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class => DBContxt.Get (specification, selector).ToTake (take, skip).ToListAsync ();
+            public virtual async Task<List<TResult>> GetListAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, int take, int skip = 0, CancellationToken cancellationToken = default) where TResult : class => await DBContxt.Get (specification, selector).ToTake (take, skip).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -321,8 +333,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="criteria">条件</param>
             /// <param name="take">取多少条</param>
             /// <param name="skip">忽略前面几个</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, int take, int skip = 0) => DBContxt.Get (criteria).ToTake (take, skip).ToListAsync ();
+            public virtual async Task<List<Entity>> GetListAsync (Expression<Func<Entity, bool>> criteria, int take, int skip = 0, CancellationToken cancellationToken = default) => await DBContxt.Get (criteria).ToTake (take, skip).ToListAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -331,8 +344,9 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <param name="selector">返回指定实体类型</param>
             /// <param name="take">取多少条</param>
             /// <param name="skip">忽略前面几个</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0) where TResult : class => DBContxt.Get (criteria, selector).ToTake (take, skip).ToListAsync ();
+            public virtual async Task<List<TResult>> GetListAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, int take, int skip = 0, CancellationToken cancellationToken = default) where TResult : class => await DBContxt.Get (criteria, selector).ToTake (take, skip).ToListAsync (cancellationToken);
             #endregion
 
             #region GetOne
@@ -370,31 +384,35 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 获取指定实体
             /// </summary>
             /// <param name="specification">规约</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<Entity> GetOneAsync (IANSHSpecification<Entity> specification = null) => DBContxt.Get (specification).FirstOrDefaultAsync ();
+            public virtual async Task<Entity> GetOneAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default) => await DBContxt.Get (specification).FirstOrDefaultAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="specification">规约</param>
             /// <param name="selector">返回指定实体类型</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<TResult> GetOneAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector) where TResult : class => DBContxt.Get (specification, selector).FirstOrDefaultAsync ();
+            public virtual async Task<TResult> GetOneAsync<TResult> (IANSHSpecification<Entity> specification, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class => await DBContxt.Get (specification, selector).FirstOrDefaultAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="criteria">条件</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<Entity> GetOneAsync (Expression<Func<Entity, bool>> criteria) => DBContxt.Get (criteria).FirstOrDefaultAsync ();
+            public virtual async Task<Entity> GetOneAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default) => await DBContxt.Get (criteria).FirstOrDefaultAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="criteria">条件</param>
             /// <param name="selector">返回指定实体类型</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<TResult> GetOneAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector) where TResult : class => DBContxt.Get (criteria, selector).FirstOrDefaultAsync ();
+            public virtual async Task<TResult> GetOneAsync<TResult> (Expression<Func<Entity, bool>> criteria, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class => await DBContxt.Get (criteria, selector).FirstOrDefaultAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体
@@ -415,15 +433,17 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 获取指定实体
             /// </summary>
             /// <param name="Id">主键</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<Entity> GetOneAsync (TPKey Id) => DBContxt.Get (m => m.Id.Equals (Id)).FirstOrDefaultAsync ();
+            public virtual async Task<Entity> GetOneAsync (TPKey Id, CancellationToken cancellationToken = default) => await DBContxt.Get (m => m.Id.Equals (Id)).FirstOrDefaultAsync (cancellationToken);
             /// <summary>
             /// 获取指定实体
             /// </summary>
             /// <param name="Id">主键</param>
             /// <param name="selector">返回指定实体类型</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体</returns>
-            public virtual Task<TResult> GetOneAsync<TResult> (TPKey Id, Expression<Func<Entity, TResult>> selector) where TResult : class => DBContxt.Get (m => m.Id.Equals (Id), selector).FirstOrDefaultAsync ();
+            public virtual async Task<TResult> GetOneAsync<TResult> (TPKey Id, Expression<Func<Entity, TResult>> selector, CancellationToken cancellationToken = default) where TResult : class => await DBContxt.Get (m => m.Id.Equals (Id), selector).FirstOrDefaultAsync (cancellationToken);
             #endregion
 
             /// <summary>
@@ -444,14 +464,16 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 获取指定实体数量
             /// </summary>
             /// <param name="specification">规约</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体数量</returns>
-            public virtual Task<int> CountAsync (IANSHSpecification<Entity> specification = null) => DBContxt.Get (specification).CountAsync ();
+            public virtual async Task<int> CountAsync (IANSHSpecification<Entity> specification = null, CancellationToken cancellationToken = default) => await DBContxt.Get (specification).CountAsync (cancellationToken);
 
             /// <summary>
             /// 获取指定实体数量
             /// </summary>
             /// <param name="criteria">条件</param>
+            /// <param name="cancellationToken">取消令牌</param>
             /// <returns>返回满足条件的实体数量</returns>
-            public virtual Task<int> CountAsync (Expression<Func<Entity, bool>> criteria) => DBContxt.Get (criteria).CountAsync ();
+            public virtual async Task<int> CountAsync (Expression<Func<Entity, bool>> criteria, CancellationToken cancellationToken = default) => await DBContxt.Get (criteria).CountAsync (cancellationToken);
         }
 }

@@ -532,12 +532,13 @@ namespace ANSH.Caches.Redis {
         /// <summary>
         /// 获取缓存
         /// </summary>
-        /// <param name="cache">缓存</param>
+        /// <param name="cachesBase">缓存</param>
+        /// <param name="breakDown">缓存击穿</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public async Task<TModel> StringGetAsync<TModel> (ANSHCachesRedisModelBase<TModel> cache, bool refresh = false) {
-            await Task.CompletedTask;
-            return StringGet (cache, out _, refresh);
+        public Task<TModel> StringGetAsync<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, out bool breakDown, bool refresh = false) {
+            breakDown = true;
+            return _StringGetAsync (cachesBase, breakDown, refresh);
         }
 
         /// <summary>
@@ -547,16 +548,25 @@ namespace ANSH.Caches.Redis {
         /// <param name="breakDown">缓存击穿</param>
         /// <param name="refresh">是否刷新缓存时间</param>
         /// <typeparam name="TModel">缓存值模型</typeparam>
-        public TModel StringGet<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, out bool breakDown, bool refresh = false) {
+        async Task<TModel> _StringGetAsync<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, bool breakDown, bool refresh = false) {
             var dataBase = RedisConnection.GetDatabase (cachesBase.DataBaseIndex);
-            var cacheValue = dataBase.StringGetAsync (cachesBase.CacheKey).Result;
+            var cacheValue = await dataBase.StringGetAsync (cachesBase.CacheKey);
             if (refresh ||
                 (cachesBase.AbsoluteExpirationRelativeToNow.HasValue && !dataBase.KeyTimeToLive (cachesBase.CacheKey).HasValue)
             ) {
-                KeyExpire (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
+                await KeyExpireAsync (dataBase, cachesBase.CacheKey, cachesBase.AbsoluteExpirationRelativeToNow);
             }
             return StringToModel<TModel> (cacheValue, out breakDown);
         }
+
+        /// <summary>
+        /// 获取缓存
+        /// </summary>
+        /// <param name="cachesBase">缓存</param>
+        /// <param name="breakDown">缓存击穿</param>
+        /// <param name="refresh">是否刷新缓存时间</param>
+        /// <typeparam name="TModel">缓存值模型</typeparam>
+        public TModel StringGet<TModel> (ANSHCachesRedisModelBase<TModel> cachesBase, out bool breakDown, bool refresh = false) => StringGetAsync (cachesBase, out breakDown, refresh).Result;
 
         /// <summary>
         /// 获取缓存

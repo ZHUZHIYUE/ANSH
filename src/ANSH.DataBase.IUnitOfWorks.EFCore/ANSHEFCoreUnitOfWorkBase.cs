@@ -59,6 +59,7 @@ namespace ANSH.DataBase.IUnitOfWorks.EFCore {
         /// <param name="Method">事物保护的方法</param>
         /// <param name="isolationLevel">隔离级别</param>
         public override void ExecuteTransaction(Action Method, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) => ExecuteTransaction<int>(() => { Method(); return 0; }, isolationLevel);
+        
 
         /// <summary>
         /// 事物保护

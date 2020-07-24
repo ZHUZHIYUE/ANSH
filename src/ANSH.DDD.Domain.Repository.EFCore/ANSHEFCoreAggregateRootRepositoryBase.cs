@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using ANSH.DataBase.EFCore;
 using ANSH.DataBase.IUnitOfWorks.EFCore;
@@ -10,7 +11,7 @@ using ANSH.DDD.Domain.Specifications;
 using ANSH.DDD.Domain.Specifications.EFCore;
 
 namespace ANSH.DDD.Domain.Repository.EFCore {
-    
+
     /// <summary>
     /// 聚合根EFCore仓储实现基类
     /// </summary>
@@ -38,6 +39,14 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <summary>
             /// 批量添加实体
             /// </summary>
+            /// <param name="TAggregateRoots">需要添加的实体</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            /// <returns>添加后的实体</returns>
+            public async Task<TAggregateRoot[]> InsertAsync (TAggregateRoot[] TAggregateRoots, CancellationToken cancellationToken = default) => await base.DBContxt.InsertAsync (TAggregateRoots, cancellationToken);
+
+            /// <summary>
+            /// 批量添加实体
+            /// </summary>
             /// <param name="model">需要添加的实体</param>
             /// <returns>添加后的实体</returns>
             public TAggregateRoot Insert (TAggregateRoot model) => base.DBContxt.Insert (model);
@@ -45,9 +54,25 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <summary>
             /// 添加实体
             /// </summary>
+            /// <param name="model">需要添加的实体</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            /// <returns>添加后的实体</returns>
+            public async Task<TAggregateRoot> InsertAsync (TAggregateRoot model, CancellationToken cancellationToken = default) => await base.DBContxt.InsertAsync (model, cancellationToken);
+
+            /// <summary>
+            /// 添加实体
+            /// </summary>
             /// <param name="action">需要添加的实体</param>
             /// <returns>添加后的实体</returns>
             public virtual TAggregateRoot Insert (Action<TAggregateRoot> action) => base.DBContxt.Insert (action);
+
+            /// <summary>
+            /// 添加实体
+            /// </summary>
+            /// <param name="action">需要添加的实体</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            /// <returns>添加后的实体</returns>
+            public async Task<TAggregateRoot> InsertAsync (Action<TAggregateRoot> action, CancellationToken cancellationToken = default) => await base.DBContxt.InsertAsync (action, cancellationToken);
 
             /// <summary>
             /// 修改指定实体
@@ -64,8 +89,28 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// 修改指定实体
             /// </summary>
             /// <param name="action">需要修改的项</param>
+            /// <param name="criteria">条件</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task UpdateAsync (Action<TAggregateRoot> action, Expression<Func<TAggregateRoot, bool>> criteria, CancellationToken cancellationToken = default) {
+                var specification = new ANSHSpecificationCommitBase<TAggregateRoot> ();
+                specification.SetCriteria (criteria);
+                await UpdateAsync (action, specification);
+            }
+
+            /// <summary>
+            /// 修改指定实体
+            /// </summary>
+            /// <param name="action">需要修改的项</param>
             /// <param name="specification">规约</param>
             public virtual void Update (Action<TAggregateRoot> action, IANSHSpecificationCommit<TAggregateRoot> specification = null) => base.DBContxt.Update (action, specification);
+
+            /// <summary>
+            /// 修改指定实体
+            /// </summary>
+            /// <param name="action">需要修改的项</param>
+            /// <param name="specification">规约</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task UpdateAsync (Action<TAggregateRoot> action, IANSHSpecificationCommit<TAggregateRoot> specification = null, CancellationToken cancellationToken = default) => await base.DBContxt.UpdateAsync (action, specification, cancellationToken);
 
             /// <summary>
             /// 修改指定实体
@@ -75,6 +120,14 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             public virtual void Update (Action<TAggregateRoot> action, TPKey Id) => Update (action, m => m.Id.Equals (Id));
 
             /// <summary>
+            /// 修改指定实体
+            /// </summary>
+            /// <param name="action">需要修改的项</param>
+            /// <param name="Id">主键</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task UpdateAsync (Action<TAggregateRoot> action, TPKey Id, CancellationToken cancellationToken = default) => await UpdateAsync (action, m => m.Id.Equals (Id), cancellationToken);
+
+            /// <summary>
             /// 删除指定实体
             /// </summary>
             /// <param name="criteria">条件</param>
@@ -82,6 +135,16 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
                 var specification = new ANSHSpecificationCommitBase<TAggregateRoot> ();
                 specification.SetCriteria (criteria);
                 Delete (specification);
+            }
+            /// <summary>
+            /// 删除指定实体
+            /// </summary>
+            /// <param name="criteria">条件</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task DeleteAsync (Expression<Func<TAggregateRoot, bool>> criteria, CancellationToken cancellationToken = default) {
+                var specification = new ANSHSpecificationCommitBase<TAggregateRoot> ();
+                specification.SetCriteria (criteria);
+                await DeleteAsync (specification, cancellationToken);
             }
 
             /// <summary>
@@ -93,7 +156,21 @@ namespace ANSH.DDD.Domain.Repository.EFCore {
             /// <summary>
             /// 删除指定实体
             /// </summary>
+            /// <param name="specification">规约</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task DeleteAsync (IANSHSpecificationCommit<TAggregateRoot> specification = null, CancellationToken cancellationToken = default) => await base.DBContxt.DeleteAsync (specification, null, cancellationToken);
+
+            /// <summary>
+            /// 删除指定实体
+            /// </summary>
             /// <param name="Id">主键</param>
             public virtual void Delete (TPKey Id) => Delete (m => m.Id.Equals (Id));
+
+            /// <summary>
+            /// 删除指定实体
+            /// </summary>
+            /// <param name="Id">主键</param>
+            /// <param name="cancellationToken">取消令牌</param>
+            public async Task DeleteAsync (TPKey Id, CancellationToken cancellationToken = default) => await DeleteAsync (m => m.Id.Equals (Id), cancellationToken);
         }
 }
