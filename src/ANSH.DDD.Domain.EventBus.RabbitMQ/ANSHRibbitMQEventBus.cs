@@ -80,7 +80,6 @@ namespace ANSH.DDD.Domain.EventBus.RabbitMQ {
                 }
                 return successDX;
             }, true, 1, true);
-
         }
     }
 }

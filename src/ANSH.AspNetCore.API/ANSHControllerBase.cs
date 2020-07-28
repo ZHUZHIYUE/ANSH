@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ANSH.SDK.API.RequestContracts;
 using ANSH.SDK.API.RequestContracts.Models;
 using ANSH.SDK.API.ResponseContracts;
@@ -187,10 +188,27 @@ namespace ANSH.AspNetCore.API {
         protected TResponse Get<TQueryRequest, TResponse, TModelResponse> (ANSHGetRequestBase<TQueryRequest, TResponse, TModelResponse> request, Func<TQueryRequest, TModelResponse> func)
         where TResponse : ANSHGetResponseBase<TModelResponse>, new ()
         where TModelResponse : class
-        where TQueryRequest : ANSHGetRequestModelBase, new () => Execute (() => {
+        where TQueryRequest : ANSHGetRequestModelBase, new () => GetAsync (request, async (parameter) => {
+            await Task.CompletedTask;
+            return func (parameter);
+        }).Result;
+
+        /// <summary>
+        /// GET项处理
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        /// <typeparam name="TQueryRequest">查询参数</typeparam>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        protected async Task<TResponse> GetAsync<TQueryRequest, TResponse, TModelResponse> (ANSHGetRequestBase<TQueryRequest, TResponse, TModelResponse> request, Func<TQueryRequest, Task<TModelResponse>> func)
+        where TResponse : ANSHGetResponseBase<TModelResponse>, new ()
+        where TModelResponse : class
+        where TQueryRequest : ANSHGetRequestModelBase, new () => await ExecuteAsync (async () => {
             TResponse response = new TResponse ();
             Validate (request);
-            response.ResultItem = func (request.Query);
+            response.ResultItem = await func?.Invoke (request.Query);
             return response;
         });
 
@@ -206,10 +224,27 @@ namespace ANSH.AspNetCore.API {
         protected TResponse Get<TQueryRequest, TResponse, TModelResponse> (ANSHGetListRequestBase<TQueryRequest, TResponse, TModelResponse> request, Func<TQueryRequest, List<TModelResponse>> func)
         where TResponse : ANSHGetListResponseBase<TModelResponse>, new ()
         where TModelResponse : class
-        where TQueryRequest : ANSHGetRequestModelBase, new () => Execute (() => {
+        where TQueryRequest : ANSHGetRequestModelBase, new () => GetAsync (request, async (parameter) => {
+            await Task.CompletedTask;
+            return func (parameter);
+        }).Result;
+
+        /// <summary>
+        /// GET项处理
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        /// <typeparam name="TQueryRequest">查询参数</typeparam>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        protected async Task<TResponse> GetAsync<TQueryRequest, TResponse, TModelResponse> (ANSHGetListRequestBase<TQueryRequest, TResponse, TModelResponse> request, Func<TQueryRequest, Task<List<TModelResponse>>> func)
+        where TResponse : ANSHGetListResponseBase<TModelResponse>, new ()
+        where TModelResponse : class
+        where TQueryRequest : ANSHGetRequestModelBase, new () => await ExecuteAsync (async () => {
             TResponse response = new TResponse ();
             Validate (request);
-            response.ResultList = func (request.Query);
+            response.ResultList = await func?.Invoke (request.Query);
             return response;
         });
 
@@ -227,9 +262,28 @@ namespace ANSH.AspNetCore.API {
         where TResponse : ANSHGetByPageResponseBase<TModelResponse, TPageResponesModel>, new ()
         where TModelResponse : class
         where TPageResponesModel : IANSHPageResponesModelBase, new ()
-        where TQueryRequest : ANSHGetByPageRequestModelBase, new () => Execute (() => {
+        where TQueryRequest : ANSHGetByPageRequestModelBase, new () => GetAsync (request, async (parameter) => {
+            await Task.CompletedTask;
+            return func (parameter);
+        }).Result;
+
+        /// <summary>
+        /// GET项处理
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        /// <typeparam name="TQueryRequest">查询参数</typeparam>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <typeparam name="TPageResponesModel">分页信息模型</typeparam>
+        /// <returns>响应</returns>
+        protected async Task<TResponse> GetAsync<TQueryRequest, TResponse, TModelResponse, TPageResponesModel> (ANSHGetByPageRequestBase<TQueryRequest, TResponse, TModelResponse, TPageResponesModel> request, Func < TQueryRequest, Task < (List<TModelResponse>, TPageResponesModel) >> func)
+        where TResponse : ANSHGetByPageResponseBase<TModelResponse, TPageResponesModel>, new ()
+        where TModelResponse : class
+        where TPageResponesModel : IANSHPageResponesModelBase, new ()
+        where TQueryRequest : ANSHGetByPageRequestModelBase, new () => await ExecuteAsync (async () => {
             Validate (request);
-            var result = func (request.Query);
+            var result = await func?.Invoke (request.Query);
             TResponse response = new TResponse ();
             response.ResultList = result.Item1;
             response.PageInfo = result.Item2;
@@ -250,11 +304,31 @@ namespace ANSH.AspNetCore.API {
         protected TResponse Post<TResponse, TMODELRequest, TModelResponse> (ANSHPostArrayRequestBase<TResponse, TMODELRequest, TModelResponse> request, Func<TMODELRequest, TModelResponse> func, Action<TMODELRequest, TModelResponse> callback = null)
         where TResponse : ANSHPostArrayResponseBase<TModelResponse>, new ()
         where TMODELRequest : ANSHPostRequestModelBase, new ()
+        where TModelResponse : ANSHPostArrayResponseModelBase, new () => PostAsync (request, async (parameter) => {
+            await Task.CompletedTask;
+            return func (parameter);
+        }, callback).Result;
+
+        /// <summary>
+        /// POST项处理
+        /// <para>数组POST</para>
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        /// <param name="callback">对返回集合进行处理</param>
+        /// <typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        protected async Task<TResponse> PostAsync<TResponse, TMODELRequest, TModelResponse> (ANSHPostArrayRequestBase<TResponse, TMODELRequest, TModelResponse> request, Func<TMODELRequest, Task<TModelResponse>> func, Action<TMODELRequest, TModelResponse> callback = null)
+        where TResponse : ANSHPostArrayResponseBase<TModelResponse>, new ()
+        where TMODELRequest : ANSHPostRequestModelBase, new ()
         where TModelResponse : ANSHPostArrayResponseModelBase, new () =>
-            Execute (() => {
+            await ExecuteAsync (async () => {
+                await Task.CompletedTask;
                 TResponse response = new TResponse ();
-                Validate (request, in_request => {
-                    var TMResponse = Post (in_request, func);
+                Validate (request, async in_request => {
+                    var TMResponse = await PostAsync (in_request, func);
                 }, (in_request, exception) => {
                     var TMResponse = new TModelResponse ();
                     TMResponse.ItemMsgCode = exception.ERRORCODE;
@@ -275,10 +349,27 @@ namespace ANSH.AspNetCore.API {
         /// <returns>响应</returns>
         TModelResponse Post<TModelResponse, TMODELRequest> (TMODELRequest request, Func<TMODELRequest, TModelResponse> func, Action<TMODELRequest, TModelResponse> callback = null)
         where TMODELRequest : ANSHPostRequestModelBase, new ()
+        where TModelResponse : ANSHPostArrayResponseModelBase, new () => PostAsync (request, async (parameter) => {
+            await Task.CompletedTask;
+            return func (parameter);
+        }, callback).Result;
+
+        /// <summary>
+        /// POST项处理
+        /// <para>数组POST</para>
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        /// <param name="callback">对返回集合进行处理</param>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        async Task<TModelResponse> PostAsync<TModelResponse, TMODELRequest> (TMODELRequest request, Func<TMODELRequest, Task<TModelResponse>> func, Action<TMODELRequest, TModelResponse> callback = null)
+        where TMODELRequest : ANSHPostRequestModelBase, new ()
         where TModelResponse : ANSHPostArrayResponseModelBase, new () {
             var TMResponse = new TModelResponse ();
             try {
-                TMResponse = func.Invoke (request);
+                TMResponse = await func?.Invoke (request);
             } catch (ANSHExceptions ex) {
                 TMResponse.ItemMsgCode = ex.ERRORCODE;
                 TMResponse.ItemMsg = ex.ERRORMSG;
@@ -309,12 +400,41 @@ namespace ANSH.AspNetCore.API {
         where TResponse : ANSHPostResponseBase<TModelResponse>, new ()
         where TMODELRequest : ANSHPostRequestModelBase, new ()
         where TModelResponse : class, new () =>
-            Execute (() => {
+            PostAsync (request, async (parameter) => {
+                await Task.CompletedTask;
+                return func (parameter);
+            }).Result;
+
+        /// <summary>
+        /// POST项处理
+        /// </summary>
+        /// <param name="request">请求数据</param>
+        /// <param name="func">项处理</param>
+        ///<typeparam name="TResponse">响应</typeparam>
+        /// <typeparam name="TMODELRequest">请求模型</typeparam>
+        /// <typeparam name="TModelResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        protected async Task<TResponse> PostAsync<TMODELRequest, TResponse, TModelResponse> (ANSHPostRequestBase<TResponse, TMODELRequest, TModelResponse> request, Func<TMODELRequest, Task<TModelResponse>> func)
+        where TResponse : ANSHPostResponseBase<TModelResponse>, new ()
+        where TMODELRequest : ANSHPostRequestModelBase, new ()
+        where TModelResponse : class, new () =>
+            await ExecuteAsync (async () => {
                 TResponse response = new TResponse ();
                 Validate (request);
-                response.ResultItem = func (request.PostItem);
+                response.ResultItem = await func?.Invoke (request.PostItem);
                 return response;
             });
+
+        /// <summary>
+        /// 执行保护
+        /// </summary>
+        /// <param name="func">执行内容</param>
+        /// <typeparam name="TResponse">响应模型</typeparam>
+        /// <returns>响应</returns>
+        protected TResponse Execute<TResponse> (Func<TResponse> func) where TResponse : ANSHResponseBase, new () => ExecuteAsync (async () => {
+            await Task.CompletedTask;
+            return func ();
+        }).Result;
 
         /// <summary>
         /// 执行保护
@@ -322,11 +442,11 @@ namespace ANSH.AspNetCore.API {
         /// <param name="action">执行内容</param>
         /// <typeparam name="TResponse">响应模型</typeparam>
         /// <returns>响应</returns>
-        protected TResponse Execute<TResponse> (Func<TResponse> action)
+        protected async Task<TResponse> ExecuteAsync<TResponse> (Func<Task<TResponse>> action)
         where TResponse : ANSHResponseBase, new () {
             TResponse response = null;
             try {
-                response = action?.Invoke ();
+                response = await action?.Invoke ();
             } catch (ANSHExceptions ex) {
                 response = new TResponse () { MsgCode = ex.ERRORCODE, Msg = ex.ERRORMSG };
             } catch (Exception ex) {
