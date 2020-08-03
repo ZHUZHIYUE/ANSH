@@ -40,8 +40,10 @@ namespace ANSH.JWT {
                 return false;
             }
 
-            if (DateTime.Now.ToTimeStamp () >= outPayload.Exp) {
-                return false;
+            if (outPayload.Exp.HasValue) {
+                if (DateTime.Now.ToTimeStamp () >= outPayload.Exp) {
+                    return false;
+                }
             }
 
             if (DateTime.Now.ToTimeStamp () <= outPayload.Nbf) {

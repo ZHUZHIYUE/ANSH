@@ -78,22 +78,6 @@ namespace ANSH.DataBase.EFCore {
         }
 
         /// <summary>
-        /// 添加DbContext记录
-        /// </summary>
-        /// <param name="db"></param>
-        void AddDbContext (ANSHDbContextBase db) {
-            _DBContext.Add (db);
-        }
-
-        /// <summary>
-        /// 创建DbContext集合
-        /// </summary>
-        List<ANSHDbContextBase> _DBContext {
-            get;
-            set;
-        } = new List<ANSHDbContextBase> ();
-
-        /// <summary>
         /// 事物保护
         /// </summary>
         /// <param name="method">事物保护的方法</param>
@@ -110,33 +94,6 @@ namespace ANSH.DataBase.EFCore {
         }
 
         /// <summary>
-        /// 创建对应的BLL层对象
-        /// </summary>
-        /// <typeparam name="TResult">对应的BLL层对象</typeparam>
-        /// <returns>返回对应的BLL层对象</returns>
-        [Obsolete ("替换为Register<TResult>()", true)]
-        new public TResult Set<TResult> ()
-        where TResult : ANSHDbContextBase, new () {
-            var result = new TResult ();
-            result.UseConnection (_ANSHDbConnection);
-            AddDbContext (result);
-            return result;
-        }
-
-        /// <summary>
-        /// 创建对应的BLL层对象
-        /// </summary>
-        /// <typeparam name="TResult">对应的BLL层对象</typeparam>
-        /// <returns>返回对应的BLL层对象</returns>
-        public TResult Register<TResult> ()
-        where TResult : ANSHDbContextBase, new () {
-            var result = new TResult ();
-            result.UseConnection (_ANSHDbConnection);
-            AddDbContext (result);
-            return result;
-        }
-
-        /// <summary>
         /// 创建DbSet实体
         /// </summary>
         /// <typeparam name="TEntity">实体</typeparam>
@@ -148,7 +105,6 @@ namespace ANSH.DataBase.EFCore {
         /// </summary>
         public override void Dispose () {
             base.Dispose ();
-            _DBContext?.ForEach (m => m.Dispose ());
         }
     }
 }
