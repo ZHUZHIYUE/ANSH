@@ -17,7 +17,7 @@ namespace ANSH.JWT {
         /// 到期时间，时间戳
         /// </summary>
         [JsonProperty ("exp")]
-        public double? Exp { get; set; } = DateTime.Now.AddMinutes (20).ToTimeStamp ();
+        public double? Exp { get; set; }
 
         /// <summary>
         /// 在此时间之前不可用，时间戳
