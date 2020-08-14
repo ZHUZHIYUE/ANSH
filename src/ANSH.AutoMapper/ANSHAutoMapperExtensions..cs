@@ -60,7 +60,7 @@ public static class ANSHAutoMapper {
         mcfe.AddProfile<TypeConverterProfile> ();
         config (mcfe);
         var mcf = new MapperConfiguration (mcfe);
-        
+
         return mcf;
     }
 }
@@ -105,7 +105,15 @@ class TypeConverterProfile : Profile,
         }
         public int? Convert (string source, int? destination, ResolutionContext context) => int.TryParse (source, out int result) ? (int?) result : null;
 
-        public DateTime? Convert (string source, DateTime? destination, ResolutionContext context) => DateTime.TryParse (source, out DateTime result) ? (DateTime?) result : null;
+        public DateTime? Convert (string source, DateTime? destination, ResolutionContext context) {
+            if (DateTime.TryParse (source, out DateTime resultDateTime)) {
+                return resultDateTime;
+            } else if (source.IsTimeStamp (out DateTime resultTimeStamp)) {
+                return resultTimeStamp;
+            } else {
+                return null;
+            }
+        }
 
         public string Convert (int? source, string destination, ResolutionContext context) => source?.ToString () ?? string.Empty;
 

@@ -103,7 +103,7 @@ volumes:
   # gitlab-runner register -n \
   # --url https://git.bioey.com/ \
   # --registration-token Lm9jzz4Uf7sumu3bxo58 \
-  # --description "node.5" \
+  # --description "node.6" \
   # --tag-list "" \
   # --executor docker \
   # --docker-image "alipne:latest" \
@@ -111,12 +111,14 @@ volumes:
   # --cache-dir "/gitlab/runner-cache"  \
   # --docker-volumes '/etc/hosts:/etc/hosts' \
   # --docker-volumes 'maven.repository:/root/.m2' \
-  # --docker-volumes 'npm.repository:/root/.npm/' \
+  # --docker-volumes 'npm.repository:/.npm' \
+  # --docker-volumes 'nuget.repository:/root/.nuget/packages' \
   # --docker-volumes 'docker.build:/.docker.build' \
   # --docker-volumes '/var/run/docker.sock:/var/run/docker.sock' \
   # --docker-volumes 'gitlab.runner.builds:/gitlab/runner-builds' \
   # --docker-volumes 'gitlab.runner.cache:/gitlab/runner-cache' \
   # --docker-volumes 'gitlab.runner.cache:/cache' \
+  # ----docker-extra-hosts ['repository.bioey.com:172.17.95.64','docker-repository.bioey.com:172.17.95.64','docker-manager.bioey.com:172.17.95.64','git.bioey.com:172.17.95.64']
   # --docker-privileged  \
 
 

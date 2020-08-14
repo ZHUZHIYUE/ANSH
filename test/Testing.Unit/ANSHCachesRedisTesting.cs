@@ -34,6 +34,13 @@ namespace Testing.Unit {
             }
         }
 
+        public class TestListSortedSetAddCache : ANSHCachesRedisSortedSetBase<int> {
+
+            public TestListSortedSetAddCache () : base ("TestListSortedSetAddCache") {
+
+            }
+        }
+
         public class TestSortedSetCache : ANSHCachesRedisSortedSetBase<int> {
 
             public TestSortedSetCache () : base ("TestSortedSetCache") {
@@ -78,6 +85,9 @@ namespace Testing.Unit {
                 ANSHCachesRedisHandle.ListRightPush (cacheBase, 1);
                 ANSHCachesRedisHandle.ListRightPush (cacheBase, 2);
                 ANSHCachesRedisHandle.ListRightPush (cacheBase, 3);
+
+                Assert.Equal (4, ANSHCachesRedisHandle.ListLength (cacheBase));
+
                 Assert.Equal (0, ANSHCachesRedisHandle.ListLeftPop (cacheBase));
                 Assert.Equal (1, ANSHCachesRedisHandle.ListLeftPop (cacheBase));
                 Assert.Equal (2, ANSHCachesRedisHandle.ListLeftPop (cacheBase));
@@ -249,6 +259,16 @@ namespace Testing.Unit {
                 Thread.Sleep (500);
             }
         }
-        
+
+        [Fact]
+        public void TestListSortedSetAdd () {
+            var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
+            var cacheBase = new TestListSortedSetAddCache ();
+            ANSHCachesRedisHandle.KeyDelete (cacheBase);
+
+            Assert.True (ANSHCachesRedisHandle.SortedSetAdd (cacheBase, 0, 0));
+            Assert.False (ANSHCachesRedisHandle.SortedSetAdd (cacheBase, 0, 0));
+        }
+
     }
 }
