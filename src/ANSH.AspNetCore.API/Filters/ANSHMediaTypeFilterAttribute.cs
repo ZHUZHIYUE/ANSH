@@ -24,9 +24,14 @@ namespace ANSH.AspNetCore.API.Filters {
         /// </summary>
         /// <param name="context">当前请求上下文</param>
         public virtual void OnResourceExecuting (ResourceExecutingContext context) {
-            if (context.HttpContext.Request.Method.ToLower () != "POST".ToLower () || context.HttpContext.Request.Method.ToLower () == "POST".ToLower () &&
-                MediaTypeHeaderValue.TryParse (context.HttpContext.Request.ContentType, out MediaTypeHeaderValue mediatype) &&
-                (MediaTypeWhiteList?.Exists (m => m.MediaType?.ToLower () == mediatype.MediaType?.ToLower () && m.CharSet?.ToLower () == mediatype?.CharSet?.ToLower ()) ?? false)) {
+            if (
+                context.HttpContext.Request.Method.ToLower () != "POST".ToLower () ||
+                (
+                    context.HttpContext.Request.Method.ToLower () == "POST".ToLower () &&
+                    MediaTypeHeaderValue.TryParse (context.HttpContext.Request.ContentType, out MediaTypeHeaderValue mediatype) &&
+                    (MediaTypeWhiteList?.Exists (m => m.MediaType?.ToLower () == mediatype.MediaType?.ToLower () && m.CharSet?.ToLower () == mediatype?.CharSet?.ToLower ()) ?? false)
+                )
+            ) {
                 MediaTypeStatePass (context);
             } else {
                 MediaTypeStateFail (context);
