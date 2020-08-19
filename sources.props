@@ -33,7 +33,6 @@
         <MicrosoftAspNetCoreDataProtectionPackageVersion>3.1.1</MicrosoftAspNetCoreDataProtectionPackageVersion>
         <MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>3.1.1</MicrosoftExtensionsCachingStackExchangeRedisPackageVersion>
         <MicrosoftExtensionsCachingAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsCachingAbstractionsPackageVersion>
-        <MicrosoftExtensionsLoggingAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
         <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
         <MicrosoftExtensionsDiagnosticsHealthChecksVersion>3.1.1</MicrosoftExtensionsDiagnosticsHealthChecksVersion>
     </PropertyGroup>
@@ -41,6 +40,7 @@
     <PropertyGroup Label="EntityFrameworkCore Package Versions">
         <MicrosoftEntityFrameworkCoreRelationalPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreRelationalPackageVersion>
         <MicrosoftEntityFrameworkCoreSqlServerPackageVersion>2.2.6</MicrosoftEntityFrameworkCoreSqlServerPackageVersion>
+        <MicrosoftExtensionsLoggingAbstractionsPackageVersion>3.1.1</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
         <MySqlDataEntityFrameworkCorePackageVersion>8.0.18</MySqlDataEntityFrameworkCorePackageVersion>
     </PropertyGroup>
 
@@ -49,7 +49,7 @@
         <CompanyProjectInFormation>zhuxi</CompanyProjectInFormation>
         <ProductProjectInFormation>zhuxi</ProductProjectInFormation>
         <GeneratePackageOnBuildProjectInFormation>false</GeneratePackageOnBuildProjectInFormation>
-        <VersionProjectInFormation>2.1.0-alpha182</VersionProjectInFormation>
+        <VersionProjectInFormation>2.1.0-alpha190</VersionProjectInFormation>
         <DescriptionProjectInFormation>解决方案基于NET Standard 2.1，NET Core 3.1开发，主要是将一些项目开发中常用的方法进行整合。</DescriptionProjectInFormation>
         <RepositoryTypeProjectInFormation>git</RepositoryTypeProjectInFormation>
         <RepositoryUrlProjectInFormation>https://github.com/ZHUZHIYUE/ANSH</RepositoryUrlProjectInFormation>

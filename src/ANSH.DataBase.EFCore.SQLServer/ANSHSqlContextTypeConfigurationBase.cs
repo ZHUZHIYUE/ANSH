@@ -13,14 +13,13 @@ namespace ANSH.DataBase.EFCore.SQLServer {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public ANSHSqlContextTypeConfigurationBase () : base (false, false) { }
+        public ANSHSqlContextTypeConfigurationBase () : base (false) { }
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="useRowNumberForPaging">是否使用RowNumber分页</param>
         /// <param name="enableRetryOnFailure">是否使用连接复原</param>
-        public ANSHSqlContextTypeConfigurationBase (bool useRowNumberForPaging, bool enableRetryOnFailure) : base (useRowNumberForPaging, enableRetryOnFailure) { }
+        public ANSHSqlContextTypeConfigurationBase (bool enableRetryOnFailure) : base (enableRetryOnFailure) { }
 
         /// <summary>
         /// 模型绑定

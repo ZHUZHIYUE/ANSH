@@ -114,7 +114,7 @@ public static class ANSHDbContextOptionsExtensions {
     /// <param name="source">来源</param>
     /// <param name="sql">执行的SQL</param>
     /// <param name="anshDbConnection">数据库连接对象</param>
-    public static IQueryable<TEntity> FromSql<TEntity> (this DbSet<TEntity> source, FormattableString sql, ANSHDbConnection anshDbConnection) where TEntity : class {
+    public static IQueryable<TEntity> FromSqlInterpolated<TEntity> (this DbSet<TEntity> source, FormattableString sql, ANSHDbConnection anshDbConnection) where TEntity : class {
         using (var cmd = anshDbConnection.DbConnection.CreateCommand ()) {
             return source.FromSql (sql);
         }
