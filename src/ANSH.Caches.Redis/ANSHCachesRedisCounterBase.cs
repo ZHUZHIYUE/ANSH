@@ -6,7 +6,7 @@ namespace ANSH.Caches.Redis {
     /// <summary>
     /// 单条记录缓存基类
     /// </summary>
-    public abstract class ANSHCachesRedisCounterBase : ANSHCachesRedisBase {
+    public abstract class ANSHCachesRedisCounterBase : ANSHCachesRedisModelBase<long> {
 
         /// <summary>
         /// 构造函数

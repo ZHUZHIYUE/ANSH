@@ -200,6 +200,8 @@ namespace Testing.Unit {
                 var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
                 Assert.Equal (3, result);
             }
+
+            Assert.Equal (3, ANSHCachesRedisHandle.StringGet (cacheBase));
         }
 
         [Fact]
