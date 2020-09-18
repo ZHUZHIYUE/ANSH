@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 /// <summary>
 /// 拓展类方法
@@ -51,7 +52,7 @@ public static class ANSHAspNetCoreExtensions {
     /// <param name="builder">当前对象</param>
     /// <param name="cachekey">redis key</param>
     /// <returns>返回IDataProtectionBuilder</returns>
-    public static IDataProtectionBuilder PersistKeysToIDistributedCache (this IDataProtectionBuilder builder, string cachekey = "PersistKeysToRedisIXmlRepository") {
+    public static IDataProtectionBuilder PersistKeysToIXmlRepository (this IDataProtectionBuilder builder, string cachekey = "PersistKeysToRedisIXmlRepository") {
         if (builder == null) {
             throw new ArgumentNullException (nameof (builder));
         }
@@ -60,6 +61,21 @@ public static class ANSHAspNetCoreExtensions {
         var descriptor = ServiceDescriptor.Singleton<IXmlRepository> (services => new RedisXmlRepository (services.GetService<IDistributedCache> (), cachekey));
         builder.Services.Add (descriptor);
         return builder.AddKeyManagementOptions (optinos => optinos.XmlRepository = builder.Services.BuildServiceProvider ().GetService<IXmlRepository> ());
+    }
+
+    /// <summary>
+    /// 使用Redis保存Keys
+    /// <remark></remark>
+    /// </summary>
+    /// <param name="builder">当前对象</param>
+    /// <param name="connectString">redis地址</param>
+    /// <param name="cachekey">redis key</param>
+    /// <returns>返回IDataProtectionBuilder</returns>
+    public static IDataProtectionBuilder ANSHPersistKeysToStackExchangeRedis (this IDataProtectionBuilder builder, string connectString, string cachekey = "PersistKeysToRedis") {
+        if (builder == null) {
+            throw new ArgumentNullException (nameof (builder));
+        }
+        return builder.PersistKeysToStackExchangeRedis (ConnectionMultiplexer.Connect (ConfigurationOptions.Parse (connectString)), cachekey);
     }
 
     /// <summary>
