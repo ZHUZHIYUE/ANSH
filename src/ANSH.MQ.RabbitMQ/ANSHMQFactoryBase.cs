@@ -112,22 +112,19 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
         public void InitRetrieving<TMessage> (TMessage message) where TMessage : ANSHMQMessageRetrievingBase {
-            Dictionary<string, object> dxQueue = null;
-            Dictionary<string, object> queue = null;
+            Dictionary<string, object> dxQueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
 
             if (message.QueueDxOpen) {
-                dxQueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
                 CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
                 CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
             }
 
-            queue = CreateParamFormDeathType (message.Exchange, message.RootKey);
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
             CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxQueue);
 
             if (message.QueueDelayOpen) {
                 CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);
-                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, queue);
+                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, dxQueue);
             }
         }
 
