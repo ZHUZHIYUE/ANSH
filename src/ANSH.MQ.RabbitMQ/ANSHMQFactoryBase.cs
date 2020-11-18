@@ -112,14 +112,14 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="message">消息内容</param>
         /// <returns>队列名</returns>
         public void InitRetrieving<TMessage> (TMessage message) where TMessage : ANSHMQMessageRetrievingBase {
-            Dictionary<string, object> dxQueue = null;
-            Dictionary<string, object> dxDelayQueue = null;
+            Dictionary<string, object> XDLExchange = null;
+            Dictionary<string, object> DelayXDLExchange = null;
 
             if (message.QueueDxOpen) {
-                dxQueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
+                XDLExchange = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
             }
             if (message.QueueDelayOpen) {
-                dxDelayQueue = CreateParamFormDeathType (message.ExchangeDX, message.RootKey);
+                DelayXDLExchange = CreateParamFormDeathType (message.Exchange, message.RootKey);
             }
             if (message.QueueDxOpen) {
                 CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
@@ -127,11 +127,11 @@ namespace ANSH.MQ.RabbitMQ {
             }
 
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
-            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, dxQueue);
+            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, XDLExchange);
 
             if (message.QueueDelayOpen) {
                 CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);
-                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, dxDelayQueue);
+                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, DelayXDLExchange);
             }
         }
 
@@ -254,7 +254,7 @@ namespace ANSH.MQ.RabbitMQ {
                         InitPublish (message_item);
                     }
 
-                    model.BasicPublish (string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
+                    model.BasicPublish (message_item.QueueDelayOpen?message_item.ExchangeDelay : string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
                         message_item.RootKey,
                         props,
                         ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));

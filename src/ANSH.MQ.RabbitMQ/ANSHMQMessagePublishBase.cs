@@ -19,6 +19,22 @@ namespace ANSH.MQ.RabbitMQ {
         public virtual string ExchangeType => "direct";
 
         /// <summary>
+        /// 延迟交换机名称
+        /// </summary>
+        public virtual string ExchangeDelay => $"{Exchange}.delay";
+
+        /// <summary>
+        /// 延迟交换机类型
+        /// </summary>
+        public virtual string ExchangeTypeDelay => ExchangeType;
+
+        /// <summary>
+        /// 是否创建延迟队列
+        /// </summary>
+        /// <value></value>
+        public virtual bool QueueDelayOpen => false;
+
+        /// <summary>
         /// 消息rootkey
         /// </summary>
         public abstract string RootKey { get; }

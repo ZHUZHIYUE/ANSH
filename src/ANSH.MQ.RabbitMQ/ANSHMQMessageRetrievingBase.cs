@@ -10,19 +10,9 @@ namespace ANSH.MQ.RabbitMQ {
     public abstract class ANSHMQMessageRetrievingBase : ANSHMQMessagePublishBase {
 
         /// <summary>
-        /// 延迟交换机名称
-        /// </summary>
-        public virtual string ExchangeDelay => $"{Exchange}.delay";
-
-        /// <summary>
         /// 死信交换机名称
         /// </summary>
         public virtual string ExchangeDX => $"{Exchange}.dx";
-
-        /// <summary>
-        /// 延迟交换机类型
-        /// </summary>
-        public virtual string ExchangeTypeDelay => ExchangeType;
 
         /// <summary>
         /// 死信交换机类型
@@ -39,12 +29,6 @@ namespace ANSH.MQ.RabbitMQ {
         /// </summary>
         /// <value></value>
         public virtual bool QueueDxOpen => true;
-
-        /// <summary>
-        /// 是否创建延迟队列
-        /// </summary>
-        /// <value></value>
-        public virtual bool QueueDelayOpen => false;
 
         /// <summary>
         /// 死信队列名称
