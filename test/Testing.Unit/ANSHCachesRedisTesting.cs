@@ -209,7 +209,6 @@ namespace Testing.Unit {
             var ANSHCachesRedisHandle = new ANSHCachesRedisHandle (Redis);
             var cacheBase = new TestStringIncrementExpirCache ();
             ANSHCachesRedisHandle.KeyDelete (cacheBase);
-
             {
                 var result = ANSHCachesRedisHandle.StringIncrement (cacheBase);
                 Assert.Equal (1, result);

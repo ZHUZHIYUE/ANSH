@@ -26,7 +26,8 @@ Docker Swarms是Docker容器的集群。
     或者
     vi /etc/docker/daemon.json
     {
-      "hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]
+      "hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"],
+      "bip": "10.10.0.1/16"
     }
 
     ```  
@@ -58,6 +59,34 @@ Docker Swarms是Docker容器的集群。
     docker swarm init --force-new-cluster 是在保留配置数据的情况下重建集群
     /volume1/docker/swarm/worker/tasks.db 删除
     ```
+
+    在docker swarm init 之前修改docker_gwbridge网段    
+    ```bash
+      docker network rm docker_gwbridge
+      docker network create \
+      --subnet 10.11.0.0/16 \
+      --gateway 10.11.0.1 \
+      -o com.docker.network.bridge.enable_icc=false \
+      -o com.docker.network.bridge.enable_ip_masquerade=true \
+      -o com.docker.network.bridge.name=docker_gwbridge \
+      docker_gwbridge
+
+
+      docker network rm ingress
+      docker network create \
+      --driver overlay \
+      --ingress \
+      --subnet=10.12.0.0/16 \
+      --gateway=10.12.0.1 \
+      ingress
+
+
+      docker network create \
+      --driver overlay \
+      --subnet=10.13.0.0/16 \
+      --gateway=10.13.0.1 \
+      swarms
+      ```
 
 4. 启动端口  
 

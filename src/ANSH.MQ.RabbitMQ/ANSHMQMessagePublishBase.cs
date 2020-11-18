@@ -30,6 +30,12 @@ namespace ANSH.MQ.RabbitMQ {
         [JsonConverter (typeof (StringEnumConverter))]
         public virtual OperatingMethod? Operating { get; set; } = OperatingMethod.Add;
 
+        /// <summary>
+        /// 消息有效处理时间单位毫秒
+        /// </summary>
+        /// <value></value>
+        public virtual long? Expiration { get; set; }
+
     }
 
     /// <summary>

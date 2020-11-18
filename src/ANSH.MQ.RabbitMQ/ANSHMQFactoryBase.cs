@@ -198,27 +198,23 @@ namespace ANSH.MQ.RabbitMQ {
         /// 生产者
         /// </summary>
         /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (TMessage message)
         where TMessage : ANSHMQMessagePublishBase {
-            PublishMsg (new TMessage[] { message }, delivery, expiration);
+            PublishMsg (new TMessage[] { message });
         }
 
         /// <summary>
         /// 生产者
         /// </summary>
         /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72)
+        public virtual void PublishMsg<TMessage> (TMessage[] message)
         where TMessage : ANSHMQMessagePublishBase {
             using (var model = IConnection.CreateModel ()) {
-                PublishMsg (model, message, delivery, expiration);
+                PublishMsg (model, message);
             }
         }
 
@@ -227,20 +223,22 @@ namespace ANSH.MQ.RabbitMQ {
         /// </summary>
         /// <param name="model">AMQP操作模型</param>
         /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
+        public virtual void PublishMsg<TMessage> (IModel model, TMessage[] message, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessagePublishBase {
-            var props = model.CreateBasicProperties ();
-            props.Expiration = (expiration).ToString ();
-            props.DeliveryMode = (byte) (delivery ? 2 : 1);
-            props.ContentType = "application/json";
-            props.ContentEncoding = "utf-8";
             if (message?.Length > 0) {
                 foreach (var message_item in message) {
+                    var props = model.CreateBasicProperties ();
+                    if (message_item.Expiration > 0) {
+                        props.Expiration = (message_item.Expiration).ToString ();
+                        props.DeliveryMode = (byte) 1;
+                    } else {
+                        props.DeliveryMode = (byte) 2;
+                    }
+                    props.ContentType = "application/json";
+                    props.ContentEncoding = "utf-8";
 
                     if (createExchangeAndQueue) {
                         InitPublish (message_item);
@@ -258,31 +256,27 @@ namespace ANSH.MQ.RabbitMQ {
         /// 生产者（确认模式）
         /// </summary>
         /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage message, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessagePublishBase {
-            return PublishMsgConfirm (new TMessage[] { message }, delivery, expiration, createExchangeAndQueue);
+            return PublishMsgConfirm (new TMessage[] { message }, createExchangeAndQueue);
         }
 
         /// <summary>
         /// 生产者（确认模式）
         /// </summary>
         /// <param name="message">消息内容</param>
-        /// <param name="delivery">消息是否持久</param>
-        /// <param name="expiration">消息有效处理时间单位毫秒</param>
         /// <param name="createExchangeAndQueue">是否创建交换机和队列</param>
         /// <typeparam name="TMessage">消息模型</typeparam>
         /// <returns>是否发送成功</returns>
-        public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool delivery = true, long expiration = 1000 * 60 * 60 * 72, bool createExchangeAndQueue = false)
+        public virtual bool PublishMsgConfirm<TMessage> (TMessage[] message, bool createExchangeAndQueue = false)
         where TMessage : ANSHMQMessagePublishBase {
             using (var model = IConnection.CreateModel ()) {
                 if (message?.Length > 0) {
                     model.ConfirmSelect ();
-                    PublishMsg (model, message, delivery, expiration, createExchangeAndQueue);
+                    PublishMsg (model, message, createExchangeAndQueue);
                     try {
                         model.WaitForConfirmsOrDie ();
                         return true;
