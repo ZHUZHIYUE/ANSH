@@ -151,7 +151,7 @@ namespace ANSH.OAuth {
         static string CreateAccessToken<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires)
         where TANSHAccessToken : ANSHAccessToken {
             var jwtPayload = new ANSHJWTPayload<TANSHAccessToken> ();
-            jwtPayload.Exp += expires * 60;
+            jwtPayload.Exp = expires * 60;
             jwtPayload.Jti = Guid.NewGuid ().ToString ("N");
             jwtPayload.Iat = DateTime.Now.ToTimeStamp ();
             jwtPayload.Claims = claims;
