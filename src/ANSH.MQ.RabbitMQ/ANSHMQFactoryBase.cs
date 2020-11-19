@@ -104,6 +104,9 @@ namespace ANSH.MQ.RabbitMQ {
         /// <returns>队列名</returns>
         public void InitPublish<TMessage> (TMessage message) where TMessage : ANSHMQMessagePublishBase {
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
+            if (message.QueueDelayOpen) {
+                CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);
+            }
         }
 
         /// <summary>
