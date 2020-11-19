@@ -88,8 +88,15 @@ namespace ANSH.MQ.RabbitMQ {
         /// <param name="exchange">队列绑定exchange</param>
         /// <param name="root_key">队列绑定routkey</param>
         /// <param name="bind_args">队列绑定参数</param>
-        public void CreateQueue (string queue, bool delivery, bool auto_delete, string exchange, string root_key = "", Dictionary<string, object> bind_args = null) {
+        /// <param name="isLazy">是否为懒队列（先将消息保存到磁盘上，不放在内存中，当消费者开始消费的时候才加载到内存中）</param>
+        public void CreateQueue (string queue, bool delivery, bool auto_delete, string exchange, string root_key, Dictionary<string, object> bind_args = null, bool isLazy = false) {
             using (var channel = IConnection.CreateModel ()) {
+                if (isLazy) {
+                    if (bind_args == null) {
+                        bind_args = new Dictionary<string, object> ();
+                    }
+                    bind_args.Add ("x-queue-mode", "lazy");
+                }
                 channel.QueueDeclare (queue, delivery, false, auto_delete, bind_args);
                 channel.QueueBind (queue: queue,
                     exchange: string.IsNullOrWhiteSpace (exchange) ? "amq.direct" : exchange,
@@ -126,7 +133,7 @@ namespace ANSH.MQ.RabbitMQ {
             }
             if (message.QueueDxOpen) {
                 CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
-                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, null);
+                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey);
             }
 
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
@@ -134,7 +141,7 @@ namespace ANSH.MQ.RabbitMQ {
 
             if (message.QueueDelayOpen) {
                 CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);
-                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, DelayXDLExchange);
+                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, DelayXDLExchange, true);
             }
         }
 
