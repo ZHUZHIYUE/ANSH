@@ -97,6 +97,7 @@ namespace ANSH.MQ.RabbitMQ {
                     }
                     bind_args.Add ("x-queue-mode", "lazy");
                 }
+
                 channel.QueueDeclare (queue, delivery, false, auto_delete, bind_args);
                 channel.QueueBind (queue: queue,
                     exchange: string.IsNullOrWhiteSpace (exchange) ? "amq.direct" : exchange,
@@ -141,7 +142,7 @@ namespace ANSH.MQ.RabbitMQ {
 
             if (message.QueueDelayOpen) {
                 CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);
-                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKey, DelayXDLExchange, true);
+                CreateQueue (message.QueueDelay, true, false, message.ExchangeDelay, message.RootKeyDelay, DelayXDLExchange, true);
             }
         }
 
@@ -264,8 +265,12 @@ namespace ANSH.MQ.RabbitMQ {
                         InitPublish (message_item);
                     }
 
-                    model.BasicPublish (message_item.QueueDelayOpen?message_item.ExchangeDelay : string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange,
-                        message_item.RootKey,
+                    string exchange = message_item.QueueDelayOpen?message_item.ExchangeDelay : string.IsNullOrWhiteSpace (message_item.Exchange) ? "amq.direct" : message_item.Exchange;
+
+                    string rootKey = message_item.QueueDelayOpen?message_item.RootKeyDelay : message_item.RootKey;
+
+                    model.BasicPublish (exchange,
+                        rootKey,
                         props,
                         ASCIIEncoding.UTF8.GetBytes (message_item.ToJson ()));
                 }

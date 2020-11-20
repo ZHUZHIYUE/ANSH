@@ -35,6 +35,11 @@ namespace ANSH.MQ.RabbitMQ {
         public virtual bool QueueDelayOpen => false;
 
         /// <summary>
+        /// 延迟队列消息rootkey
+        /// </summary>
+        public string RootKeyDelay => RootKey;
+
+        /// <summary>
         /// 消息rootkey
         /// </summary>
         public abstract string RootKey { get; }
