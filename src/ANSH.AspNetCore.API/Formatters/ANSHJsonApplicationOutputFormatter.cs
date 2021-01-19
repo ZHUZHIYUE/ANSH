@@ -12,15 +12,15 @@ namespace ANSH.AspNetCore.API.Formatters {
     /// WebApi格式化响应数据，用给定的文本格式将一个物体写到输出流中
     /// </summary>
     public class ANSHJsonApplicationOutputFormatter : TextOutputFormatter {
-        Action<IServiceProvider, object, Type> _Action;
+        Func<IServiceProvider, object, Type, String> _func;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="action">对响应的JSON文本格式进行读取</param>
+        /// <param name="func">对响应的JSON文本格式进行读取</param>
         /// <returns></returns>
-        public ANSHJsonApplicationOutputFormatter (Action<IServiceProvider, object, Type> action = null) : base () {
-            _Action = action;
+        public ANSHJsonApplicationOutputFormatter (Func<IServiceProvider, object, Type, String> func = null) : base () {
+            _func = func;
             SupportedMediaTypes.Clear ();
             SupportedMediaTypes.Add (new MediaTypeHeaderValue ("application/json"));
             SupportedEncodings.Clear ();
@@ -33,8 +33,8 @@ namespace ANSH.AspNetCore.API.Formatters {
         /// <param name="context">响应上下文</param>
         /// <param name="selectedEncoding">应用于响应的编码格式</param>
         public override async Task WriteResponseBodyAsync (OutputFormatterWriteContext context, Encoding selectedEncoding) {
-            _Action?.Invoke (context.HttpContext.RequestServices, context.Object, context.ObjectType);
-            await context.HttpContext.Response.WriteAsync (JObject.FromObject (context.Object).ToString (), selectedEncoding);
+            string json = _func?.Invoke (context.HttpContext.RequestServices, context.Object, context.ObjectType);
+            await context.HttpContext.Response.WriteAsync (json, selectedEncoding);
         }
     }
 }

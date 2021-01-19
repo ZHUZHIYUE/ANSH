@@ -148,7 +148,7 @@ namespace ANSH.OAuth {
         /// <param name="secretKey">密匙</param>
         /// <param name="expires">有效时间（单位分钟）</param>
         /// <returns>AccessToken</returns>
-        static string CreateAccessToken<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires)
+        string CreateAccessToken<TANSHAccessToken> (TANSHAccessToken claims, string secretKey, int expires)
         where TANSHAccessToken : ANSHAccessToken {
             var jwtPayload = new ANSHJWTPayload<TANSHAccessToken> ();
             jwtPayload.Exp = DateTime.Now.AddMinutes (expires).ToTimeStamp ();
@@ -165,6 +165,6 @@ namespace ANSH.OAuth {
         /// <param name="secretKey">密匙</param>
         /// <param name="accessTokenModel">accessToken内容</param>
         /// <returns>AccessToken</returns>
-        static bool VerifyAccessToken<TANSHAccessToken> (string access_token, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel) where TANSHAccessToken : ANSHAccessToken => ANSHJWT.Decode (access_token, secretKey, out accessTokenModel);
+        bool VerifyAccessToken<TANSHAccessToken> (string access_token, string secretKey, out ANSHJWTPayload<TANSHAccessToken> accessTokenModel) where TANSHAccessToken : ANSHAccessToken => ANSHJWT.Decode (access_token, secretKey, out accessTokenModel);
     }
 }

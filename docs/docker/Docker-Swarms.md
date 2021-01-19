@@ -27,8 +27,26 @@ Docker Swarms是Docker容器的集群。
     vi /etc/docker/daemon.json
     {
       "hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"],
-      "bip": "10.10.0.1/16"
+      "bip": "10.10.0.1/16",
+      "graph":"/volume1/docker",
+      "userland-proxy": false,
+      "registry-mirrors": [
+          "https://lbpwb5di.mirror.aliyuncs.com"
+        ]
     }
+
+
+    systemctl start firewalld
+    systemctl enable firewalld
+    /usr/lib/firewalld/services/
+    firewall-cmd --zone=public --add-port=3306/tcp --permanent （--permanent永久生效，没有此参数重启后失效）
+    firewall-cmd --zone=public --remove-service=mysql --permanent
+    firewall-cmd --zone=public --add-service=docker-swarm --permanent
+    firewall-cmd --reload（重新载入）
+    firewall-cmd --zone=public --list-ports（查看所有打开的端口）
+    firewall-cmd --zone=public --list-all
+    firewall-cmd --set-default-zone=public　　　　　设定默认域
+    firewall-cmd --permanent --add-interface=eth0 --zone=public 　　　　添加指定域的网络接口
 
     ```  
     CentOS配置
