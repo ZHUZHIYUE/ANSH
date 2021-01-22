@@ -31,8 +31,8 @@ public static class ANSHCommonExtensionsENUM {
     /// <param name="value">当前实例值</param>
     /// <param name="default_value">当此实例的值为 null 或无效的值时要返回的值。</param>
     /// <returns>与当前实例值对应的 System.Int32</returns>
-    public static int ToEnum<T> (this string value, int default_value) {
-        return value.IsEnum (out int result) ? result : default_value;
+    public static T ToEnum<T> (this string value, T default_value) where T : struct {
+        return value.IsEnum (out T result) ? result : default_value;
     }
 
     /// <summary>
