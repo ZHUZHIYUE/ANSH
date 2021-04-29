@@ -1,6 +1,7 @@
 # Docker Swarms  
 
 Docker Swarms是Docker容器的集群。  
+
 ## 准备  
 
 1. 为您的操作系统下载并安装[docker](https://docs.docker.com/)  
@@ -18,6 +19,7 @@ Docker Swarms是Docker容器的集群。
 3. 设置启动  
 
     通用配置  
+
     ```bash
     #!/bin/bash
     vi /usr/lib/systemd/system/docker.service
@@ -49,7 +51,9 @@ Docker Swarms是Docker容器的集群。
     firewall-cmd --permanent --add-interface=eth0 --zone=public 　　　　添加指定域的网络接口
 
     ```  
+
     CentOS配置
+
     ```bash
     #!/bin/bash
     vi /etc/systemd/system/docker-tcp.socket
@@ -78,7 +82,8 @@ Docker Swarms是Docker容器的集群。
     /volume1/docker/swarm/worker/tasks.db 删除
     ```
 
-    在docker swarm init 之前修改docker_gwbridge网段    
+    在docker swarm init 之前修改docker_gwbridge网段
+
     ```bash
       docker network rm docker_gwbridge
       docker network create \

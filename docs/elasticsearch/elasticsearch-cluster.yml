@@ -1,0 +1,286 @@
+version: '3.6'
+
+#vi /etc/sysctl.conf
+#vm.max_map_count=262144
+#sysctl -p
+services:
+  es11:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: es11
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+    environment: 
+      - network.publish_host=es11
+      - node.name=es11
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es12,es21,es22
+      - cluster.initial_master_nodes=es11,es12,es21,es22
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      
+      
+      #开启集群中https传输
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.key=server.key
+      - xpack.security.transport.ssl.certificate=server.crt
+      - xpack.security.transport.ssl.certificate_authorities=ca.crt
+      
+      # 开启api接口https传输
+      #- xpack.security.http.ssl.enabled=true
+      #- xpack.security.http.ssl.key=server.key
+      #- xpack.security.http.ssl.certificate=server.crt
+      #- xpack.security.http.ssl.certificate_authorities=ca.crt
+      #- xpack.security.http.ssl.client_authentication=none
+      #- xpack.security.http.ssl.verification_mode=none
+      # 生成密码 bin/elasticsearch-setup-passwords interactive --batch --url http://127.0.0.1:9200
+      # 生成密码 bin/elasticsearch-setup-passwords auto --batch --url http://127.0.0.1:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch.data.1.1:/usr/share/elasticsearch/data
+    configs:
+      - source: CA.server.crt
+        target: /usr/share/elasticsearch/config/server.crt
+      - source: CA.server.key
+        target: /usr/share/elasticsearch/config/server.key
+      - source: CA.ca.crt
+        target: /usr/share/elasticsearch/config/ca.crt
+    networks:
+      bscnetwork:
+        aliases:
+          - bsc.es
+          - es11
+    deploy:
+      endpoint_mode: dnsrr
+      placement:
+        constraints: 
+          - node.labels.swarm.es == node
+          - node.labels.swarm.es.node == 1
+          
+  es12:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: es12
+    environment:
+      - network.publish_host=es12
+      - node.name=es12
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es11,es21,es22
+      - cluster.initial_master_nodes=es11,es12,es21,es22
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      
+      
+      #开启集群中https传输
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.key=server.key
+      - xpack.security.transport.ssl.certificate=server.crt
+      - xpack.security.transport.ssl.certificate_authorities=ca.crt
+      
+      # 开启api接口https传输
+      #- xpack.security.http.ssl.enabled=true
+      #- xpack.security.http.ssl.key=server.key
+      #- xpack.security.http.ssl.certificate=server.crt
+      #- xpack.security.http.ssl.certificate_authorities=ca.crt
+      #- xpack.security.http.ssl.client_authentication=none
+      #- xpack.security.http.ssl.verification_mode=none
+      # 生成密码 bin/elasticsearch-setup-passwords interactive --batch --url http://127.0.0.1:9200
+      # 生成密码 bin/elasticsearch-setup-passwords auto --batch --url http://127.0.0.1:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch.data.1.2:/usr/share/elasticsearch/data
+    configs:
+      - source: CA.server.crt
+        target: /usr/share/elasticsearch/config/server.crt
+      - source: CA.server.key
+        target: /usr/share/elasticsearch/config/server.key
+      - source: CA.ca.crt
+        target: /usr/share/elasticsearch/config/ca.crt
+    networks:
+      bscnetwork:
+        aliases:
+          - bsc.es
+          - es12
+    deploy:
+      endpoint_mode: dnsrr
+      placement:
+        constraints: 
+          - node.labels.swarm.es == node
+          - node.labels.swarm.es.node == 1
+          
+  kib01:
+    image: docker.elastic.co/kibana/kibana:7.11.2
+    container_name: kib01
+    ports:
+      - target: 5601
+        published: 5601
+    environment:
+      ELASTICSEARCH_URL: http://es11:9200
+      ELASTICSEARCH_HOSTS: '["http://es11:9200","http://es12:9200","http://es21:9200","http://es22:9200"]'
+      ELASTICSEARCH_USERNAME: "kibana_system"
+      ELASTICSEARCH_PASSWORD: "Bio*novo!"
+      ELASTICSEARCH_SSL_VERIFICATIONMODE: none
+      I18N_LOCALE: 'zh-CN'
+    networks: 
+      bscnetwork:
+        aliases:
+          - kib01
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.es == node
+          - node.labels.swarm.es.node == 1
+          
+  es21:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: es21
+    environment: 
+      - network.publish_host=es21
+      - node.name=es21
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es11,es12,es22
+      - cluster.initial_master_nodes=es11,es12,es21,es22
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      
+      
+      #开启集群中https传输
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.key=server.key
+      - xpack.security.transport.ssl.certificate=server.crt
+      - xpack.security.transport.ssl.certificate_authorities=ca.crt
+      
+      # 开启api接口https传输
+      #- xpack.security.http.ssl.enabled=true
+      #- xpack.security.http.ssl.key=server.key
+      #- xpack.security.http.ssl.certificate=server.crt
+      #- xpack.security.http.ssl.certificate_authorities=ca.crt
+      #- xpack.security.http.ssl.client_authentication=none
+      #- xpack.security.http.ssl.verification_mode=none
+      # 生成密码 bin/elasticsearch-setup-passwords interactive --batch --url http://127.0.0.1:9200
+      # 生成密码 bin/elasticsearch-setup-passwords auto --batch --url http://127.0.0.1:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch.data.2.1:/usr/share/elasticsearch/data
+    configs:
+      - source: CA.server.crt
+        target: /usr/share/elasticsearch/config/server.crt
+      - source: CA.server.key
+        target: /usr/share/elasticsearch/config/server.key
+      - source: CA.ca.crt
+        target: /usr/share/elasticsearch/config/ca.crt
+    networks:
+      bscnetwork:
+        aliases:
+          - bsc.es
+          - es21
+    deploy:
+      endpoint_mode: dnsrr
+      placement:
+        constraints: 
+          - node.labels.swarm.es == node
+          - node.labels.swarm.es.node == 2
+          
+  es22:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: es22
+    environment:
+      - network.publish_host=es22
+      - node.name=es22
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es11,es12,es21
+      - cluster.initial_master_nodes=es11,es12,es21,es22
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      
+      
+      #开启集群中https传输
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none
+      - xpack.security.transport.ssl.key=server.key
+      - xpack.security.transport.ssl.certificate=server.crt
+      - xpack.security.transport.ssl.certificate_authorities=ca.crt
+      
+      # 开启api接口https传输
+      #- xpack.security.http.ssl.enabled=true
+      #- xpack.security.http.ssl.key=server.key
+      #- xpack.security.http.ssl.certificate=server.crt
+      #- xpack.security.http.ssl.certificate_authorities=ca.crt
+      #- xpack.security.http.ssl.client_authentication=none
+      #- xpack.security.http.ssl.verification_mode=none
+      # 生成密码 bin/elasticsearch-setup-passwords interactive --batch --url http://127.0.0.1:9200
+      # 生成密码 bin/elasticsearch-setup-passwords auto --batch --url http://127.0.0.1:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch.data.2.2:/usr/share/elasticsearch/data
+    configs:
+      - source: CA.server.crt
+        target: /usr/share/elasticsearch/config/server.crt
+      - source: CA.server.key
+        target: /usr/share/elasticsearch/config/server.key
+      - source: CA.ca.crt
+        target: /usr/share/elasticsearch/config/ca.crt
+    networks:
+      bscnetwork:
+        aliases:
+          - bsc.es
+          - es22
+    deploy:
+      endpoint_mode: dnsrr
+      placement:
+        constraints: 
+          - node.labels.swarm.es == node
+          - node.labels.swarm.es.node == 2
+          
+
+
+networks:
+  bscnetwork:
+    external: true 
+
+
+volumes:
+  elasticsearch.data.1.1:
+    external: true
+  elasticsearch.data.1.2:
+    external: true
+  elasticsearch.data.2.1:
+    external: true
+  elasticsearch.data.2.2:
+    external: true
+
+configs:
+  CA.server.crt:
+    external: true
+  CA.ca.crt:
+    external: true
+  CA.server.key:
+    external: true

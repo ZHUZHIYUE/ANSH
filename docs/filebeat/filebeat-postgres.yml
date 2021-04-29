@@ -1,0 +1,67 @@
+version: '3.6'
+
+services:
+  pod:
+    image: postgres:13.1-alpine
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    environment:
+      - POSTGRES_PASSWORD=Bio*novo!
+      - TZ=Asia/Shanghai
+      - PGTZ=Asia/Shanghai
+    networks: 
+      bscnetwork:
+        aliases:
+          - bsc.postgresql.all
+    volumes:
+      - postgressql.all.data:/var/lib/postgresql/data:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.db == node
+          - node.labels.swarm.db.node == 1
+          
+          
+          
+          
+  filebeat:
+    image: store/elastic/filebeat:7.11.2
+    user: root
+    privileged: true
+    entrypoint: ['filebeat' , '-e' , '-strict.perms=false' , '-E' , 'setup.ilm.overwrite=true' , '-E' , 'setup.kibana.host=kib01:5601' , '-E' , 'output.elasticsearch.hosts=["bsc.es:9200"]' , '-E' , 'output.elasticsearch.username=elastic' , '-E' , 'output.elasticsearch.password=Bio*novo!'  , '--modules' , 'postgresql' , '-M' , 'postgresql.log.var.paths=[/data/postgresql/log/*.log*]']
+    networks: 
+      bscnetwork:
+    volumes:
+      - postgressql.all.data:/data/postgresql
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.db == node
+          - node.labels.swarm.db.node == 1
+          
+          
+          
+networks:
+  bscnetwork:
+    external: true 
+    
+volumes:
+  postgressql.all.data:
+    external: true 
+    

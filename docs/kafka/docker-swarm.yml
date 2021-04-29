@@ -1,0 +1,57 @@
+version: '3.6'
+
+services:
+  agent:
+    image: wurstmeister/kafka:2.13-2.7.0
+    hostname: bsc-kafka-node-1
+    environment:
+      #HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      #KAFKA_ZOOKEEPER_CONNECT: bsc.zookeeper:2181
+      #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      #KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
+      #KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      #KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: bsc.kafka.node.1
+      KAFKA_CREATE_TOPICS: "zipkin:2:2:delete"
+      KAFKA_ZOOKEEPER_CONNECT: bsc.zookeeper:2181/kafka
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092
+      KAFKA_LISTENERS: INSIDE://:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_LOG_RETENTION_BYTES: -1
+    networks: 
+      bscnetwork:
+        aliases:
+          - bsc.kafka.node
+          - bsc.kafka.node.1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - bsc.kafka.node.1:/kafka
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints:  
+          - node.labels.swarm.mq == node
+          - node.labels.swarm.mq.node == 1
+          
+
+
+networks:
+  bscnetwork:
+    external: true 
+    
+    
+    
+volumes:
+  bsc.kafka.node.1:
+    external: true 

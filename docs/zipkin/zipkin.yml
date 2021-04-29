@@ -1,0 +1,56 @@
+version: '3.6'
+
+services:
+  node:
+    image: docker-repository.bioey.com/openzipkin/zipkin:2.23
+    environment:
+      #- COLLECTOR_RABBITMQ_ENABLED=true
+      #- RABBIT_ADDRESSES=bsc.rabbitmq.node:5672
+      #- RABBIT_USER=zipkin
+      #- RABBIT_PASSWORD=zipkin
+      #- RABBIT_VIRTUAL_HOST=/
+      #- RABBIT_QUEUE=zipkin
+      #- RABBIT_CONCURRENCY=1
+      
+      #Kafka 启用
+      - COLLECTOR_KAFKA_ENABLED=true
+      #Kafka 地址
+      - KAFKA_BOOTSTRAP_SERVERS=bsc.kafka.node:9092
+      #Kafka Topic名称,默认为"zipkin"
+      - KAFKA_TOPIC=zipkin             
+      #Kafka 组名,默认为"zipkin"
+      - KAFKA_GROUP_ID=zipkin          
+      #消耗Topic的线程数,默认为1    
+      - KAFKA_STREAMS=3
+      
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=bsc.es:9200
+      - ES_USERNAME=elastic
+      - ES_PASSWORD=Bio*novo!
+      - ES_SSL_NO_VERIFY=true
+    ports:
+      - target: 9411
+        published: 9411
+    networks: 
+      bscnetwork:
+        aliases:
+          - bsc.zipkin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.swarm.mq == node
+          
+
+
+networks:
+  bscnetwork:
+    external: true 
