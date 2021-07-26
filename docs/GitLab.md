@@ -18,5 +18,6 @@ $ docker exec -it gitlab gitlab-rake gitlab:backup:create SKIP=artifacts
 ```
 ### 恢复
 ```
+chmod 666 /var/opt/gitlab/backups/${文件名称}_gitlab_backup.tar
 $ docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=${文件名称}
 ```
