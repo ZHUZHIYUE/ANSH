@@ -134,11 +134,11 @@ namespace ANSH.MQ.RabbitMQ {
             }
             if (message.QueueDxOpen) {
                 CreateDurableExchange (message.ExchangeDX, message.ExchangeTypeDX, true, false);
-                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey);
+                CreateQueue (message.QueueDX, true, false, message.ExchangeDX, message.RootKey, isLazy : message.IsLazy);
             }
 
             CreateDurableExchange (message.Exchange, message.ExchangeType, true, false);
-            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, XDLExchange);
+            CreateQueue (message.Queue, true, false, message.Exchange, message.RootKey, XDLExchange, isLazy : message.IsLazy);
 
             if (message.QueueDelayOpen) {
                 CreateDurableExchange (message.ExchangeDelay, message.ExchangeTypeDelay, true, false);

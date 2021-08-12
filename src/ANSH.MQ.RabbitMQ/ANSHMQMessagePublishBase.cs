@@ -57,6 +57,12 @@ namespace ANSH.MQ.RabbitMQ {
         /// <value></value>
         public virtual long? Expiration { get; set; }
 
+        /// <summary>
+        /// 是否为懒队列（先将消息保存到磁盘上，不放在内存中，当消费者开始消费的时候才加载到内存中）
+        /// </summary>
+        /// <value></value>
+        public virtual bool IsLazy => false;
+
     }
 
     /// <summary>
